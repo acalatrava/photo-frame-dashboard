@@ -1,0 +1,11 @@
+# Optional override that lets frames discover the backend by itself (mDNS, _homehq._tcp).
+# Multicast does not cross Docker's default bridge network, so the container shares the host network instead.
+#   docker compose -f docker-compose.yml -f docker-compose.mdns.yml up -d
+# The service then listens directly on the host, on port 8787.
+services:
+  homehq:
+    network_mode: host
+    ports: !reset []
+    environment:
+      HOMEHQ_DATA_DIR: /data
+      HOMEHQ_MDNS_ENABLED: "true"

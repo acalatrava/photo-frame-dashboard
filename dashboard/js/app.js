@@ -1,68 +1,40 @@
-// Core shell: router, demo clock, idle/ambient, toasts, sheets, helpers.
+// Core shell: router, idle/ambient, toasts, sheets, helpers.
 (function () {
   'use strict';
   var D = window.DATA;
-  var App = window.App = { state: D, views: {}, current: null, mode: 'day', calMode: 'normal' };
+  var App = window.App = { state: D, views: {}, current: null, mode: 'day' };
   var $ = App.$ = function (s, r) { return (r || document).querySelector(s); };
   App.$$ = function (s, r) { return Array.prototype.slice.call((r || document).querySelectorAll(s)); };
 
   // ------------------------------------------------------------ events
   var handlers = {};
   App.on = function (e, fn) { (handlers[e] = handlers[e] || []).push(fn); };
-  App.emit = function (e, a) { (handlers[e] || []).forEach(function (fn) { fn(a); }); };
-
-  // ------------------------------------------------------------ time (demo clock)
-  var offset = 0;
-  App.now = function () { return new Date(Date.now() + offset); };
-  App.setTime = function (h, m) {
-    if (h == null) offset = 0;
-    else { var d = new Date(); d.setHours(h, m, 0, 0); offset = d - Date.now(); }
-    lastMin = -1;
-    App.emit('time');
-    App.rerender();
+  App.errors = [];
+  // One failing listener must never stop the others (a wall display cannot be reloaded by hand).
+  App.emit = function (e, a) {
+    (handlers[e] || []).forEach(function (fn) {
+      try { fn(a); } catch (err) {
+        App.errors.push(e + ': ' + (err && err.stack || err));
+        if (App.errors.length > 30) App.errors.shift();
+        if (window.console) console.error('[HomeHQ] handler for "' + e + '" failed', err);
+      }
+    });
   };
+
+  // ------------------------------------------------------------ time (wall clock in the configured zone)
+  // App.now() returns a Date whose local fields are the wall-clock time in the configured time zone, so views
+  // never depend on the frame's own zone setting. Formatting lives in i18n.js (Intl based).
+  App.now = function () { return App.wallNow(); };
   App.dayStart = function (d) { var x = new Date(d); x.setHours(0, 0, 0, 0); return x; };
+  App.monday = function (d) { var x = App.dayStart(d); return App.addDays(x, -((x.getDay() + 6) % 7)); };
+  // ISO 8601 week number (weeks start on Monday, week 1 contains the first Thursday of the year).
+  App.isoWeek = function (d) {
+    var t = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
+    t.setUTCDate(t.getUTCDate() + 4 - (t.getUTCDay() || 7));
+    return Math.ceil(((t - Date.UTC(t.getUTCFullYear(), 0, 1)) / 864e5 + 1) / 7);
+  };
   App.addDays = function (d, n) { var x = new Date(d); x.setDate(x.getDate() + n); return x; };
   App.sameDay = function (a, b) { return a.getFullYear() === b.getFullYear() && a.getMonth() === b.getMonth() && a.getDate() === b.getDate(); };
-  App.isNight = function () { var h = App.now().getHours(); return h >= 22 || h < 6; };
-
-  var DAYS = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-  var MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
-  var MON_SHORT = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'June', 'July', 'Aug', 'Sept', 'Oct', 'Nov', 'Dec'];
-  App.fmt = {
-    time: function (d, ampm) {
-      var h = d.getHours(), m = d.getMinutes();
-      var s = (h % 12 || 12) + ':' + (m < 10 ? '0' : '') + m;
-      return ampm === false ? s : s + ' ' + (h >= 12 ? 'PM' : 'AM');
-    },
-    // "4 PM", "3:45 PM"
-    hour: function (d) {
-      var h = d.getHours(), m = d.getMinutes();
-      return (h % 12 || 12) + (m ? ':' + (m < 10 ? '0' : '') + m : '') + ' ' + (h >= 12 ? 'PM' : 'AM');
-    },
-    ampm: function (d) { return d.getHours() >= 12 ? 'PM' : 'AM'; },
-    range: function (a, b) {
-      var same = App.fmt.ampm(a) === App.fmt.ampm(b);
-      return (same ? App.fmt.time(a, false) : App.fmt.time(a)) + ' – ' + App.fmt.time(b);
-    },
-    day: function (d) { return DAYS[d.getDay()]; },
-    dayShort: function (d) { return DAYS[d.getDay()].slice(0, 3); },
-    month: function (d) { return MONTHS[d.getMonth()]; },
-    monthShort: function (d) { return MON_SHORT[d.getMonth()]; },
-    mins: function (m) {
-      m = Math.max(0, Math.round(m));
-      if (m < 60) return m + ' min';
-      var h = Math.floor(m / 60), r = m % 60;
-      return h + ' hr' + (r ? ' ' + r + ' min' : '');
-    },
-    rel: function (d) {
-      var t = App.dayStart(App.now()), x = App.dayStart(d), diff = Math.round((x - t) / 864e5);
-      if (diff === 0) return 'Today';
-      if (diff === 1) return 'Tomorrow';
-      if (diff === -1) return 'Yesterday';
-      return DAYS[d.getDay()];
-    }
-  };
   App.esc = function (s) { return String(s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); };
 
   // ------------------------------------------------------------ icons + people
@@ -89,13 +61,7 @@
   };
 
   // ------------------------------------------------------------ calendar helpers
-  App.events = function () {
-    var list = D.events.slice();
-    var today = App.dayStart(App.now());
-    if (App.calMode === 'busy') list = list.concat(D.busyExtras);
-    if (App.calMode === 'empty') list = list.filter(function (e) { return e.allDay || !App.sameDay(e.start, today); });
-    return list;
-  };
+  App.events = function () { return D.events; };
   App.isFamily = function (e) { return e.people.length >= D.people.length; };
   App.evColor = function (e) { return App.isFamily(e) ? D.family : App.person(e.people[0]); };
   App.timedOn = function (day, pid) {
@@ -122,37 +88,33 @@
     return App.events().filter(function (e) { return e.id === id; })[0];
   };
 
-  // ------------------------------------------------------------ chores + weather helpers
-  App.currentRoutine = function () {
-    var h = App.now().getHours();
-    for (var i = 0; i < D.routines.length; i++) if (h >= D.routines[i].from && h < D.routines[i].to) return D.routines[i];
-    return D.routines[2];
-  };
+  // ------------------------------------------------------------ weather helpers
   App.weatherNow = function () {
     var W = D.weather, h = App.now().getHours();
-    var rainAt = -1;
-    for (var i = h; i < 24; i++) if (W.p[i] >= 50) { rainAt = i; break; }
+    if (!W || W.t[h] == null) return null;
+    var rainAt = -1, i;
+    for (i = h; i < 24; i++) if (W.p[i] >= 50) { rainAt = i; break; }
     var summary, advice;
     if (rainAt === h) {
       var stop = h; while (stop < 24 && W.p[stop] >= 50) stop++;
-      summary = 'Rain until ' + App.fmt.hour(new Date(2000, 0, 1, stop));
-      advice = 'Umbrella weather';
+      summary = App.t('wx_rain_until', { h: App.fmt.hour(new Date(2000, 0, 1, stop)) });
+      advice = App.t('wx_umbrella');
     } else if (rainAt > -1) {
-      summary = 'Rain from ' + App.fmt.hour(new Date(2000, 0, 1, rainAt));
-      var soccer = App.timedOn(App.now()).filter(function (e) { return /soccer/i.test(e.title) && e.start > App.now(); })[0];
-      advice = soccer ? 'Pack a rain jacket for soccer' : 'Grab a rain jacket';
+      summary = App.t('wx_rain_from', { h: App.fmt.hour(new Date(2000, 0, 1, rainAt)) });
+      advice = App.t('wx_jacket_rain');
     } else {
-      summary = W.t[h] < 12 ? 'Clear and cool' : 'Dry all day';
-      advice = W.t[h] < 12 ? 'Jacket weather' : 'Light layers';
+      summary = W.t[h] < 12 ? App.t('wx_clear_cool') : App.t('wx_dry');
+      advice = W.t[h] < 12 ? App.t('wx_jacket') : App.t('wx_light');
     }
-    var labels = { sun: 'Sunny', moon: 'Clear', partly: 'Partly cloudy', cloud: 'Overcast', rain: 'Rain' };
-    return { temp: W.t[h], cond: W.c[h], label: labels[W.c[h]], hi: W.hi, lo: W.lo, summary: summary, advice: advice, hour: h };
+    return { temp: W.t[h], cond: W.c[h], label: App.t('wx_' + W.c[h]), hi: W.hi, lo: W.lo, summary: summary, advice: advice, hour: h, stale: W.stale };
   };
   App.hourly = function (count) {
     var W = D.weather, h = App.now().getHours(), out = [];
+    if (!W) return out;
     for (var i = 0; i < count; i++) {
       var x = (h + i) % 24;
-      out.push({ h: x, t: W.t[x], c: W.c[x], p: W.p[x], label: i === 0 ? 'Now' : ((x % 12 || 12) + (x >= 12 ? 'p' : 'a')) });
+      if (W.t[x] == null) continue;
+      out.push({ h: x, t: W.t[x], c: W.c[x], p: W.p[x], label: i === 0 ? App.t('now') : App.fmt.hour(new Date(2000, 0, 1, x)) });
     }
     return out;
   };
@@ -208,6 +170,24 @@
     Object.keys(App.views).forEach(function (k) { if (k !== App.current) App.views[k]._dirty = true; });
     refreshStale(1500);
   }
+  // Chores and cameras only appear in the rail when the server has some configured.
+  App.syncRail = function () {
+    var show = { chores: D.chores.configured > 0, cameras: D.cameras.length > 0 };
+    Object.keys(show).forEach(function (k) {
+      var b = $('.rail-item[data-go="' + k + '"]');
+      if (b) b.hidden = !show[k];
+    });
+    if (App.current && show[App.current] === false) App.go('home');
+  };
+  // Today is always first and Settings always last; everything in between follows the order set in the admin panel.
+  App.applyNav = function (order) {
+    var rail = $('#rail'), settings = $('.rail-item[data-go="settings"]');
+    (order || []).forEach(function (k) {
+      var b = $('.rail-item[data-go="' + k + '"]');
+      if (b) rail.insertBefore(b, settings);
+    });
+  };
+  App.on('data', App.syncRail);
   App.on('data', markStale);
   App.on('time', markStale);
   App.rerender = function () {
@@ -226,7 +206,7 @@
     t.className = 'toast' + (opts.tone ? ' toast--' + opts.tone : '');
     t.style.setProperty('--ms', ms + 'ms');
     t.innerHTML = (opts.icon ? App.icon(opts.icon, 26) : '') + '<span class="toast-msg">' + html + '</span>' +
-      (opts.undo ? '<button class="toast-undo">' + App.icon('undo', 22) + 'Undo</button>' : '');
+      (opts.undo ? '<button class="toast-undo">' + App.icon('undo', 22) + App.t('undo') + '</button>' : '');
     box.appendChild(t);
     t.classList.add('is-in');
     function kill() { t.remove(); }
@@ -294,7 +274,7 @@
   var idleSec = 0;
   function onIdleTick() {
     idleSec++;
-    var blocked = $('#takeover').classList.contains('is-open');
+    var blocked = !!($('#setup') && $('#setup').classList.contains('is-open'));
     if (App.mode === 'nightdash' && idleSec >= 20) { App.setMode('night'); return; }
     if (App.mode !== 'day' || blocked) return;
     if (idleSec === App.idle.home && App.current !== 'home') { App.closeSheet(); App.go('home'); }
@@ -312,6 +292,26 @@
     $('#stage').style.transform = Math.abs(s - 1) < 0.01 ? '' : 'scale(' + s + ')';
   }
 
+  // ------------------------------------------------------------ keyboard avoidance
+  // The Android keyboard covers about half of the 800px-high screen and the window does not resize,
+  // so the surface that holds the focused field is lifted until the field sits above the keyboard.
+  var lifted = null;
+  function unlift() {
+    if (lifted) { lifted.style.translate = ''; lifted = null; }
+  }
+  document.addEventListener('focusin', function (e) {
+    var el = e.target;
+    if (!el || !/^(INPUT|TEXTAREA)$/.test(el.tagName) || el.type === 'range') return;
+    setTimeout(function () {
+      var host = el.closest('#setup') || $('#stage');
+      var r = el.getBoundingClientRect();
+      var free = window.innerHeight * 0.5 - 24;
+      var need = r.bottom + 24 - free;
+      if (need > 0) { host.style.translate = '0 ' + (-Math.round(need)) + 'px'; lifted = host; }
+    }, 300);
+  });
+  document.addEventListener('focusout', function () { setTimeout(function () { if (!document.activeElement || !/^(INPUT|TEXTAREA)$/.test(document.activeElement.tagName)) unlift(); }, 50); });
+
   // ------------------------------------------------------------ clock tick
   var lastMin = -1;
   function tick() {
@@ -327,7 +327,6 @@
 
   // ------------------------------------------------------------ boot
   App.start = function () {
-    App.setTime(15, 18); // demo default: a busy weekday afternoon
     fit();
     window.addEventListener('resize', fit);
     // Switch tabs the instant a finger lands (pointerdown), not on release. Keyboard "clicks"
@@ -347,7 +346,12 @@
     setInterval(tick, 1000);
     App.emit('ready');
     refreshStale(1500);
-    setTimeout(function () { App.toast('Tip: press and hold the <b>clock</b> in the sidebar for demo controls', { ms: 6000, icon: 'bolt' }); }, 1200);
+    App.backend.start();
   };
-  document.addEventListener('DOMContentLoaded', function () { App.start(); });
+  document.addEventListener('DOMContentLoaded', function () {
+    try { App.start(); } catch (err) {
+      App.errors.push('start: ' + (err && err.stack || err));
+      if (window.console) console.error('[HomeHQ] start failed', err);
+    }
+  });
 })();

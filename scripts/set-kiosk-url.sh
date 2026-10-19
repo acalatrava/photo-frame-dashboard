@@ -3,6 +3,7 @@
 # used at every launch, including after a reboot.
 #
 # Usage: scripts/set-kiosk-url.sh <url>     save <url> and open it
+#        scripts/set-kiosk-url.sh app       go back to the dashboard bundled in the app (the default)
 #        scripts/set-kiosk-url.sh           print the saved URL
 #
 # Over Wi-Fi instead of USB: ADB_SERIAL=<frame-ip>:5555 scripts/set-kiosk-url.sh <url>
@@ -13,15 +14,15 @@ PKG=com.wesbos.homehq
 adb_() { adb ${ADB_SERIAL:+-s "$ADB_SERIAL"} "$@"; }
 
 if [ $# -eq 0 ]; then
-  # Root reads the app's private prefs; prints nothing if no URL was ever saved (kiosk default).
+  # Root reads the app's private prefs; prints nothing if no URL was ever saved (the bundled dashboard).
   adb_ shell "su -c 'cat /data/data/$PKG/shared_prefs/*.xml'" | tr -d '\r' | sed -n 's:.*<string name="url">\(.*\)</string>.*:\1:p'
   exit 0
 fi
 
 url=$1
 case "$url" in
-  http://*|https://*) ;;
-  *) echo "URL must start with http:// or https://" >&2; exit 1 ;;
+  app|http://*|https://*) ;;
+  *) echo "URL must be \"app\" or start with http:// or https://" >&2; exit 1 ;;
 esac
 # The URL travels through adb and the device shell; keep it to characters that
 # cannot break out of the quoting there. Percent-encode anything else.

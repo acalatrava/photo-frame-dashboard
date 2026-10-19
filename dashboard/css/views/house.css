@@ -1,0 +1,58 @@
+/* Casa */
+.hz { height: 100%; display: flex; flex-direction: column; gap: 14px; }
+.hz-head { display: flex; align-items: flex-end; justify-content: space-between; }
+.hz-head h1 { font-size: 64px; line-height: .95; }
+.hz-live { display: inline-flex; align-items: center; gap: 10px; font-size: 16px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; color: var(--ok); padding-bottom: 8px; }
+.hz-live i { width: 12px; height: 12px; border-radius: 50%; background: var(--ok); }
+.hz-live.is-off { color: var(--alert); }
+.hz-live.is-off i { background: var(--alert); }
+.hz-banner { display: flex; align-items: center; gap: 12px; padding: 12px 18px; border-radius: var(--r-s); background: rgb(var(--amber-rgb) / .18); font-weight: 700; font-size: 18px; }
+.hz-body { flex: 1; min-height: 0; overflow-y: auto; padding-bottom: 24px; }
+.hz-group { margin-bottom: 18px; }
+.hz-group .label { padding: 4px 2px 8px; border-bottom: 2px solid var(--ink); margin-bottom: 12px; }
+.hz-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+.hz-tile { background: var(--card); border-radius: var(--r); padding: 14px 16px; display: flex; flex-direction: column; gap: 6px; min-height: 120px; position: relative; }
+.hz-tile.is-on { background: var(--ink); color: var(--paper); }
+.hz-tile.is-busy { opacity: .6; }
+.hz-main { display: flex; flex-direction: column; gap: 6px; flex: 1; min-height: 96px; text-align: left; width: 100%; }
+.hz-main:disabled, .hz-action:disabled, .hz-cl-set button:disabled, .hz-modes button:disabled { opacity: .45; }
+.hz-name { font-size: 20px; font-weight: 800; font-stretch: 80%; line-height: 1.1; }
+.hz-state { font-size: 14px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; color: var(--mute); }
+.hz-tile.is-on .hz-state { color: inherit; opacity: .8; }
+.hz-slider { width: 100%; height: 44px; margin: 0; accent-color: var(--warm); }
+.hz-action { text-align: left; justify-content: space-between; }
+.hz-climate { grid-column: span 2; }
+.hz-cl-head { display: flex; align-items: center; gap: 10px; }
+.hz-cl-head .hz-state { margin-left: auto; }
+.hz-cl-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.hz-cl-now b { font-size: 56px; line-height: 1; }
+.hz-cl-now small { display: block; font-size: 14px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; opacity: .7; }
+.hz-cl-set { display: flex; align-items: center; gap: 10px; }
+.hz-cl-set b { font-size: 44px; min-width: 96px; text-align: center; }
+.hz-cl-set button { width: 64px; height: 64px; display: grid; place-items: center; border-radius: 50%; background: rgb(var(--ink-rgb) / .1); }
+.hz-tile.is-on .hz-cl-set button { background: rgba(255, 255, 255, .18); }
+.hz-modes { align-self: flex-start; }
+.hz-modes button { min-height: 48px; padding: 0 16px; font-size: 15px; }
+.hz-tile.is-on .hz-modes { background: rgba(255, 255, 255, .14); }
+.hz-tile.is-on .hz-modes button { color: rgba(255, 255, 255, .8); }
+.hz-tile.is-on .hz-modes button.is-on { background: var(--paper); color: var(--ink); }
+.hz-sensor { justify-content: space-between; min-height: 110px; }
+.hz-sensor b { font-size: 38px; font-weight: 800; line-height: 1; }
+.hz-sensor small { font-size: 18px; margin-left: 4px; opacity: .7; }
+.hz-sensor > b:not(.num) { font-size: 22px; letter-spacing: .02em; }
+.hz-s-ic { color: var(--mute); }
+.hz-tile.is-on .hz-s-ic { color: var(--warm); }
+.hz-empty { font-size: 44px; line-height: 1.08; color: var(--mute); padding: 90px 20px; text-align: center; }
+.hz-empty i { font-size: 30px; }
+.hz-grid--scenes { grid-template-columns: repeat(3, 1fr); gap: 14px; }
+.hz-grid--scenes .hz-action { min-height: 150px; padding: 18px 22px; gap: 14px; justify-content: space-between; background: var(--ink); color: var(--paper); }
+.hz-grid--scenes .hz-action.is-tinted { background: var(--card); }
+.hz-grid--scenes .hz-action:active { transform: scale(.98); }
+.hz-grid--scenes .hz-name { font-size: 30px; line-height: 1.08; }
+.hz-cover.is-on .hz-state { opacity: .85; }
+.hz-cv-head { display: flex; align-items: center; gap: 10px; }
+.hz-cv-btns { display: flex; gap: 10px; margin-top: 4px; }
+.hz-cv-btns button { flex: 1; height: 64px; display: grid; place-items: center; border-radius: 16px; background: rgb(var(--ink-rgb) / .1); }
+.hz-cv-btns button:active { transform: scale(.96); }
+.hz-cv-btns button:disabled { opacity: .45; }
+.hz-tile.is-on .hz-cv-btns button { background: rgba(255, 255, 255, .2); }

@@ -26,7 +26,7 @@
   --c-ink: #FFFFFF;
 
   /* type */
-  --sans: 'Archivo', 'Roboto Condensed', 'Roboto', system-ui, sans-serif;
+  --sans: 'Archivo Variable', 'Archivo', 'Roboto Condensed', 'Roboto', system-ui, sans-serif;
   --serif: 'Instrument Serif', 'Noto Serif', Georgia, serif;
   --fs-clock: 150px;
   --fs-hero: 76px;

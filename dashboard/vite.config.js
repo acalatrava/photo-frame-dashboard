@@ -5,6 +5,7 @@ import { defineConfig } from 'vite';
 // #ffffffbf) even though Chrome 106 should support them, and a newer target lets the minifier
 // rewrite transparent/rgba() into that form. Verified on-device with CSS.supports().
 export default defineConfig({
+  base: './',
   build: {
     target: 'chrome106',
     cssTarget: 'chrome61',

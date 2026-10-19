@@ -13,11 +13,14 @@ BT="${BUILD_TOOLS:-$ANDROID_HOME/build-tools/34.0.0}"
 JAR="$ANDROID_HOME/platforms/android-34/android.jar"
 KS="$HOME/.android/debug.keystore"
 
-rm -rf build && mkdir -p build/gen build/classes
+# The dashboard is bundled in the APK: build it first and copy it into assets/app.
+(cd .. && npx vite build >/dev/null)
+rm -rf build && mkdir -p build/gen build/classes build/assets
+cp -R ../dist build/assets/app
 
 "$BT/aapt2" compile --dir res -o build/res.zip
-"$BT/aapt2" link -o build/base.apk -I "$JAR" --manifest AndroidManifest.xml build/res.zip \
-  --java build/gen --min-sdk-version 23 --target-sdk-version 23 --version-code 2 --version-name 1.1
+"$BT/aapt2" link -o build/base.apk -I "$JAR" --manifest AndroidManifest.xml build/res.zip -A build/assets \
+  --java build/gen --min-sdk-version 23 --target-sdk-version 23 --version-code 6 --version-name 2.3
 
 javac -nowarn -source 8 -target 8 -classpath "$JAR" -d build/classes \
   src/com/wesbos/homehq/*.java build/gen/com/wesbos/homehq/R.java

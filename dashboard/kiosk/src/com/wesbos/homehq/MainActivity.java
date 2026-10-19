@@ -1,7 +1,9 @@
 package com.wesbos.homehq;
 
 import android.app.Activity;
+import android.app.AlarmManager;
 import android.app.AlertDialog;
+import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
@@ -11,6 +13,7 @@ import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.content.res.AssetManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
@@ -24,32 +27,48 @@ import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
+import android.webkit.WebResourceRequest;
+import android.webkit.WebResourceResponse;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
+import android.widget.Toast;
 import android.widget.TextView;
 
+import org.json.JSONObject;
+
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.HashMap;
+import java.util.Map;
+
 /**
- * Full-screen kiosk WebView for the Home HQ wall tablet.
+ * Full-screen kiosk WebView for the Home HQ wall frame.
+ * - The dashboard is bundled in the APK (assets/app) and served to the WebView at
+ *   http://appassets.homehq.invalid/, so the frame starts instantly and works without the network.
+ *   Only that bundled page receives the HQNative bridge (see Bridge).
  * - Immersive mode hides the status + navigation bars (true 1280x800).
  * - Controls: hold two fingers still on the screen for 1.5s for launcher/settings/Wi-Fi/reload.
- * - Offline: a failed page load shows a native screen instead of WebView's error page (which
- *   prints the full URL, including any token in it). With no Wi-Fi it offers Wi-Fi settings.
  * - Remote debugging is OFF unless launched with the debug extra (every app on this device
  *   gets root, so the devtools socket should only exist while actively debugging):
  *     adb shell am start -n com.wesbos.homehq/.MainActivity --ez debug true
- * - Launch with a URL: adb shell am start -a android.intent.action.VIEW -d <url> -n com.wesbos.homehq/.MainActivity
- * - Set the saved URL, used on every later launch: adb shell am start -n com.wesbos.homehq/.MainActivity --es url <url>
+ * - Show another web dashboard instead (saved; it never gets the bridge), or go back to the bundled one:
+ *     adb shell am start -n com.wesbos.homehq/.MainActivity --es url <url>
+ *     adb shell am start -n com.wesbos.homehq/.MainActivity --es url app
  * - Offer the kiosk as a Home app (--ez home false undoes it), then pick it:
  *     adb shell am start -n com.wesbos.homehq/.MainActivity --ez home true
  *     adb shell cmd package set-home-activity com.wesbos.homehq/.Home
  */
 public class MainActivity extends Activity {
   static final String TAG = "HomeHQ";
-  static final String DEFAULT_URL = "https://home-dashboard.wesbos.workers.dev/";
+  static final String APP_HOST = "appassets.homehq.invalid";
+  static final String APP_URL = "http://" + APP_HOST + "/index.html";
+  static final String ASSET_DIR = "app";
+  static final String EXTRA_URL = "url";
   static final String PREFS = "kiosk";
   static final String PREF_URL = "url";
   static final long EXIT_HOLD_MS = 1500;
@@ -60,6 +79,11 @@ public class MainActivity extends Activity {
   static final float EXIT_SLOP_PX = 60;
 
   private WebView web;
+  private Hardware hw;
+  private Bridge bridge;
+  private volatile String currentUrl = "";
+  private volatile int lastBrightness = 100;
+  private String userAgent = "";
   private final Handler handler = new Handler(Looper.getMainLooper());
   // Not cleared in onDestroy, so a navigation rebind that has started always finishes.
   private final Handler rebindHandler = new Handler(Looper.getMainLooper());
@@ -114,14 +138,14 @@ public class MainActivity extends Activity {
       Log.i(TAG, "Two-finger hold: opening controls");
       new AlertDialog.Builder(MainActivity.this)
           .setTitle("Home HQ")
-          .setItems(new String[] {"Open launcher", "Android settings", "Wi-Fi settings", "Reload dashboard"},
+          .setItems(new String[] {"Abrir el launcher", "Ajustes de Android", "Ajustes Wi-Fi", "Recargar el panel"},
               (dialog, which) -> {
                 if (which == 0) openLauncher();
-                else if (which == 1) startActivity(new Intent(Settings.ACTION_SETTINGS));
+                else if (which == 1) openSystemScreen(new Intent(Settings.ACTION_SETTINGS));
                 else if (which == 2) openWifiSettings();
                 else web.reload();
               })
-          .setNegativeButton("Back to dashboard", null).show();
+          .setNegativeButton("Volver al panel", null).show();
     }
   };
 
@@ -132,7 +156,10 @@ public class MainActivity extends Activity {
     applyHomeFlag(getIntent());
     keepNavigationEnabled();
     getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON
-        | WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        | WindowManager.LayoutParams.FLAG_FULLSCREEN
+        | WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED
+        | WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON
+        | WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD);
 
     web = new WebView(this);
     WebSettings s = web.getSettings();
@@ -140,6 +167,18 @@ public class MainActivity extends Activity {
     s.setDomStorageEnabled(true);
     s.setUseWideViewPort(true);
     s.setMediaPlaybackRequiresUserGesture(false);
+    s.setAllowFileAccess(false);
+    s.setAllowContentAccess(false);
+    userAgent = s.getUserAgentString();
+    hw = Hardware.get(this);
+    bridge = new Bridge(this, hw);
+    web.addJavascriptInterface(bridge, "HQNative");
+    hw.setSink((event, json) -> handler.post(() -> {
+      if (web != null && pageIsBundled()) {
+        web.evaluateJavascript("window.HQ&&window.HQ.onNative&&window.HQ.onNative('" + event + "'," + json + ")", null);
+      }
+    }));
+    hw.start();
     // Keep navigation inside the kiosk. When the kiosk starts at boot before Wi-Fi is up, the
     // first load fails and would stay on the error page, so retry failed main-frame loads.
     // The offline screen covers WebView's error page until a load succeeds.
@@ -147,6 +186,12 @@ public class MainActivity extends Activity {
       @Override
       public void onPageStarted(WebView view, String url, Bitmap icon) {
         pageFailed = false;
+        currentUrl = url == null ? "" : url;
+      }
+
+      @Override
+      public WebResourceResponse shouldInterceptRequest(WebView view, WebResourceRequest request) {
+        return serveAsset(request);
       }
 
       @Override
@@ -181,7 +226,8 @@ public class MainActivity extends Activity {
     setContentView(root);
 
     String url = urlFrom(getIntent());
-    web.loadUrl(url != null ? url : savedUrl());
+    retryUrl = url != null ? url : savedUrl();
+    web.loadUrl(retryUrl);
     @SuppressWarnings("deprecation")
     IntentFilter connectivity = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
     registerReceiver(networkChange, connectivity);
@@ -190,6 +236,7 @@ public class MainActivity extends Activity {
   @Override
   protected void onResume() {
     super.onResume();
+    cancelSystemScreenReturn();
     NavigationService.setDashboardVisible(true);
   }
 
@@ -215,23 +262,101 @@ public class MainActivity extends Activity {
     }
   }
 
-  /** A "url" extra is saved for later launches. A VIEW link from another app is shown, not saved. */
+  /**
+   * A "url" extra (adb only) points the kiosk at another web dashboard and is remembered; the value "app" goes back
+   * to the bundled dashboard. Other pages never receive the HQNative bridge.
+   */
   private String urlFrom(Intent intent) {
-    String saved = intent.getStringExtra(PREF_URL);
-    if (saved == null) return intent.getDataString();
-    // The activity is exported, so only save web URLs: never file:, content: or javascript:.
-    String scheme = Uri.parse(saved).getScheme();
+    String url = intent.getStringExtra(EXTRA_URL);
+    if (url == null) return null;
+    if ("app".equals(url)) {
+      getSharedPreferences(PREFS, MODE_PRIVATE).edit().remove(PREF_URL).apply();
+      return APP_URL;
+    }
+    String scheme = Uri.parse(url).getScheme();
     if (!"http".equalsIgnoreCase(scheme) && !"https".equalsIgnoreCase(scheme)) {
-      Log.w(TAG, "Ignoring non-web kiosk URL: " + saved);
+      Log.w(TAG, "Ignoring non-web kiosk URL: " + url);
       return null;
     }
-    getSharedPreferences(PREFS, MODE_PRIVATE).edit().putString(PREF_URL, saved).apply();
-    Log.i(TAG, "Saved kiosk URL: " + saved);
-    return saved;
+    getSharedPreferences(PREFS, MODE_PRIVATE).edit().putString(PREF_URL, url).apply();
+    return url;
   }
 
   private String savedUrl() {
-    return getSharedPreferences(PREFS, MODE_PRIVATE).getString(PREF_URL, DEFAULT_URL);
+    return getSharedPreferences(PREFS, MODE_PRIVATE).getString(PREF_URL, APP_URL);
+  }
+
+  // ------------------------------------------------------------ bundled app
+  /** True while the page in the WebView is the one served from this APK. Safe to call from any thread. */
+  boolean pageIsBundled() {
+    String u = currentUrl;
+    return u.startsWith("http://" + APP_HOST + "/");
+  }
+
+  private static final Map<String, String> MIME = new HashMap<>();
+  static {
+    MIME.put("html", "text/html"); MIME.put("js", "text/javascript"); MIME.put("mjs", "text/javascript");
+    MIME.put("css", "text/css"); MIME.put("json", "application/json"); MIME.put("png", "image/png");
+    MIME.put("jpg", "image/jpeg"); MIME.put("jpeg", "image/jpeg"); MIME.put("svg", "image/svg+xml");
+    MIME.put("woff", "font/woff"); MIME.put("woff2", "font/woff2"); MIME.put("webmanifest", "application/manifest+json");
+    MIME.put("ico", "image/x-icon");
+  }
+
+  private WebResourceResponse serveAsset(WebResourceRequest request) {
+    Uri uri = request.getUrl();
+    if (uri == null || !APP_HOST.equalsIgnoreCase(uri.getHost())) return null;
+    String path = uri.getPath() == null || uri.getPath().equals("/") ? "/index.html" : uri.getPath();
+    Map<String, String> headers = new HashMap<>();
+    headers.put("Cache-Control", path.startsWith("/assets/") ? "public, max-age=31536000, immutable" : "no-cache");
+    if (path.contains("..") || !"GET".equalsIgnoreCase(request.getMethod())) {
+      return new WebResourceResponse("text/plain", "UTF-8", 404, "Not Found", headers, new ByteArrayInputStream(new byte[0]));
+    }
+    try {
+      InputStream in = getAssets().open(ASSET_DIR + path, AssetManager.ACCESS_STREAMING);
+      String ext = path.substring(path.lastIndexOf('.') + 1).toLowerCase();
+      String mime = MIME.containsKey(ext) ? MIME.get(ext) : "application/octet-stream";
+      return new WebResourceResponse(mime, mime.startsWith("text/") || mime.endsWith("json") ? "UTF-8" : null, 200, "OK", headers, in);
+    } catch (IOException e) {
+      return new WebResourceResponse("text/plain", "UTF-8", 404, "Not Found", headers, new ByteArrayInputStream(new byte[0]));
+    }
+  }
+
+  String userAgent() { return userAgent; }
+
+  String screenSize() {
+    return getResources().getDisplayMetrics().widthPixels + "x" + getResources().getDisplayMetrics().heightPixels;
+  }
+
+  // ------------------------------------------------------------ screen control (called from the bridge)
+  void applyDisplay(JSONObject display) { /* brightness and sleeping are decided by the page; nothing to keep */ }
+
+  /** 0..100. Values of 1 or less switch the backlight off while the screen stays "on" (touch still works). */
+  void setBrightnessPct(int pct) {
+    lastBrightness = pct;
+    runOnUiThread(() -> {
+      WindowManager.LayoutParams lp = getWindow().getAttributes();
+      lp.screenBrightness = pct <= 1 ? 0f : Math.min(1f, pct / 100f);
+      getWindow().setAttributes(lp);
+    });
+  }
+
+  boolean sleep(String mode) {
+    if (!"off".equals(mode)) return false;
+    return hw.sleepReal();
+  }
+
+  void wake() {
+    if ("off".equals(hw.screen)) hw.wakeReal();
+    hw.screen = "on";
+    runOnUiThread(() -> getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON));
+  }
+
+  void clearWebCache() {
+    runOnUiThread(() -> web.clearCache(true));
+  }
+
+  void reloadPage() {
+    runOnUiThread(() -> web.loadUrl(APP_URL));
   }
 
   private int dp(float v) {
@@ -260,7 +385,7 @@ public class MainActivity extends Activity {
     offline.addView(offlineText);
 
     Button wifi = new Button(this);
-    wifi.setText("Open Wi-Fi settings");
+    wifi.setText("Abrir ajustes Wi-Fi");
     wifi.setTextSize(TypedValue.COMPLEX_UNIT_SP, 22);
     wifi.setPadding(dp(32), dp(16), dp(32), dp(16));
     wifi.setOnClickListener(v -> openWifiSettings());
@@ -278,21 +403,21 @@ public class MainActivity extends Activity {
 
   private void showOffline() {
     if (wifiConnected()) {
-      offlineTitle.setText("Can't reach the dashboard");
-      offlineText.setText("Wi-Fi is connected. Retrying every few seconds.");
+      offlineTitle.setText("No se puede cargar el panel");
+      offlineText.setText("El Wi-Fi está conectado. Reintentando cada pocos segundos.");
     } else {
-      offlineTitle.setText("Connect to Wi-Fi?");
-      offlineText.setText("The frame isn't on Wi-Fi. The dashboard comes back by itself once it is.");
+      offlineTitle.setText("¿Conectar al Wi-Fi?");
+      offlineText.setText("El marco no está en el Wi-Fi. El panel volverá solo cuando lo esté.");
     }
     offline.setVisibility(View.VISIBLE);
   }
 
   private void openWifiSettings() {
     try {
-      startActivity(new Intent(Settings.ACTION_WIFI_SETTINGS));
+      openSystemScreen(new Intent(Settings.ACTION_WIFI_SETTINGS));
     } catch (Exception e) {
       Log.w(TAG, "No Wi-Fi settings screen, opening Settings", e);
-      startActivity(new Intent(Settings.ACTION_SETTINGS));
+      openSystemScreen(new Intent(Settings.ACTION_SETTINGS));
     }
   }
 
@@ -384,13 +509,39 @@ public class MainActivity extends Activity {
       startActivity(new Intent(home).setComponent(new ComponentName(pkg, info.activityInfo.name)));
       return;
     }
-    startActivity(new Intent(Settings.ACTION_SETTINGS));
+    openSystemScreen(new Intent(Settings.ACTION_SETTINGS));
+  }
+
+  private static final long SYSTEM_SCREEN_MS = 5 * 60 * 1000L;
+
+  private PendingIntent returnIntent() {
+    Intent back = new Intent(this, MainActivity.class)
+        .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_REORDER_TO_FRONT | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+    return PendingIntent.getActivity(this, 7, back, PendingIntent.FLAG_UPDATE_CURRENT);
+  }
+
+  /**
+   * Opens an Android screen and schedules an automatic return to Home HQ. The frame has no Back or Home
+   * buttons, so without this there would be no way out. An alarm is used instead of a timer so it still
+   * fires if the system reclaims the app's memory in the meantime.
+   */
+  void openSystemScreen(Intent screen) {
+    AlarmManager alarms = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+    alarms.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + SYSTEM_SCREEN_MS, returnIntent());
+    Toast.makeText(this, "Volverás a Home HQ automáticamente en 5 minutos", Toast.LENGTH_LONG).show();
+    startActivity(screen.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+  }
+
+  private void cancelSystemScreenReturn() {
+    ((AlarmManager) getSystemService(Context.ALARM_SERVICE)).cancel(returnIntent());
   }
 
   @Override
   protected void onDestroy() {
     unregisterReceiver(networkChange);
     handler.removeCallbacksAndMessages(null);
+    if (hw != null) hw.setSink(null);
+    if (bridge != null) bridge.shutdown();
     if (web != null) web.destroy();
     super.onDestroy();
   }

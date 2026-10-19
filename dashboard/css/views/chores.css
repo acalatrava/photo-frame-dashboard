@@ -1,0 +1,28 @@
+/* Tareas */
+.ch { height: 100%; display: flex; flex-direction: column; gap: 14px; }
+.ch-head { display: flex; align-items: flex-end; justify-content: space-between; flex: none; }
+.ch-head h1 { font-size: 64px; line-height: .95; }
+.ch-total { display: flex; align-items: center; gap: 14px; }
+.ch-total b { font-size: 40px; }
+.ch-cols { flex: 1; min-height: 0; display: grid; gap: 14px; }
+.ch-col { min-width: 0; min-height: 0; display: flex; flex-direction: column; background: var(--card); border-radius: var(--r); overflow: hidden; border-top: 10px solid var(--c); }
+.ch-colhead { display: flex; align-items: center; gap: 12px; padding: 12px 16px; flex: none; }
+.ch-colhead b { font-size: 28px; font-weight: 800; font-stretch: 80%; text-transform: uppercase; letter-spacing: .03em; flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ch-count { font-size: 34px; color: var(--mute); }
+.ch-col.is-all .ch-count { color: var(--ok); }
+.ch-list { flex: 1; min-height: 0; overflow-y: auto; padding: 0 12px 14px; display: flex; flex-direction: column; gap: 10px; }
+.ch-item { display: flex; align-items: center; gap: 14px; min-height: 96px; padding: 10px 16px; border-radius: 16px; text-align: left; background: rgb(var(--c-rgb) / .14); flex: none; }
+.ch-item:active { transform: scale(.98); }
+.ch-ic { width: 56px; height: 56px; border-radius: 50%; display: grid; place-items: center; flex: none; background: var(--card); color: var(--ink); }
+.ch-tx { display: flex; flex-direction: column; min-width: 0; }
+.ch-tx b { font-size: 28px; font-weight: 700; line-height: 1.1; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+.ch-tx small { font-size: 18px; color: var(--mute); font-weight: 700; }
+.ch-item.is-done { background: var(--c); color: var(--c-ink); }
+.ch-item.is-done .ch-ic { background: rgba(255, 255, 255, .28); color: var(--c-ink); }
+.ch-item.is-done .ch-tx b { text-decoration: line-through; opacity: .85; }
+.ch-item.is-done .ch-tx small { color: var(--c-ink); opacity: .8; }
+.ch-all { font-size: 34px; text-align: center; color: var(--ok); padding: 14px 0 0; }
+.ch-empty { font-size: 44px; line-height: 1.08; color: var(--mute); padding: 90px 20px; text-align: center; }
+.ch-empty i { font-size: 30px; }
+.ch-total .ring-bg { stroke: var(--line); }
+.ch-total .ring-fg { stroke: var(--ok); }

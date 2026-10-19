@@ -20,3 +20,4 @@ scripts/si006-webview-overlay/build/
 
 # Private per-frame records (docs/frame-records.md). No trailing slash, so a symlink is ignored too.
 /frames
+rollout-2026-10-18T14-59-10-01a14f18-3b1e-7ff0-af99-41bb1c1e510d.jsonl

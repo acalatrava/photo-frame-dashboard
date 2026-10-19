@@ -63,13 +63,47 @@ Settings → About before you follow any guide:
 - **Something else:** work through the [phase map](#phase-map), create `docs/<device>.md`, and
   [send in what you find](#check-for-updates-and-send-back-what-you-find).
 
-## The dashboard
+## Home HQ: the dashboard and its backend
 
-[`dashboard/`](dashboard) is the family dashboard we run on the BIUFRAME (it uses mock data): a Vite
-web app deployed to Cloudflare Workers. `dashboard/kiosk/` is a small full-screen WebView Android app,
-built without Gradle, that shows it. Hold two fingers still for 1.5 s to open a menu for the
-launcher, Android settings, and reloading. On frames without system navigation, optional floating
-**Back** and **Dashboard** buttons help; see the [kiosk guide](dashboard/kiosk/README.md).
+[`dashboard/`](dashboard) is Home HQ, a touch-first family dashboard (Spanish es-ES by default, English available) for
+1280x800 frames. It is a Vite app **bundled in the Android app** (`dashboard/kiosk/`, a small full-screen WebView app built
+without Gradle), so the frame starts without the network and talks to your own backend over the LAN.
+
+[`backend/`](backend) is the Docker service (FastAPI + SQLite, Alembic migrations) with the admin web panel (Spanish and
+English, light and dark). It holds every secret; the frame only has a revocable device token.
+
+What it does:
+
+- **Today**: clock, weather, who is home, next event with a countdown, one lane per person with their events and chores
+  (tap to tick, with undo and a "see all" button when space runs out), photo, chores progress, shopping and house status.
+- **Calendar**: day, 3 days, week and month. The week view is the calendar week (Monday to Sunday) with ISO week numbers, the
+  month view has a week-number column, and the current day is highlighted. ICS and CalDAV sources, coloured by person.
+- **Photos**: albums uploaded in the panel (JPEG, PNG, WebP, HEIC), per-frame slideshow, ambient mode.
+- **Chores**: per person and per day, with weekdays and week patterns (every week, even/odd weeks, every N weeks), offline queue.
+- **House**: Home Assistant lights, switches, scenes and blinds with custom names, icons and colours.
+- **Cameras**: Frigate, Home Assistant or image-URL cameras relayed by the backend as MJPEG.
+- **Shopping**: local list or a Home Assistant `todo.*` list such as Alexa, with an offline queue.
+- **Screens and frames**: reorder the side-rail screens from the panel (Today always first, Settings always last), pair and
+  configure several frames, brightness and night mode, screen off, and the light sensor as an activity detector.
+- **Safety**: admin login with short-lived cookie tokens and refresh rotation, pairing approved with a code, encrypted secrets,
+  vendor apps of the PF1007L disabled. The frame returns by itself to Home HQ five minutes after you open Android settings.
+
+```sh
+cp .env.example .env
+docker compose up -d --build        # then open http://<server>:8787/admin/
+```
+
+Start with the **[user guide](docs/homehq-user-guide.md)**. The rest of the Home HQ docs:
+[architecture](docs/homehq-architecture.md), [install, variables, backups, updates](docs/homehq-install.md),
+[pairing](docs/homehq-pairing.md), [Home Assistant and the Amazon list](docs/homehq-homeassistant.md),
+[chores, cameras, Frigate and screen order](docs/homehq-chores-cameras.md), [shopping conflict policy](docs/shopping.md),
+[light sensor and screen control](docs/light-sensor.md), [troubleshooting](docs/homehq-troubleshooting.md) and the
+[audit with verification status](docs/homehq-audit.md).
+
+Hold two fingers still for 1.5 s on the frame to open a menu for the launcher, Android settings, Wi-Fi and
+reloading (Android screens return to Home HQ on their own after five minutes). On frames without system navigation,
+optional floating **Back** and **Dashboard** buttons help; see the [kiosk guide](dashboard/kiosk/README.md). Read
+[aimor-remote-root-shell.md](docs/aimor-remote-root-shell.md) before a PF1007L joins your network.
 
 ## For agents: start here
 

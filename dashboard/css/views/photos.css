@@ -52,3 +52,5 @@
 .ph-btn--fav { padding: 0 24px 0 20px; }
 .ph-btn--fav.is-on { background: #E4007C; }
 .ph-btn--fav.is-on .i { fill: currentColor; }
+
+.slide--empty { display: flex; align-items: center; justify-content: center; text-align: center; padding: 40px; background: #1a1a1a; color: rgba(255, 255, 255, .75); font-size: 28px; line-height: 1.2; }

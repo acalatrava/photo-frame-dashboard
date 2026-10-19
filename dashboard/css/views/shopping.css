@@ -51,7 +51,7 @@
 .s-input::placeholder { color: #AAA59B; font-weight: 500; }
 
 .s-suggest { flex: 1; min-height: 0; display: flex; flex-direction: column; gap: 10px; }
-.s-usuals { display: grid; grid-template-columns: repeat(3, 1fr); grid-auto-rows: 1fr; gap: 8px; flex: 1; min-height: 0; }
+.s-usuals { display: grid; grid-template-columns: repeat(3, 1fr); grid-auto-rows: minmax(64px, auto); align-content: start; gap: 8px; }
 .s-tile {
   display: flex; flex-direction: column; justify-content: space-between;
   padding: 12px 14px; border-radius: 14px; background: var(--card);
@@ -67,3 +67,17 @@
 .s-ac-row { display: flex; align-items: center; gap: 12px; min-height: 72px; padding: 0 18px 0 22px; border-radius: 14px; background: var(--card); }
 .s-ac-row b { flex: 1; font-size: 22px; }
 .s-ac-row--new { background: transparent; box-shadow: inset 0 0 0 2px var(--line); }
+
+/* offline/sync status + completed section */
+.s-edit { width: 64px; height: 64px; display: grid; place-items: center; border-radius: 50%; color: var(--mute); flex: none; }
+.s-edit:active { background: var(--paper-2); }
+.s-row.is-done .s-name b { color: var(--mute); text-decoration: line-through; text-decoration-thickness: 2px; }
+.s-row.is-done .s-box { background: var(--ink); color: var(--paper); box-shadow: none; }
+.s-cat--done { margin-top: 18px; padding: 10px 14px 16px; background: var(--paper-2); border-radius: var(--r); }
+.s-cat--done .s-row { border-bottom-color: var(--line); }
+.s-status { display: flex; flex-direction: column; gap: 8px; }
+.s-sync { display: flex; align-items: center; gap: 10px; padding: 10px 14px; border-radius: var(--r-s); font-size: 17px; font-weight: 700; }
+.s-sync.is-ok { background: rgb(0 163 108 / .12); color: var(--ok); }
+.s-sync.is-warn { background: rgb(var(--amber-rgb) / .2); color: var(--ink); }
+.s-hint { color: var(--mute); font-size: 18px; padding: 8px 4px; }
+.big-input { width: 100%; border: 0; border-bottom: 3px solid var(--ink); background: transparent; font-size: 44px; padding: 10px 0; outline: none; margin: 12px 0 8px; }

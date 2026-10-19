@@ -9,19 +9,30 @@ Hold two fingers still on the dashboard for 1.5 seconds to open the native contr
 - **Reload dashboard** reloads the current URL.
 - **Back to dashboard** dismisses the controls.
 
-## Dashboard URL
+Android settings, Wi-Fi settings and the launcher fallback schedule an automatic return: five minutes after opening one
+of them an alarm brings Home HQ back to the front (it is cancelled if you return earlier). A message at the start says
+so. Frames without Back or Home buttons would otherwise have no way out.
 
-The kiosk opens the hosted demo dashboard by default. To show your own, save its URL once:
+## Dashboard
+
+The kiosk shows the Home HQ dashboard bundled in the APK (`assets/app`, served at `http://appassets.homehq.invalid/`),
+so it starts without the network. Only that bundled page receives the `HQNative` bridge (light sensor, brightness,
+screen off, mDNS discovery, private preferences). To show another web dashboard instead, save its URL once; it gets no bridge:
 
 ```sh
 adb shell am start -n com.wesbos.homehq/.MainActivity --es url https://your-dashboard/
+adb shell am start -n com.wesbos.homehq/.MainActivity --es url app    # back to the bundled dashboard
 ```
 
-`scripts/set-kiosk-url.sh <url>` from the repository root does the same, and prints the saved
-URL when run without one.
+`scripts/set-kiosk-url.sh <url|app>` from the repository root does the same, and prints the saved
+URL when run without one (nothing is printed for the bundled dashboard).
 
 Every later launch, including after a reboot, opens the saved URL. Links that other apps open
 in the kiosk, such as a sign-in page, are shown but not saved.
+
+Build with `kiosk/build.sh` (it runs `vite build` first and packs `dashboard/dist`). To let the frame turn its
+screen really off, activate the device administrator once:
+`adb shell dpm set-active-admin com.wesbos.homehq/.AdminReceiver`.
 
 ## Start at boot
 
