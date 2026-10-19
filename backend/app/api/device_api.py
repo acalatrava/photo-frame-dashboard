@@ -4,7 +4,7 @@ from datetime import datetime, timezone
 from typing import Literal
 
 from fastapi import APIRouter, Depends, HTTPException, Request
-from fastapi.responses import StreamingResponse
+from fastapi.responses import FileResponse, StreamingResponse
 from pydantic import BaseModel, Field
 from sqlalchemy.orm import Session
 
@@ -21,6 +21,7 @@ from ..services.homeassistant import service as has
 from ..services.photos import service as photos
 from ..services.presence import service as presence
 from ..services.shopping import service as shop
+from ..services.updates import service as upd
 from ..services.weather import service as weather
 from .deps import device_required
 
@@ -193,6 +194,25 @@ async def ha_service(body: HaServiceBody, device: Device = Depends(device_requir
         return await has.control(db, state.ha, body.entity_id, body.service, body.data)
     except has.ControlError as exc:
         raise HTTPException(exc.status, exc.msg) from exc
+
+
+@router.get("/update")
+def update_info(device: Device = Depends(device_required), db: Session = Depends(get_db)):
+    """The published app release (if any). The frame compares versionCode itself and decides what to do."""
+    g, _ = config_service.get_global(db)
+    return {"mode": g.updates.mode, "package": upd.APK_PACKAGE, "release": upd.public_view(upd.published())}
+
+
+@router.get("/update/apk")
+def update_apk(device: Device = Depends(device_required)):
+    release = upd.published()
+    path = upd.apk_path(release["version_code"]) if release else None
+    if not release or not path.exists():
+        raise HTTPException(404, "No hay ninguna actualización publicada")
+    return FileResponse(path, media_type="application/vnd.android.package-archive",
+                        filename=f"homehq-{release['version_name']}.apk",
+                        headers={"X-HomeHQ-Version-Code": str(release["version_code"]),
+                                 "X-HomeHQ-SHA256": release["sha256"], "Cache-Control": "no-store"})
 
 
 @router.get("/events")

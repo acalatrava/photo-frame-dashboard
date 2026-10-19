@@ -4,6 +4,15 @@
   /* ------------------------------------------------------------------ i18n */
   var STR = {
     es: {
+      nav_updates: 'Actualizaciones', sub_updates: 'Publica nuevas versiones de la app del marco para que se instalen por la red, sin cable USB.',
+      upd_mode: 'Qué hacen los marcos con una versión nueva', upd_mode_off: 'Nada (actualizaciones desactivadas)', upd_mode_notify: 'Avisar y ofrecerla en Ajustes', upd_mode_auto: 'Descargarla sola y dejarla lista para instalar',
+      upd_mode_help: 'Instalar siempre requiere un toque de confirmación en el marco: Android no permite que una app se instale sola sin permisos de sistema.',
+      upd_upload_title: 'Subir una versión', upd_drop: 'Suelta aquí el APK o pulsa para elegirlo (kiosk/build/homehq.apk)', upd_notes: 'Novedades (opcional)',
+      upd_releases: 'Versiones subidas', upd_none: 'Todavía no has subido ninguna versión.', upd_publish: 'Publicar', upd_unpublish: 'Retirar', upd_published: 'Publicada', upd_draft: 'Sin publicar',
+      upd_mode_h: 'Comportamiento', upd_cert: 'Firma', upd_uploaded: 'Subido', upd_created: 'Versión subida. Publícala para que los marcos la vean.', upd_exists: 'Esa versión ya estaba subida.', upd_delete_confirm: '¿Borrar esta versión?',
+      upd_publish_confirm: '¿Publicar esta versión? Los marcos la ofrecerán o la descargarán según el modo elegido.',
+      upd_help: 'Flujo: 1) sube el número de versión en kiosk/build.sh, 2) ejecuta kiosk/build.sh, 3) sube kiosk/build/homehq.apk aquí, 4) publícalo. Un marco solo se actualiza a versiones con un versionCode mayor y firmadas con la misma clave.',
+      command_update: 'Actualizar ahora', upd_outdated: 'Desactualizado', upd_ok: 'Al día', upd_cmd_sent: 'Orden enviada: el marco mostrará el diálogo de instalación', upd_version_col: 'App',
       nav_screens: 'Pantallas', g_frames: 'Marcos', g_content: 'Contenido', g_integrations: 'Integraciones', g_system: 'Sistema',
       scr_home: 'Hoy', scr_calendar: 'Calendario', scr_photos: 'Fotos', scr_chores: 'Tareas', scr_house: 'Casa', scr_cameras: 'Cámaras', scr_shopping: 'Compra', scr_settings: 'Ajustes',
       screens_title: 'Orden de las pantallas', screens_help: 'Elige en qué orden aparecen las pantallas en la barra lateral del marco. «Hoy» siempre va la primera y «Ajustes» siempre la última, junto al reloj.',
@@ -73,6 +82,15 @@
       app_version: 'App', hw: 'Hardware', close: 'Cerrar', pairing_expired: 'Caduca'
     },
     en: {
+      nav_updates: 'Updates', sub_updates: 'Publish new versions of the frame app so they install over the network, no USB cable.',
+      upd_mode: 'What frames do with a new version', upd_mode_off: 'Nothing (updates off)', upd_mode_notify: 'Notify and offer it in Settings', upd_mode_auto: 'Download it automatically and leave it ready to install',
+      upd_mode_help: 'Installing always needs one confirmation tap on the frame: Android does not let an app install itself without system privileges.',
+      upd_upload_title: 'Upload a version', upd_drop: 'Drop the APK here or click to choose it (kiosk/build/homehq.apk)', upd_notes: 'Release notes (optional)',
+      upd_releases: 'Uploaded versions', upd_none: 'You have not uploaded any version yet.', upd_publish: 'Publish', upd_unpublish: 'Withdraw', upd_published: 'Published', upd_draft: 'Unpublished',
+      upd_mode_h: 'Behaviour', upd_cert: 'Signature', upd_uploaded: 'Uploaded', upd_created: 'Version uploaded. Publish it so the frames can see it.', upd_exists: 'That version was already uploaded.', upd_delete_confirm: 'Delete this version?',
+      upd_publish_confirm: 'Publish this version? Frames will offer or download it according to the selected mode.',
+      upd_help: 'Flow: 1) raise the version number in kiosk/build.sh, 2) run kiosk/build.sh, 3) upload kiosk/build/homehq.apk here, 4) publish it. A frame only updates to a higher versionCode signed with the same key.',
+      command_update: 'Update now', upd_outdated: 'Out of date', upd_ok: 'Up to date', upd_cmd_sent: 'Command sent: the frame will show the install dialog', upd_version_col: 'App',
       nav_screens: 'Screens', g_frames: 'Frames', g_content: 'Content', g_integrations: 'Integrations', g_system: 'System',
       scr_home: 'Today', scr_calendar: 'Calendar', scr_photos: 'Photos', scr_chores: 'Chores', scr_house: 'House', scr_cameras: 'Cameras', scr_shopping: 'Shopping', scr_settings: 'Settings',
       screens_title: 'Screen order', screens_help: 'Choose the order of the screens in the frame side bar. “Today” is always first and “Settings” is always last, next to the clock.',
@@ -276,6 +294,7 @@
 
   var ICONS = {
     status: ['M22 12h-4l-3 9L9 3l-3 9H2'],
+    updates: ['M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4', 'M7 10l5 5 5-5', 'M12 15V3'],
     devices: ['M4 5h16a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2z', 'M8 21h8', 'M12 18v3'],
     screens: ['M8 6h13', 'M8 12h13', 'M8 18h13', 'M3 6h.01', 'M3 12h.01', 'M3 18h.01'],
     photos: ['M4 4h16a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z', 'M8.5 10a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3z', 'M22 16l-5-5-9 9'],
@@ -308,7 +327,7 @@
   }
 
   var NAV = [
-    ['g_frames', [['status', 'nav_status'], ['devices', 'nav_devices'], ['screens', 'nav_screens']]],
+    ['g_frames', [['status', 'nav_status'], ['devices', 'nav_devices'], ['screens', 'nav_screens'], ['updates', 'nav_updates']]],
     ['g_content', [['photos', 'nav_photos'], ['calendars', 'nav_calendars'], ['chores', 'nav_chores'], ['shopping', 'nav_shopping'], ['cameras', 'nav_cameras']]],
     ['g_integrations', [['ha', 'nav_ha'], ['sensor', 'nav_sensor']]],
     ['g_system', [['general', 'nav_general'], ['account', 'nav_account']]]
@@ -435,9 +454,9 @@
 
   /* ---- devices */
   VIEWS.devices = function () {
-    return Promise.all([api('GET', '/api/v1/admin/pairing'), api('GET', '/api/v1/admin/devices'), api('GET', '/api/v1/admin/albums'), api('GET', '/api/v1/admin/config')])
+    return Promise.all([api('GET', '/api/v1/admin/pairing'), api('GET', '/api/v1/admin/devices'), api('GET', '/api/v1/admin/albums'), api('GET', '/api/v1/admin/config'), api('GET', '/api/v1/admin/updates')])
       .then(function (r) {
-        var pairing = r[0], devices = r[1], albums = r[2], cfg = r[3].config;
+        var pairing = r[0], devices = r[1], albums = r[2], cfg = r[3].config, updates = r[4];
         var nodes = [];
         var pc = h('div', { class: 'card' }, h('h3', null, t('pending_pairing')), h('p', { class: 'muted' }, t('pairing_hint')));
         if (!pairing.length) pc.appendChild(h('p', null, t('no_pending')));
@@ -455,10 +474,10 @@
         });
         nodes.push(pc);
         var dc = h('div', { class: 'card' }, h('h3', null, t('devices')));
-        var tb = h('table', null, h('tr', null, h('th', null, t('name')), h('th', null, t('status')), h('th', null, t('last_seen')), h('th', null, '')));
+        var tb = h('table', null, h('tr', null, h('th', null, t('name')), h('th', null, t('status')), h('th', null, t('last_seen')), h('th', null, t('upd_version_col')), h('th', null, '')));
         devices.forEach(function (d) {
           tb.appendChild(h('tr', null, h('td', null, d.name), h('td', null, h('span', { class: 'pill ' + (d.online ? 'ok' : '') }, d.online ? t('online') : t('offline'))),
-            h('td', { class: 'muted' }, fmtDate(d.last_seen_at)), h('td', null, btn(t('edit'), function () { return deviceEditor(d.id, albums, cfg); }))));
+            h('td', { class: 'muted' }, fmtDate(d.last_seen_at)), h('td', null, appVersionCell(d.app_version, updates.published)), h('td', null, btn(t('edit'), function () { return deviceEditor(d.id, albums, cfg); }))));
         });
         dc.appendChild(tb);
         nodes.push(dc);
@@ -466,6 +485,14 @@
         page(t('nav_devices'), nodes);
       });
   };
+
+  // The frame reports its version as "2.4 (7)"; the number in brackets is what updates compare.
+  function appVersionCell(version, publishedCode) {
+    var m = /\((\d+)\)\s*$/.exec(version || '');
+    if (!m) return h('span', { class: 'muted' }, version || '—');
+    var outdated = publishedCode != null && Number(m[1]) < publishedCode;
+    return h('span', null, version + ' ', h('span', { class: 'pill ' + (outdated ? 'warn' : 'ok') }, outdated ? t('upd_outdated') : t('upd_ok')));
+  }
 
   function deviceEditor(id, albums, global) {
     return api('GET', '/api/v1/admin/devices/' + id).then(function (d) {
@@ -494,6 +521,7 @@
           btn(t('command_sleep'), function () { return api('POST', '/api/v1/admin/devices/' + id + '/command', { type: 'sleep' }); }),
           btn(t('command_reload'), function () { return api('POST', '/api/v1/admin/devices/' + id + '/command', { type: 'reload' }); }),
           btn(t('command_identify'), function () { return api('POST', '/api/v1/admin/devices/' + id + '/command', { type: 'identify' }); }),
+          btn(t('command_update'), function () { return api('POST', '/api/v1/admin/devices/' + id + '/command', { type: 'update' }).then(function () { flash(box, 'ok', t('upd_cmd_sent')); }); }),
           btn(t('revoke'), function () { if (!confirm(t('revoke_confirm'))) return; return api('DELETE', '/api/v1/admin/devices/' + id).then(function () { go('devices'); }); }, 'bad')),
         h('p'),
         h('div', { class: 'row' }, input(name, 'name', t('name')), input(c, 'room', t('room')),
@@ -536,6 +564,56 @@
       box.scrollIntoView({ behavior: 'smooth' });
     });
   }
+
+  /* ---- app updates */
+  function fmtSize(n) { return n >= 1048576 ? (n / 1048576).toFixed(1) + ' MB' : Math.round(n / 1024) + ' KB'; }
+
+  VIEWS.updates = function () {
+    return api('GET', '/api/v1/admin/updates').then(function (ov) {
+      var box = h('div');
+      var mode = { mode: ov.mode };
+      var notes = h('input', { placeholder: t('upd_notes'), maxlength: 500 });
+      var file = h('input', { type: 'file', accept: '.apk,application/vnd.android.package-archive', style: null });
+      file.style.display = 'none';
+      var drop = h('div', { class: 'drop', tabindex: 0 }, t('upd_drop'));
+      var progress = h('p', { class: 'muted' });
+      function send(f) {
+        if (!f) return;
+        progress.textContent = t('uploading') + ' ' + f.name + ' (' + fmtSize(f.size) + ')…';
+        api('POST', '/api/v1/admin/updates?filename=' + encodeURIComponent(f.name) + '&notes=' + encodeURIComponent(notes.value.trim()), f, { raw: true })
+          .then(function (r) { flash(box, r.created ? 'ok' : 'err', r.created ? t('upd_created') : t('upd_exists')); return VIEWS.updates(); })
+          .catch(function (e) { progress.textContent = ''; fail(e); });
+      }
+      drop.addEventListener('click', function () { file.click(); });
+      ['dragenter', 'dragover'].forEach(function (e) { drop.addEventListener(e, function (ev) { ev.preventDefault(); drop.classList.add('over'); }); });
+      ['dragleave', 'drop'].forEach(function (e) { drop.addEventListener(e, function (ev) { ev.preventDefault(); drop.classList.remove('over'); }); });
+      drop.addEventListener('drop', function (ev) { send(ev.dataTransfer.files[0]); });
+      file.addEventListener('change', function () { send(file.files[0]); });
+
+      var table = h('table', null, h('tr', null, h('th', null, t('upd_version_col')), h('th', null, t('status')), h('th', null, t('upd_uploaded')), h('th', null, ''), h('th', null, '')));
+      ov.releases.forEach(function (r) {
+        var live = ov.published === r.version_code;
+        table.appendChild(h('tr', null,
+          h('td', null, h('b', null, r.version_name), ' ', h('span', { class: 'muted' }, '(' + r.version_code + ') · ' + fmtSize(r.size)), r.notes ? h('div', { class: 'muted' }, r.notes) : null,
+            h('div', { class: 'muted' }, r.cert_sha256 ? t('upd_cert') + ' ' + r.cert_sha256.slice(0, 12) + '…' : '')),
+          h('td', null, h('span', { class: 'pill ' + (live ? 'ok' : '') }, live ? t('upd_published') : t('upd_draft'))),
+          h('td', { class: 'muted' }, new Date(r.uploaded_at * 1000).toLocaleString(lang === 'es' ? 'es-ES' : 'en-GB')),
+          h('td', null, live
+            ? btn(t('upd_unpublish'), function () { return api('POST', '/api/v1/admin/updates/unpublish').then(function () { return VIEWS.updates(); }); })
+            : btn(t('upd_publish'), function () { if (!confirm(t('upd_publish_confirm'))) return; return api('POST', '/api/v1/admin/updates/' + r.version_code + '/publish').then(function () { return VIEWS.updates(); }); }, 'pri')),
+          h('td', null, live ? null : btn(t('delete'), function () { if (!confirm(t('upd_delete_confirm'))) return; return api('DELETE', '/api/v1/admin/updates/' + r.version_code).then(function () { return VIEWS.updates(); }); }, 'bad'))));
+      });
+      page(t('nav_updates'), box);
+      box.appendChild(h('div', { class: 'card' }, h('h3', null, t('upd_mode_h')),
+        h('div', { class: 'row' }, select(mode, 'mode', t('upd_mode'), [['off', t('upd_mode_off')], ['notify', t('upd_mode_notify')], ['auto', t('upd_mode_auto')]]),
+          h('div', { class: 'row tight' }, btn(t('save'), function () {
+            return api('PUT', '/api/v1/admin/updates/settings', { mode: mode.mode }).then(function () { flash(box, 'ok', t('saved')); });
+          }, 'pri'))),
+        h('p', { class: 'muted' }, t('upd_mode_help'))));
+      box.appendChild(h('div', { class: 'card' }, h('h3', null, t('upd_upload_title')), h('p', { class: 'muted' }, t('upd_help')), h('div', { class: 'row' }, h('div', null, h('label', null, t('upd_notes')), notes)), drop, file, progress));
+      box.appendChild(h('div', { class: 'card' }, h('h3', null, t('upd_releases')), ov.releases.length ? table : h('p', { class: 'muted' }, t('upd_none'))));
+    });
+  };
 
   /* ---- photos */
   VIEWS.photos = function () {

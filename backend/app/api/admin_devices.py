@@ -27,7 +27,7 @@ class DevicePatch(BaseModel):
 
 
 class CommandBody(BaseModel):
-    type: str = Field(pattern="^(reload|wake|sleep|identify)$")
+    type: str = Field(pattern="^(reload|wake|sleep|identify|update)$")
 
 
 def device_dict(d: Device) -> dict:

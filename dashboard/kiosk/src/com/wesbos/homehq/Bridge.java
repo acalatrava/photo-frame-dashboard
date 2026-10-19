@@ -26,18 +26,21 @@ final class Bridge {
   private final MainActivity act;
   private final Hardware hw;
   private final Discovery discovery;
+  private final Updater updater;
   private final SharedPreferences prefs;
 
   Bridge(MainActivity act, Hardware hw) {
     this.act = act;
     this.hw = hw;
     this.discovery = new Discovery(act);
+    this.updater = new Updater(act);
     this.prefs = act.getSharedPreferences(PREFS, Context.MODE_PRIVATE);
   }
 
   private boolean trusted() { return act.pageIsBundled(); }
 
-  void shutdown() { discovery.stop(); }
+  void shutdown() { discovery.stop(); updater.shutdown(); }
+  void onForeground() { updater.onForeground(); }
 
   // ------------------------------------------------------------ preferences
   @JavascriptInterface public String getPref(String key) {
@@ -131,6 +134,15 @@ final class Bridge {
 
   /** Returns true when the screen was really switched off; false means the page should draw its black overlay. */
   @JavascriptInterface public boolean sleepScreen(String mode) { return trusted() && act.sleep(mode); }
+
+  // ------------------------------------------------------------ app updates
+  /** Downloads the build from the backend and verifies it; install=true also opens the system installer. */
+  @JavascriptInterface public void downloadUpdate(String url, String token, String sha256, int versionCode, boolean install) {
+    if (trusted()) updater.download(url, token, sha256, versionCode, install);
+  }
+
+  @JavascriptInterface public void installUpdate() { if (trusted()) updater.install(); }
+  @JavascriptInterface public String getUpdateState() { return trusted() ? updater.stateJson() : "{}"; }
 
   // ------------------------------------------------------------ misc
   @JavascriptInterface public void reload() { if (trusted()) act.reloadPage(); }

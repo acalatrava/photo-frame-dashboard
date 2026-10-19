@@ -24,9 +24,16 @@ admin account live only in the backend.
 | Part | Where | Notes |
 | --- | --- | --- |
 | Backend | `backend/` | Python 3.12, FastAPI, SQLAlchemy 2 on SQLite (WAL), Alembic migrations, Pillow + pillow-heif. |
-| Admin panel | `backend/app/static/admin` | Spanish and English. Overview, frames and pairing, screen order, photos, calendars, chores, shopping, cameras, Home Assistant, light sensor, general settings, account. |
+| Admin panel | `backend/app/static/admin` | Spanish and English. Overview, frames and pairing, screen order, app updates, photos, calendars, chores, shopping, cameras, Home Assistant, light sensor, general settings, account. |
 | Dashboard | `dashboard/` | Vite app with a fixed 1280x800 stage, touch first. Bundled in the APK, so the frame starts without the network. |
 | Android app | `dashboard/kiosk/` | Kiosk WebView, no Gradle. Serves the bundle at `http://appassets.homehq.invalid/`, exposes the `HQNative` bridge only to that page. |
+
+## App updates
+
+The backend stores APK releases under `data/updates/` and publishes one. Frames ask `GET /api/v1/device/update`, hand
+the download to the Android shell (`Updater.java`), which checks the SHA-256, the package, the version code and the
+signing certificate before opening Android's installer. Details and the safety model:
+[homehq-updates.md](homehq-updates.md).
 
 ## Chores, cameras and screen order
 

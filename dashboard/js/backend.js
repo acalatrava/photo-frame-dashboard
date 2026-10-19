@@ -375,6 +375,7 @@
     if (topic === 'presence.ha') { D.presence.ha_active = p.active; App.emit('presence'); return; }
     if (topic === 'device.revoked') { B.unpair(true); return; }
     if (topic === 'device.command') { App.emit('command', p.type); return; }
+    if (topic === 'update.changed') { App.emit('update:published'); return; }
     if (topic === 'recording.changed') { B.recording = !!p.active; App.emit('recording', B.recording); return; }
     // calendar, shopping, photos, weather: refetch the dashboard (small payload, one request)
     B.refreshDashboard();

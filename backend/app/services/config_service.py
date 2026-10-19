@@ -52,6 +52,7 @@ def effective_config(db: Session, device: Device) -> dict:
         "people": [p.model_dump(exclude={"ha_person"}) | {"has_presence": bool(p.ha_person)}
                    for p in g.people if p.id in visible],
         "shopping": {"provider": g.shopping.provider},
+        "updates": {"mode": g.updates.mode},
         "homeassistant": {"enabled": g.homeassistant.enabled},
         "device_config": d.model_dump(mode="json"),
     }

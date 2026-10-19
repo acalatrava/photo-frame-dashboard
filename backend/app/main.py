@@ -12,7 +12,7 @@ from pydantic import ValidationError
 from sqlalchemy import text
 
 from . import state
-from .api import admin_auth, admin_devices, admin_settings, device_api, media, pairing
+from .api import admin_auth, admin_devices, admin_settings, admin_updates, device_api, media, pairing
 from .core import db as dbmod
 from .core import security
 from .core.config import APP_VERSION, get_settings
@@ -85,7 +85,7 @@ def on_ha_status(connected: bool) -> None:
 async def lifespan(app: FastAPI):
     s = get_settings()
     setup_logging()
-    for d in (s.data_dir, s.photos_dir, s.secrets_dir, s.recordings_dir, s.logs_dir):
+    for d in (s.data_dir, s.photos_dir, s.secrets_dir, s.recordings_dir, s.logs_dir, s.updates_dir):
         d.mkdir(parents=True, exist_ok=True)
     if dbmod.engine() is None:
         dbmod.init_engine()
@@ -156,7 +156,7 @@ def create_app() -> FastAPI:
         return JSONResponse({"status": "ok" if db_ok else "error", "version": APP_VERSION, "db": db_ok,
                              "homeassistant": state.ha.connected}, status_code=code)
 
-    for r in (admin_auth.router, admin_devices.router, admin_settings.router, device_api.router,
+    for r in (admin_auth.router, admin_devices.router, admin_settings.router, admin_updates.router, device_api.router,
               pairing.router, media.router):
         app.include_router(r)
 

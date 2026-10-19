@@ -30,6 +30,7 @@ class Settings(BaseSettings):
     mdns_hostname: str = ""
     log_level: str = "INFO"
     photo_max_upload_mb: int = 40
+    apk_max_upload_mb: int = 80
     # Trust X-Forwarded-Proto/For from a reverse proxy.
     trust_proxy: bool = False
     public_dashboard: bool = True
@@ -50,6 +51,10 @@ class Settings(BaseSettings):
     @property
     def photos_dir(self) -> Path:
         return self.data_dir / "photos"
+
+    @property
+    def updates_dir(self) -> Path:
+        return self.data_dir / "updates"
 
     @property
     def recordings_dir(self) -> Path:

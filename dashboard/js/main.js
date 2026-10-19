@@ -9,6 +9,7 @@ import './i18n.js';
 import './native.js';
 import './backend.js';
 import './display.js';
+import './updates.js';
 import './system.js';
 import './slideshow.js';
 import './views/home.js';

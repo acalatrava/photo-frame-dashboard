@@ -51,6 +51,27 @@
         : '<p class="st-note">' + App.t(N.available ? 'st_no_sensor' : 'st_no_native') + '</p>') + '</section>';
   }
 
+  // Updates only exist inside the Android shell; a plain browser has nothing to install.
+  function updateCard() {
+    if (!N.available) return '';
+    var u = App.updates, r = u.release(), st = u.state, avail = u.available(), off = u.mode() === 'off', busy = st.state === 'downloading' || st.state === 'installing';
+    var status = st.state === 'downloading' ? App.t('up_downloading', { n: st.pct })
+      : st.state === 'installing' ? App.t('up_installing')
+      : st.state === 'error' ? App.t('up_error', { m: App.esc(st.error) })
+      : st.state === 'ready' ? App.t('up_ready')
+      : avail ? App.t(off ? 'up_off' : 'up_found') : App.t('up_current');
+    var canInstall = !busy && (st.state === 'ready' || (avail && !off));
+    var label = st.state === 'ready' ? 'up_install_now' : st.state === 'error' ? 'up_retry' : 'up_download_install';
+    return '<section class="st-card"><div class="label">' + App.t('up_title') + '</div><div class="st-kv">' +
+      '<span>' + App.t('up_installed') + '</span><b>' + App.esc(N.version() || '–') + '</b>' +
+      '<span>' + App.t('up_available') + '</span><b>' + (r ? App.esc(r.version_name) + ' (' + r.version_code + ')' : '–') + '</b></div>' +
+      (avail && r && r.notes ? '<p class="st-note">' + App.esc(r.notes) + '</p>' : '') +
+      '<div class="st-warn' + (st.state === 'error' ? ' is-bad' : avail ? '' : ' is-calm') + '">' + App.icon(st.state === 'error' ? 'bolt' : avail ? 'bolt' : 'check', 22) + status + '</div>' +
+      (st.state === 'downloading' ? '<div class="st-progress"><i style="width:' + st.pct + '%"></i></div>' : '') +
+      '<div class="st-actions">' + (canInstall ? '<button class="btn" data-up-install>' + App.t(label) + '</button>' : '') +
+      (busy ? '' : '<button class="btn btn--ghost" data-up-check>' + App.t('up_check') + '</button>') + '</div></section>';
+  }
+
   function aboutCard() {
     var i = N.info();
     return '<section class="st-card"><div class="label">' + App.t('st_about') + '</div><div class="st-kv">' +
@@ -86,8 +107,11 @@
 
   function paint() {
     if (!V.el) return;
+    var body = V.el.querySelector('.st-body'), keep = body ? body.scrollTop : 0;
     V.el.innerHTML = '<div class="st"><header class="st-head"><div><div class="label">' + App.t('st_kicker') + '</div><h1 class="serif">' + App.t('nav_settings') + '</h1></div></header>' +
-      '<div class="st-body">' + connection() + screenCard() + sensorCard() + aboutCard() + '</div></div>';
+      '<div class="st-body">' + connection() + screenCard() + updateCard() + aboutCard() + sensorCard() + '</div></div>';
+    body = V.el.querySelector('.st-body');
+    if (body) body.scrollTop = keep;
     drawChart();
   }
   function live() {
@@ -105,6 +129,8 @@
     if (e.target.closest('[data-sync]')) { App.backend.sync().then(paint, paint); }
     else if (e.target.closest('[data-sleep]')) { App.display.sleep(cfg().display && cfg().display.screen_off !== 'never' ? cfg().display.screen_off : 'black'); }
     else if (e.target.closest('[data-android]')) N.openSettings();
+    else if (e.target.closest('[data-up-install]')) App.updates.install();
+    else if (e.target.closest('[data-up-check]')) App.updates.check(true).then(paint, function () { App.toast(App.t('up_check_failed'), { icon: 'bolt', ms: 4000 }); });
     else if ((t = e.target.closest('[data-sens]'))) {
       V.sens = t.dataset.sens;
       try { localStorage.setItem(SENS_KEY, V.sens); } catch (x) { /* ignore */ }
@@ -133,4 +159,5 @@
   });
   App.on('data', function () { if (App.current === 'settings') paint(); });
   App.on('conn', function () { if (App.current === 'settings') paint(); });
+  App.on('update', function () { if (App.current === 'settings') paint(); });
 })();

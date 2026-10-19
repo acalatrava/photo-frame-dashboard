@@ -367,6 +367,12 @@ class DeviceConfig(Strict):
     language: Literal["es-ES", "en", "inherit"] = "inherit"
 
 
+class UpdatesConfig(Strict):
+    """off: frames ignore published app versions; notify: they offer the update in Settings;
+    auto: they also download it in the background so installing is a single tap."""
+    mode: Literal["off", "notify", "auto"] = "notify"
+
+
 class GlobalConfig(Strict):
     schema_version: int = SCHEMA_VERSION
     general: GeneralConfig = GeneralConfig()
@@ -377,6 +383,7 @@ class GlobalConfig(Strict):
     chores: list[Chore] = []
     frigate: FrigateConfig = FrigateConfig()
     cameras: list[CameraSource] = []
+    updates: UpdatesConfig = UpdatesConfig()
     device_defaults: DeviceConfig = DeviceConfig()
 
     @field_validator("people")

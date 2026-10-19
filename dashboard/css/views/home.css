@@ -15,7 +15,7 @@
 .h-date b { font-family: var(--sans); font-weight: 800; font-stretch: 75%; text-transform: uppercase; letter-spacing: .06em; font-size: 20px; margin-right: 6px; }
 
 /* ---- weather */
-.h-weather { grid-column: 5 / 10; border-bottom: 3px solid var(--ink); padding: 0 8px 6px; display: flex; flex-direction: column; justify-content: flex-end; }
+.h-weather { grid-column: 5 / 13; border-bottom: 3px solid var(--ink); padding: 0 8px 6px; display: flex; flex-direction: column; justify-content: flex-end; }
 .h-wx-top { display: flex; align-items: center; gap: 12px; }
 .h-wx-icon { color: var(--ink); }
 .h-wx-temp { font-size: 84px; line-height: .8; letter-spacing: -.03em; }
@@ -30,15 +30,6 @@
 .h-hr-i { height: 26px; display: grid; place-items: center; }
 .h-hr b { font-weight: 800; font-stretch: 70%; }
 .h-hr.is-wet .h-hr-i { color: #1F6FEB; }
-
-/* ---- presence */
-.h-presence { grid-column: 10 / 13; display: flex; flex-direction: column; justify-content: space-between; border-bottom: 3px solid var(--ink); padding: 2px 0 10px; }
-.h-who { display: flex; align-items: center; gap: 10px; min-width: 0; }
-.h-who > span:not(.avatar) { flex: 1; display: flex; align-items: baseline; justify-content: space-between; gap: 8px; min-width: 0; }
-.h-who b { font-size: 18px; font-weight: 800; white-space: nowrap; flex: none; }
-.h-who small { font-size: var(--fs-min); color: var(--mute); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
-.h-who small b { font-size: var(--fs-min); color: var(--c); }
-.h-who .avatar--away { background: var(--paper); }
 
 /* ---- main column */
 .h-main { grid-column: 1 / 8; display: grid; grid-template-rows: 232px 1fr; gap: 16px; min-height: 0; }

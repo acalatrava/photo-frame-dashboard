@@ -28,15 +28,6 @@
       }).join('') + '</div>';
   }
 
-  function presence() {
-    return D.people.map(function (p) {
-      var sub = p.hasPresence ? App.t(p.home ? 'home' : 'away') : '';
-      return '<div class="h-who' + (p.home ? ' is-home' : '') + '" style="' + App.pstyle(p) + '">' +
-        App.avatar(p, 36, p.home || !p.hasPresence ? '' : 'avatar--away') +
-        '<span><b>' + App.esc(p.name) + '</b>' + (sub ? '<small>' + sub + '</small>' : '') + '</span></div>';
-    }).join('');
-  }
-
   function hero() {
     var e = App.nextEvent(), now = App.now();
     if (!e) {
@@ -179,7 +170,6 @@
     var el = V.el;
     el.querySelector('.h-clock').innerHTML = clock();
     el.querySelector('.h-weather').innerHTML = weather();
-    el.querySelector('.h-presence').innerHTML = presence();
     el.querySelector('.h-hero-slot').innerHTML = hero();
     el.querySelector('.h-lanes').innerHTML = lanes();
     paintChores();
@@ -201,7 +191,6 @@
         el.innerHTML = '<div class="home">' +
           '<div class="h-clock" data-go="calendar"></div>' +
           '<div class="h-weather"></div>' +
-          '<div class="h-presence"></div>' +
           '<div class="h-main"><div class="h-hero-slot"></div><div class="h-lanes" ></div></div>' +
           '<div class="h-side">' +
           '  <button class="h-photo" data-go="photos"><div class="h-photo-stage"></div><div class="h-photo-cap"></div></button>' +

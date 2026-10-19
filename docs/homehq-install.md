@@ -106,5 +106,10 @@ git pull
 docker compose up -d --build     # add the -f override if you use mDNS
 ```
 
-Alembic migrations run on start. Back up first. After a backend update the frame keeps working; after an app
-update run `adb install -r` again. Pairing and the offline cache survive reinstalls.
+Alembic migrations run on start. Back up first. After a backend update the frame keeps working.
+
+After an app update the frames can install it over the network, with no cable: build with `kiosk/build.sh`, publish
+with `kiosk/publish.sh --publish` (or in the panel under *Updates*), and tap **Instalar** on the frame. See
+[homehq-updates.md](homehq-updates.md). The first install of an update-capable build, and any frame that has not
+been given the `WRITE_SECURE_SETTINGS` grant, still use `adb install -r`. Pairing and the offline cache survive
+reinstalls.

@@ -34,6 +34,9 @@
   H.sleep = function (mode) { return call('sleepScreen', [mode || 'black'], false); };
   H.reload = function () { call('reload', [], null); };
   H.openSettings = function () { call('openAndroidSettings', [], null); };
+  H.downloadUpdate = function (url, token, sha256, versionCode, install) { call('downloadUpdate', [url, token, sha256, versionCode, !!install], null); };
+  H.installUpdate = function () { call('installUpdate', [], null); };
+  H.updateState = function () { return json('getUpdateState', [], { state: 'idle' }); };
 
   H.on = function (ev, fn) { (listeners[ev] = listeners[ev] || []).push(fn); };
   // Called by the Android shell: window.HQ.onNative('activity', {...})

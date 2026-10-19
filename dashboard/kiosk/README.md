@@ -159,5 +159,9 @@ ANDROID_HOME=/path/to/android-sdk bash kiosk/build.sh
 adb install -r kiosk/build/homehq.apk
 ```
 
+Once a frame runs an update-capable build, later versions can be pushed over the network instead of over USB:
+`kiosk/publish.sh --publish` after `build.sh`, then one tap on the frame (see `docs/homehq-updates.md`). The grant
+`adb shell pm grant com.wesbos.homehq android.permission.WRITE_SECURE_SETTINGS` is needed on each frame for that.
+
 The kiosk loads the existing hosted dashboard over the frame's Wi-Fi. A USB
 connection is only needed for installation or diagnostics, not normal use.

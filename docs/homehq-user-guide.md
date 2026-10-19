@@ -19,7 +19,7 @@ panel. Chores and cameras only appear when something is configured for them.
 
 ### Today (*Hoy*)
 
-- The clock, the date, the weather (current conditions, next hours and a one-line hint) and who is at home.
+- The clock, the date, the weather (current conditions, next hours and a one-line hint).
 - A hero card with the next event ("A continuación") and a countdown, or the first event of tomorrow when today is over.
 - One lane per person (two to four columns, depending on how many people are configured). Each lane shows that
   person's events for the rest of the day and their pending chores. Tap a chore to tick it; a toast offers *Deshacer*.
@@ -121,6 +121,14 @@ Everything shared (language, time zone, people, calendars, chores, Home Assistan
 - A frame only works after an administrator approves its pairing code, and its token can be revoked at any time.
 - On the PF1007L the vendor apps (AiMOR, qeota, DeviceTest) must stay disabled. They accept remote commands from the
   vendor's servers; read [aimor-remote-root-shell.md](aimor-remote-root-shell.md).
+
+## Updating the app
+
+New versions of the frame app are published from the panel (*Updates*, or `kiosk/publish.sh`). When one is available
+the *Ajustes* icon gets an orange dot; open *Ajustes*, find **App update** and press **Download and install**, then
+confirm with **Instalar** in the Android dialog. The app restarts by itself. In the panel, **Update now** in a frame's
+editor does the same remotely, and *Updates > Behaviour* chooses whether frames only notify, also pre-download, or
+ignore new versions. See [homehq-updates.md](homehq-updates.md).
 
 ## Restarting the frame
 

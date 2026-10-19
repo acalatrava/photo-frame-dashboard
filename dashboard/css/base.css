@@ -69,7 +69,8 @@ ul { margin: 0; padding: 0; list-style: none; }
 .rail-item.is-active { background: var(--ink); color: var(--paper); }
 .rail-item:active { background: var(--paper-2); }
 .rail-item.is-active:active { background: var(--ink-2); }
-.rail-item[data-go="settings"] { margin-top: auto; }
+.rail-item[data-go="settings"] { margin-top: auto; position: relative; }
+.rail-item.has-update::after { content: ""; position: absolute; top: 8px; right: 14px; width: 12px; height: 12px; border-radius: 50%; background: #E0952B; box-shadow: 0 0 0 3px var(--paper); }
 .rail-clock { margin-top: 0; padding: 10px 0; text-align: center; line-height: 1; position: relative; overflow: hidden; }
 .rail-clock.is-holding { background: var(--paper-2); }
 .rail-clock b { display: block; font-size: 24px; font-weight: 800; font-stretch: 62%; font-variant-numeric: tabular-nums; }

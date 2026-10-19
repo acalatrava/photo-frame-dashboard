@@ -173,11 +173,7 @@ public class MainActivity extends Activity {
     hw = Hardware.get(this);
     bridge = new Bridge(this, hw);
     web.addJavascriptInterface(bridge, "HQNative");
-    hw.setSink((event, json) -> handler.post(() -> {
-      if (web != null && pageIsBundled()) {
-        web.evaluateJavascript("window.HQ&&window.HQ.onNative&&window.HQ.onNative('" + event + "'," + json + ")", null);
-      }
-    }));
+    hw.setSink((event, json) -> emit(event, json));
     hw.start();
     // Keep navigation inside the kiosk. When the kiosk starts at boot before Wi-Fi is up, the
     // first load fails and would stay on the error page, so retry failed main-frame loads.
@@ -237,6 +233,7 @@ public class MainActivity extends Activity {
   protected void onResume() {
     super.onResume();
     cancelSystemScreenReturn();
+    if (bridge != null) bridge.onForeground();
     NavigationService.setDashboardVisible(true);
   }
 
@@ -288,6 +285,15 @@ public class MainActivity extends Activity {
 
   // ------------------------------------------------------------ bundled app
   /** True while the page in the WebView is the one served from this APK. Safe to call from any thread. */
+  /** Sends an event to the bundled page; safe to call from any thread. */
+  void emit(String event, String json) {
+    handler.post(() -> {
+      if (web != null && pageIsBundled()) {
+        web.evaluateJavascript("window.HQ&&window.HQ.onNative&&window.HQ.onNative('" + event + "'," + json + ")", null);
+      }
+    });
+  }
+
   boolean pageIsBundled() {
     String u = currentUrl;
     return u.startsWith("http://" + APP_HOST + "/");
