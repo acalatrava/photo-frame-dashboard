@@ -90,3 +90,23 @@ def test_telemetry_and_recording(paired):
 def test_status_endpoint(admin):
     s = admin.get("/api/v1/admin/status").json()
     assert s["version"] and "homeassistant" in s
+
+
+def test_photo_widgets_and_calendar_mode_reach_the_frame(paired):
+    c, dev, token = paired
+    cfg = c.get(f"/api/v1/admin/devices/{dev}").json()["config"]
+    assert cfg["photos"]["widgets"] == ["time", "date", "weather", "calendar", "people"]
+    assert cfg["layout"]["calendar_mode"] == "day"
+    cfg["photos"]["widgets"] = ["tasks", "time", "time"]
+    cfg["layout"]["calendar_mode"] = "week"
+    assert c.put(f"/api/v1/admin/devices/{dev}", json={"config": cfg}).status_code == 200
+    got = c.get("/api/v1/device/bootstrap", headers=h(token)).json()["config"]["device_config"]
+    assert got["photos"]["widgets"] == ["time", "tasks"]
+    assert got["layout"]["calendar_mode"] == "week"
+    cfg["photos"]["widgets"] = []
+    assert c.put(f"/api/v1/admin/devices/{dev}", json={"config": cfg}).status_code == 200
+    cfg["photos"]["widgets"] = ["clock"]
+    assert c.put(f"/api/v1/admin/devices/{dev}", json={"config": cfg}).status_code in (400, 422)
+    cfg["photos"]["widgets"] = []
+    cfg["layout"]["calendar_mode"] = "year"
+    assert c.put(f"/api/v1/admin/devices/{dev}", json={"config": cfg}).status_code in (400, 422)

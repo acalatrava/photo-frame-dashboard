@@ -3,7 +3,19 @@
   'use strict';
   var D = window.DATA;
   var PX = 72, START = 6, END = 23; // 72px per hour, 6 AM → 11 PM
-  var V = { mode: 'day', date: null, el: null, scroll: null };
+  var V = { mode: 'day', date: null, el: null, scroll: null, leftAt: 0 };
+  var MODES = ['day', '3day', 'week', 'month'];
+  // The opening view comes from the frame's settings; after a quiet minute away it returns to it.
+  function defaultMode() {
+    var c = App.backend && App.backend.cfg, m = c && c.device_config && c.device_config.layout && c.device_config.layout.calendar_mode;
+    return MODES.indexOf(m) >= 0 ? m : 'day';
+  }
+  function openFresh() {
+    V.mode = defaultMode();
+    V.date = App.dayStart(App.now());
+    if (V.mode === 'month') V.date.setDate(1);
+    V.scroll = null;
+  }
   function modes() { return [['day', App.t('today')], ['3day', App.t('cal_3day')], ['week', App.t('cal_week')], ['month', App.t('cal_month')]]; }
 
   function y(d) { return ((d.getHours() + d.getMinutes() / 60) - START) * PX; }
@@ -263,7 +275,7 @@
       '<div class="evs-time num">' + (e.allDay ? App.t('all_day') : App.fmt.range(e.start, e.end)) + '</div></div>' +
       '<div class="evs-body">' +
       (e.loc ? '<div class="evs-row">' + App.icon('pin', 28) + '<div><b>' + App.esc(e.loc) + '</b></div></div>' : '') +
-      (D.people.length ? '<div class="evs-row">' + App.icon('person', 28) + '<div class="evs-people">' + (fam ? D.people : e.people.map(App.person)).map(function (x) {
+      (D.people.length ? '<div class="evs-row">' + App.icon('person', 28) + '<div class="evs-people">' + (!e.people.length ? [D.family] : fam ? D.people : e.people.map(App.person)).map(function (x) {
         return '<span class="chip" style="' + App.pstyle(x) + '">' + App.avatar(x, 32) + App.esc(x.name) + '</span>';
       }).join('') + '</div></div>' : '') +
       (e.notes ? '<div class="evs-notes serif">“' + App.esc(e.notes) + '”</div>' : '') +
@@ -287,11 +299,17 @@
         el.addEventListener('click', onClick);
         swipe(el);
       }
-      if (!V.date) V.date = App.dayStart(App.now());
+      if (!V.date || (!opts.rerender && Date.now() - V.leftAt > 60000)) openFresh();
       if (!opts.rerender) V.scroll = null;
       render();
-    }
+    },
+    resume: function () {
+      if (Date.now() - V.leftAt > 60000) { openFresh(); render(); }
+    },
+    hide: function () { V.leftAt = Date.now(); }
   });
+  // A changed default only shows up the next time the calendar is opened.
+  App.on('config', function () { if (App.current !== 'calendar') V.leftAt = 0; });
   App.on('minute', function () {
     if (App.current !== 'calendar') return;
     var line = V.el.querySelector('.now-line');

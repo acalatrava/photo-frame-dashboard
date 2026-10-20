@@ -4,15 +4,31 @@
   var D = window.DATA, $ = App.$;
   var amb = { show: null }, shiftTimer = null;
 
+  var DEFAULT_WIDGETS = ['time', 'date', 'weather', 'calendar', 'people'];
+
+  // Which pieces of information go over the photos is a per-frame setting (photos.widgets).
+  function widgets() {
+    var w = App.photosConfig().widgets;
+    return Array.isArray(w) ? w : DEFAULT_WIDGETS;
+  }
+
+  function tasksPill() {
+    var items = D.chores.items, done = items.filter(function (i) { return i.done; }).length;
+    if (!items.length) return '';
+    return '<div class="amb-next amb-tasks">' + App.icon(done === items.length ? 'check' : 'tasks', 22) + App.t('nav_chores') + ' <b class="num">' + done + '/' + items.length + '</b></div>';
+  }
+
   function ambientInfo() {
-    var n = App.now(), w = App.weatherNow(), next = App.nextEvent();
-    return '<div class="amb-clock"><div class="amb-time num">' + App.fmt.time(n, false) + '</div>' +
-      '<div class="amb-date">' + App.fmt.day(n) + ', ' + App.fmt.dayMonth(n) + '</div></div>' +
-      '<div class="amb-right">' +
-      (w ? '<div class="amb-wx">' + App.icon(w.cond, 44) + '<span class="num">' + w.temp + '°</span><small>' + w.summary + '</small></div>' : '') +
+    var on = widgets(), n = App.now(), w = on.indexOf('weather') >= 0 && App.weatherNow(), next = on.indexOf('calendar') >= 0 && App.nextEvent();
+    var left = (on.indexOf('time') >= 0 ? '<div class="amb-time num">' + App.fmt.time(n, false) + '</div>' : '') +
+      (on.indexOf('date') >= 0 ? '<div class="amb-date' + (on.indexOf('time') < 0 ? ' amb-date--alone' : '') + '">' + App.fmt.day(n) + ', ' + App.fmt.dayMonth(n) + '</div>' : '');
+    var right = (w ? '<div class="amb-wx">' + App.icon(w.cond, 44) + '<span class="num">' + w.temp + '°</span><small>' + w.summary + '</small></div>' : '') +
       (next ? '<div class="amb-next" style="' + App.pstyle(App.evColor(next)) + '"><i></i>' + App.esc(next.title) + ' · ' + App.fmt.time(next.start) + '</div>' : '') +
-      '<div class="amb-who">' + D.people.filter(function (p) { return p.hasPresence; }).map(function (p) { return App.avatar(p, 34, p.home ? '' : 'avatar--away'); }).join('') + '</div>' +
-      '</div>';
+      (on.indexOf('tasks') >= 0 ? tasksPill() : '') +
+      (on.indexOf('people') >= 0 ? '<div class="amb-who">' + D.people.filter(function (p) { return p.hasPresence; }).map(function (p) { return App.avatar(p, 34, p.home ? '' : 'avatar--away'); }).join('') + '</div>' : '');
+    var amb = $('#ambient');
+    if (amb) amb.classList.toggle('amb--bare', !left && !right);
+    return (left ? '<div class="amb-clock">' + left + '</div>' : '') + (right ? '<div class="amb-right">' + right + '</div>' : '');
   }
   function nightInfo() {
     var n = App.now(), tomorrow = App.addDays(n, n.getHours() < 6 ? 0 : 1);
@@ -49,4 +65,5 @@
     App.resetIdle();
   });
   App.on('minute', paint);
+  App.on('config', function () { if (App.mode === 'ambient') paint(); });
 })();

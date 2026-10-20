@@ -59,7 +59,7 @@
       ha_hold: 'Mantener presencia HA (s)', min_abs_lux: 'Cambio mínimo absoluto (lux)', min_rel_change: 'Cambio relativo mínimo',
       min_gap: 'Separación mínima entre eventos (s)', hold: 'Duración de la actividad (s)',
       album: 'Álbum', no_album: '(sin álbum)', interval: 'Intervalo (s)', order: 'Orden', chronological: 'Cronológico', random: 'Aleatorio',
-      fit: 'Ajuste', contain: 'Contener', cover: 'Cubrir', overlay: 'Mostrar fecha/leyenda', cache_limit: 'Fotos en caché del marco',
+      fit: 'Ajuste', contain: 'Contener', cover: 'Cubrir', overlay: 'Leyenda sobre cada foto (cuándo y dónde se hizo)', widgets_h: 'Información sobre las fotos (marco en reposo)', widgets_help: 'Lo que se dibuja encima de las fotos cuando el marco está en reposo. Sin marcar, solo se ven las fotos.', wg_time: 'Hora', wg_date: 'Fecha', wg_weather: 'Tiempo', wg_calendar: 'Próximo evento', wg_tasks: 'Tareas pendientes', wg_people: 'Personas en casa', calendar_mode: 'Calendario: vista inicial', cal_mode_day: 'Día (por personas)', cal_mode_3day: 'Tres días', cal_mode_week: 'Semana', cal_mode_month: 'Mes', calendar_mode_help: 'Es la vista con la que se abre el calendario; en el marco se puede cambiar y vuelve a esta al pasar un rato.', cache_limit: 'Fotos en caché del marco',
       default_view: 'Vista inicial', ambient_after: 'Pasar a fotos tras (s)', home_after: 'Volver a inicio tras (s)',
       albums: 'Álbumes', new_album: 'Nuevo álbum', create: 'Crear', rename: 'Renombrar', upload: 'Subir fotos',
       drop_here: 'Arrastra fotos aquí o pulsa para elegirlas (JPEG, PNG, HEIC, WEBP)', uploading: 'Subiendo', of: 'de', duplicates: 'duplicadas',
@@ -67,7 +67,7 @@
       people: 'Personas', add_person: 'Añadir persona', color: 'Color', ha_person: 'Entidad person.* de HA (opcional)',
       calendars: 'Calendarios', add_calendar: 'Añadir calendario', type: 'Tipo', url: 'URL', calendar_user: 'Usuario (CalDAV)',
       calendar_pw: 'Contraseña / token (se guarda cifrada)', calendar_name: 'Nombre del calendario (CalDAV, opcional)', refresh_min: 'Actualizar cada (min)',
-      calendar_people: 'Personas (vacío = todas)', sync_now: 'Sincronizar ahora', synced: 'Sincronizado: {n} eventos',
+      calendar_people: 'Personas de este calendario (vacío = eventos de toda la familia, sin columna de persona)', calendar_tag_help: 'Para asignar un evento concreto a alguien, escribe en sus notas @user:nombre (el nombre o el id de la persona; da igual mayúsculas y acentos). Con varias etiquetas se asigna a varias personas, y @user:familia lo deja como evento de todos. La etiqueta manda sobre las personas del calendario y no se muestra en el marco.', sync_now: 'Sincronizar ahora', synced: 'Sincronizado: {n} eventos',
       ha_url: 'URL de Home Assistant', ha_token: 'Token de acceso de larga duración', token_saved: 'Token guardado (no se puede volver a ver)',
       token_missing: 'Sin token', verify_tls: 'Verificar certificado TLS', test_conn: 'Probar conexión', conn_ok: 'Conexión correcta. HA {v}',
       ha_status: 'Estado de la conexión', connected: 'conectado', disconnected: 'desconectado',
@@ -137,7 +137,7 @@
       ha_hold: 'Hold HA presence (s)', min_abs_lux: 'Minimum absolute change (lux)', min_rel_change: 'Minimum relative change',
       min_gap: 'Minimum gap between events (s)', hold: 'Activity duration (s)',
       album: 'Album', no_album: '(no album)', interval: 'Interval (s)', order: 'Order', chronological: 'Chronological', random: 'Random',
-      fit: 'Fit', contain: 'Contain', cover: 'Cover', overlay: 'Show date/caption', cache_limit: 'Photos cached on the frame',
+      fit: 'Fit', contain: 'Contain', cover: 'Cover', overlay: 'Caption on each photo (when and where it was taken)', widgets_h: 'Information over the photos (idle frame)', widgets_help: 'What is drawn over the photos while the frame is idle. With none ticked, only the photos show.', wg_time: 'Time', wg_date: 'Date', wg_weather: 'Weather', wg_calendar: 'Next event', wg_tasks: 'Pending chores', wg_people: 'People at home', calendar_mode: 'Calendar: opening view', cal_mode_day: 'Day (by person)', cal_mode_3day: 'Three days', cal_mode_week: 'Week', cal_mode_month: 'Month', calendar_mode_help: 'The view the calendar opens with; it can be changed on the frame and returns to this one after a while.', cache_limit: 'Photos cached on the frame',
       default_view: 'Start view', ambient_after: 'Go to photos after (s)', home_after: 'Back to home after (s)',
       albums: 'Albums', new_album: 'New album', create: 'Create', rename: 'Rename', upload: 'Upload photos',
       drop_here: 'Drop photos here or click to choose (JPEG, PNG, HEIC, WEBP)', uploading: 'Uploading', of: 'of', duplicates: 'duplicates',
@@ -145,7 +145,7 @@
       people: 'People', add_person: 'Add person', color: 'Color', ha_person: 'HA person.* entity (optional)',
       calendars: 'Calendars', add_calendar: 'Add calendar', type: 'Type', url: 'URL', calendar_user: 'User (CalDAV)',
       calendar_pw: 'Password / token (stored encrypted)', calendar_name: 'Calendar name (CalDAV, optional)', refresh_min: 'Refresh every (min)',
-      calendar_people: 'People (empty = everyone)', sync_now: 'Sync now', synced: 'Synced: {n} events',
+      calendar_people: 'People of this calendar (empty = whole-family events, no person column)', calendar_tag_help: 'To give one event to someone, write @user:name in its notes (the person\'s name or id; case and accents do not matter). Several tags assign several people, and @user:family makes it everyone\'s. The tag wins over the calendar\'s people and is not shown on the frame.', sync_now: 'Sync now', synced: 'Synced: {n} events',
       ha_url: 'Home Assistant URL', ha_token: 'Long-lived access token', token_saved: 'Token stored (cannot be shown again)',
       token_missing: 'No token', verify_tls: 'Verify TLS certificate', test_conn: 'Test connection', conn_ok: 'Connection OK. HA {v}',
       ha_status: 'Connection status', connected: 'connected', disconnected: 'disconnected',
@@ -504,6 +504,15 @@
       var views = ['home', 'calendar', 'photos', 'chores', 'house', 'cameras', 'shopping', 'settings'].map(function (k) { return [k, t('scr_' + k)]; });
       var haEnts = h('input', { value: c.presence.ha_entities.join(', '), placeholder: 'binary_sensor.pasillo_movimiento, ...' });
       haEnts.addEventListener('input', function () { c.presence.ha_entities = haEnts.value.split(',').map(function (x) { return x.trim(); }).filter(Boolean); });
+      var widgetsSel = h('div', { class: 'row tight' });
+      ['time', 'date', 'weather', 'calendar', 'tasks', 'people'].forEach(function (w) {
+        var el = h('input', { type: 'checkbox', checked: c.photos.widgets.indexOf(w) >= 0 });
+        el.addEventListener('change', function () {
+          c.photos.widgets = c.photos.widgets.filter(function (x) { return x !== w; });
+          if (el.checked) c.photos.widgets.push(w);
+        });
+        widgetsSel.appendChild(h('label', { class: 'chk' }, el, t('wg_' + w)));
+      });
       var peopleSel = h('div', { class: 'row tight' });
       global.people.forEach(function (p) {
         var el = h('input', { type: 'checkbox', checked: c.layout.person_ids.indexOf(p.id) >= 0 });
@@ -552,12 +561,14 @@
           select(c, 'photos.fit', t('fit'), [['cover', t('cover')], ['contain', t('contain')]]),
           input(c, 'photos.cache_limit', t('cache_limit'), { type: 'number', min: 10, max: 400 })),
         check(c, 'photos.show_overlay', t('overlay')),
+        h('label', null, t('widgets_h')), widgetsSel, h('p', { class: 'muted' }, t('widgets_help')),
         h('h3', null, t('layout')),
         h('div', { class: 'row' }, select(c, 'layout.default_view', t('default_view'), views),
+          select(c, 'layout.calendar_mode', t('calendar_mode'), [['day', t('cal_mode_day')], ['3day', t('cal_mode_3day')], ['week', t('cal_mode_week')], ['month', t('cal_mode_month')]]),
           input(c, 'layout.ambient_after_s', t('ambient_after'), { type: 'number', min: 15 }),
           input(c, 'layout.home_after_s', t('home_after'), { type: 'number', min: 10 })),
         peopleSel,
-        h('p'),
+        h('p', { class: 'muted' }, t('calendar_mode_help')),
         btn(t('save'), function () {
           return api('PUT', '/api/v1/admin/devices/' + id, { name: name.name, config: c }).then(function () { flash(box, 'ok', t('saved')); });
         }, 'pri')));
@@ -798,7 +809,7 @@
             h('div', { class: 'row' }, input(c, 'name', t('name')), select(c, 'type', t('type'), [['ics', 'ICS / webcal'], ['caldav', 'CalDAV']]), input(c, 'refresh_minutes', t('refresh_min'), { type: 'number', min: 5 })),
             h('div', { class: 'row' }, input(c, 'url', t('url'), { placeholder: 'https://… / webcal://…' })),
             h('div', { class: 'row' }, input(c, 'username', t('calendar_user')), h('div', null, h('label', null, t('calendar_pw')), pw), input(c, 'calendar_name', t('calendar_name'))),
-            h('label', null, t('calendar_people')), people, check(c, 'enabled', t('enabled')), h('p'),
+            h('label', null, t('calendar_people')), people, h('p', { class: 'muted' }, t('calendar_tag_help')), check(c, 'enabled', t('enabled')), h('p'),
             h('div', { class: 'row tight' },
               btn(t('save'), function () {
                 return saveConfig(cfg, box).then(function () { return pw.value ? api('PUT', '/api/v1/admin/calendars/' + c.id + '/password', { password: pw.value }) : null; })

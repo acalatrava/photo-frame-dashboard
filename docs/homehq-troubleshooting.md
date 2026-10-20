@@ -17,6 +17,9 @@
 | Stuck in Android settings | The frame has no Back or Home button. Home HQ returns by itself 5 minutes after it opens an Android screen. To return sooner from a computer: `adb shell input keyevent KEYCODE_HOME`. |
 | After a restart ADB no longer connects | USB ADB is temporary on these frames (`persist.sys.usb.config=mass_storage`). Make it persistent beforehand with `setprop persist.sys.usb.config mass_storage,adb` (USB only), see [pf1007l-start-here.md](pf1007l-start-here.md). |
 | "Instalación bloqueada" when updating the app | The frame lacks the secure-settings grant: `adb shell pm grant com.wesbos.homehq android.permission.WRITE_SECURE_SETTINGS`. More in [homehq-updates.md](homehq-updates.md). |
+| An event is in nobody's column on Today | It has no person: its calendar is linked to nobody and its notes carry no `@user:name` tag. That is the intended meaning of a family event; it shows in the next-up card and in the calendar. Link the calendar to people, or tag the event. |
+| An `@user:` tag does nothing | The name must match a person's id, name or first name (case and accents do not matter) and the calendar must have synced since. An unknown name is ignored. Check *General* for the exact names. |
+| An emoji shows as an empty box | Frames before version 3.0 use the Android 6 system font, which stops at Unicode 8; update the app ([homehq-updates.md](homehq-updates.md)). From 3.0 on the frame has its own emoji font. |
 | Backend does not start | `docker compose logs homehq`. `HOMEHQ_SECRET_KEY` must be a valid Fernet key (32 url-safe base64 bytes) or empty. |
 
 Logs: `data/logs/homehq.log` (rotating). On the frame: `adb logcat -s HomeHQ chromium`. Remote WebView debugging is off by default;

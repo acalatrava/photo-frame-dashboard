@@ -339,18 +339,32 @@ class PresenceConfig(Strict):
     activity_hold_s: int = Field(45, ge=5, le=1800)
 
 
+PHOTO_WIDGETS = ["time", "date", "weather", "calendar", "tasks", "people"]
+
+
 class PhotosConfig(Strict):
     enabled: bool = True
     album_id: str | None = None
     interval_s: int = Field(30, ge=5, le=3600)
     order: Literal["chronological", "random"] = "random"
     fit: Literal["contain", "cover"] = "cover"
+    # Caption on the photo itself (when and where it was taken).
     show_overlay: bool = True
+    # Information drawn over the photos while the frame is idle.
+    widgets: list[Literal["time", "date", "weather", "calendar", "tasks", "people"]] = [
+        "time", "date", "weather", "calendar", "people"]
     cache_limit: int = Field(80, ge=10, le=400)
+
+    @field_validator("widgets")
+    @classmethod
+    def _widgets(cls, v: list[str]) -> list[str]:
+        return [w for w in PHOTO_WIDGETS if w in v]
 
 
 class HomeLayoutConfig(Strict):
     default_view: Literal["home", "calendar", "photos", "house", "chores", "cameras", "shopping", "settings"] = "home"
+    # How the calendar opens; whoever is at the frame can still switch it.
+    calendar_mode: Literal["day", "3day", "week", "month"] = "day"
     ambient_after_s: int = Field(120, ge=15, le=3600)
     home_after_s: int = Field(60, ge=10, le=3600)
     person_ids: list[str] = []

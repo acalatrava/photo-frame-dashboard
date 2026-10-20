@@ -35,12 +35,38 @@ Day, three days, week and month views, all starting on Monday.
   ("Semana 43").
 - **Month** has a week-number column and the current day is a strong coloured cell.
 - In the week view the current day is a tinted column. The *Hoy* button jumps back to today.
-- Events are coloured by person. Events with no person are shown for everyone.
+- Events are coloured by person. Who an event belongs to is decided in this order:
+  1. An `@user:` tag in the event's notes (see below).
+  2. The people linked to its calendar (*Calendarios* in the panel).
+  3. Nobody. It is then a **family event**: it shows in the agenda, in the Today "next up" card (with the two that follow
+     it) and in the family band of the day view, but under no person's column.
+- The view the calendar opens with (day, three days, week or month) is a setting of each frame in the panel
+  (*Marcos > Disposición > Calendario: vista inicial*). You can switch view on the frame at any time; after a minute away
+  from the calendar it opens with the default again.
+
+#### Giving one event to someone
+
+Write `@user:` followed by the person's name or id in the event's notes, for example `@user:antonio`. Case and accents do
+not matter (`@user:INES` finds "Inés"). Several tags give the event to several people, and `@user:familia` makes it
+everyone's even if its calendar is linked to one person. The tag takes priority over the calendar's people, an unknown
+name is ignored, and the tag is not shown on the frame. This is meant for a shared family calendar that you do not want
+to link to anyone: link nobody, and tag only the events that are for one person.
+
+#### Emoji
+
+Event titles can carry emoji. The frame includes its own colour emoji font (Noto Color Emoji), because the Android 6
+system font stops at Unicode 8 and drew empty boxes for newer ones such as the pink heart. Calendars written long ago by
+old phones may hold private-use emoji codes (SoftBank, DoCoMo or Google); the backend converts them to standard emoji.
 
 ### Photos (*Fotos*)
 
-A slideshow of the album assigned to the frame, with a date and caption overlay if enabled. After a configurable idle
-time the frame goes to the photos (ambient mode); a touch brings it back to Today.
+A slideshow of the album assigned to the frame. The *caption* setting adds when and where each photo was taken on the
+photo itself. After a configurable idle time the frame goes to the photos (ambient mode); a touch brings it back to Today.
+
+In ambient mode the frame draws information over the photos. You choose which in the panel
+(*Marcos > Fotos > Información sobre las fotos*): **time**, **date**, **weather**, **next event**, **pending chores**
+and **people at home**. With none ticked you only see the photos. This is separate from the caption setting, which only
+affects the photo's own date.
 
 ### Chores (*Tareas*)
 
@@ -95,10 +121,10 @@ is in Spanish or English (button at the bottom of the side bar) and follows the 
 | Section | What it is for |
 | --- | --- |
 | **Resumen** | Health at a glance: Home Assistant, weather, number of paired frames, server version, calendar sources. |
-| **Marcos** | Pair new frames (type the six digit code the frame shows) and edit each one: name, room, language, brightness and night mode, screen-off mode, presence (light sensor and/or Home Assistant), photo album and slideshow options, start view, idle timers and which people it shows. Commands: wake, sleep, reload, identify, revoke. |
+| **Marcos** | Pair new frames (type the six digit code the frame shows) and edit each one: name, room, language, brightness and night mode, screen-off mode, presence (light sensor and/or Home Assistant), photo album, slideshow options and the widgets over the photos, start view, calendar opening view, idle timers and which people it shows. Commands: wake, sleep, reload, identify, revoke. |
 | **Pantallas** | The order of the side rail. Up and down buttons for the middle screens; Today first and Settings last are fixed. The order is global and the frames apply it as soon as they receive the configuration. |
 | **Fotos** | Albums, drag and drop upload (JPEG, PNG, WebP, HEIC), captions (double-click a photo), delete. |
-| **Calendarios** | ICS or CalDAV sources, owners, refresh interval, *Sync now*. |
+| **Calendarios** | ICS or CalDAV sources, owners (leave empty for family events, and use `@user:` tags in event notes for individual ones), refresh interval, *Sync now*. |
 | **Tareas** | Chores: title, icon, time, who does it, weekdays and week pattern (every week, even weeks, odd weeks, every N weeks from a start date). |
 | **Compra** | Local list or a Home Assistant `todo.*` list. |
 | **Cámaras** | Frigate address and detection, Home Assistant cameras, image URLs, preview. |

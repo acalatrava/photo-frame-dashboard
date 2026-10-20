@@ -142,3 +142,93 @@ def test_invalid_calendar_config_rejected(admin):
     cfg = admin.get("/api/v1/admin/config").json()["config"]
     cfg["calendars"] = [{"id": "x", "name": "x", "type": "ics", "url": "ftp://bad", "person_ids": []}]
     assert admin.put("/api/v1/admin/config", json=cfg).status_code in (400, 422)
+
+
+TAGGED_ICS = b"""BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//test//EN
+BEGIN:VEVENT
+UID:plain
+SUMMARY:Sin etiqueta
+DTSTART:20261104T180000Z
+DTEND:20261104T190000Z
+END:VEVENT
+BEGIN:VEVENT
+UID:one
+SUMMARY:Solo Ines
+DESCRIPTION:Llevar la guitarra @user:INES
+DTSTART:20261104T190000Z
+DTEND:20261104T200000Z
+END:VEVENT
+BEGIN:VEVENT
+UID:two
+SUMMARY:Ana y Luis
+DESCRIPTION:@user:ana @User: Luis
+DTSTART:20261104T200000Z
+DTEND:20261104T210000Z
+END:VEVENT
+BEGIN:VEVENT
+UID:unknown
+SUMMARY:Nombre desconocido
+DESCRIPTION:@user:nadie
+DTSTART:20261104T210000Z
+DTEND:20261104T220000Z
+END:VEVENT
+END:VCALENDAR
+"""
+
+PEOPLE3 = [{"id": "ana", "name": "Ana", "color": "#2D5BFF"}, {"id": "luis", "name": "Luis", "color": "#FF5B2D"},
+           {"id": "ines", "name": "Inés", "color": "#22AA66"}]
+
+
+def _events_by_title(admin, token):
+    h = {"Authorization": f"Bearer {token}"}
+    return {e["title"]: e for e in admin.get("/api/v1/device/dashboard", headers=h).json()["events"]}
+
+
+def test_user_tag_assigns_people_case_and_accent_insensitive(paired, ics_server):
+    admin, dev, token = paired
+    srv, url = ics_server
+    _Handler.body = TAGGED_ICS
+    set_config(admin, people=PEOPLE3,
+               calendars=[{"id": "fam", "name": "Familia", "type": "ics", "url": url, "person_ids": []}])
+    assert admin.post("/api/v1/admin/calendars/fam/sync").status_code == 200
+    ev = _events_by_title(admin, token)
+    assert ev["Sin etiqueta"]["people"] == []
+    assert ev["Solo Ines"]["people"] == ["ines"]
+    assert ev["Solo Ines"]["notes"] == "Llevar la guitarra"
+    assert ev["Ana y Luis"]["people"] == ["ana", "luis"] and ev["Ana y Luis"]["notes"] == ""
+    assert ev["Nombre desconocido"]["people"] == []
+
+
+def test_user_tag_overrides_calendar_people_and_respects_visibility(paired, ics_server):
+    admin, dev, token = paired
+    srv, url = ics_server
+    _Handler.body = TAGGED_ICS
+    set_config(admin, people=PEOPLE3,
+               calendars=[{"id": "fam", "name": "Familia", "type": "ics", "url": url, "person_ids": ["ana"]}])
+    admin.post("/api/v1/admin/calendars/fam/sync")
+    ev = _events_by_title(admin, token)
+    assert ev["Sin etiqueta"]["people"] == ["ana"]
+    assert ev["Solo Ines"]["people"] == ["ines"]
+    assert ev["Nombre desconocido"]["people"] == ["ana"]
+
+
+def test_read_user_tags_family_word():
+    from app.schemas.config import Person
+    from app.services.calendar.service import read_user_tags
+
+    people = [Person(id="ana", name="Ana María", color="#2D5BFF")]
+    assert read_user_tags("cena @user:familia", people) == ([], "cena")
+    assert read_user_tags("@user:maria", people) == (None, "")
+    assert read_user_tags("@user:ANA", people) == (["ana"], "")
+    assert read_user_tags("sin etiqueta", people) == (None, "sin etiqueta")
+
+
+def test_legacy_private_use_emoji_become_standard_ones():
+    from app.services.calendar.service import modern_emoji
+
+    assert modern_emoji("A\ue329A") == "A\U0001f498A"
+    assert modern_emoji("\ue005 y \ue515") == "\U0001f469 y \U0001f471"
+    assert modern_emoji("Cumple \U0001FA77") == "Cumple \U0001FA77"
+    assert modern_emoji("") == ""

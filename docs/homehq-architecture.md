@@ -45,6 +45,17 @@ signing certificate before opening Android's installer. Details and the safety m
   appended) and frames apply it on every configuration update. Today first and Settings last are enforced by the frame.
 - The calendar views and the Today lanes are laid out by the frame from the data it already has; there is no extra
   endpoint for them.
+- Who an event belongs to is resolved by the backend when it builds the dashboard (`calendar.device_events`): an
+  `@user:` tag in the notes (matched on id, name or first name, ignoring case and accents, and removed from the notes
+  sent to the frame), else the people of its calendar, else nobody. An empty `people` list means a family event, and the
+  frame treats it like an event for everyone (`App.isFamily`) but lists it in no person's lane. The same function converts
+  legacy private-use emoji codes with the table in `calendar/legacy_emoji.py` (generated from `emoji-datasource` 5.0.1).
+- The frame bundles a COLRv1 Noto Color Emoji (SIL OFL) in `dashboard/css/fonts/emoji`, split in `unicode-range` slices
+  and placed right after Archivo in the font stack, so only the slices a text needs are read. It adds about 2 MB to the APK
+  and works because the frame's WebView is Chrome 106; the OpenType-SVG build in `@fontsource/noto-color-emoji` does not
+  render there.
+- `photos.widgets` (time, date, weather, calendar, tasks, people) selects what the ambient overlay draws and
+  `layout.calendar_mode` the view the calendar opens with. Both are per frame and validated by the backend.
 
 ## Several frames
 

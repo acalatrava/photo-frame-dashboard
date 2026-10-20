@@ -77,8 +77,13 @@ What it does:
 - **Today**: clock, weather, who is home, next event with a countdown, one lane per person with their events and chores
   (tap to tick, with undo and a "see all" button when space runs out), photo, chores progress, shopping and house status.
 - **Calendar**: day, 3 days, week and month. The week view is the calendar week (Monday to Sunday) with ISO week numbers, the
-  month view has a week-number column, and the current day is highlighted. ICS and CalDAV sources, coloured by person.
-- **Photos**: albums uploaded in the panel (JPEG, PNG, WebP, HEIC), per-frame slideshow, ambient mode.
+  month view has a week-number column, and the current day is highlighted. ICS and CalDAV sources, coloured by person. An
+  event belongs to the people linked to its calendar, or to whoever an `@user:name` tag in its notes names; with neither it
+  is a family event. Each frame chooses which view the calendar opens with.
+- **Photos**: albums uploaded in the panel (JPEG, PNG, WebP, HEIC), per-frame slideshow, ambient mode with the widgets you
+  choose over the photos (time, date, weather, next event, chores, who is home).
+- **Emoji**: the frame ships its own colour emoji font, so event titles with newer emoji (and the private-use codes some old
+  phones put in calendars) are drawn instead of empty boxes.
 - **Chores**: per person and per day, with weekdays and week patterns (every week, even/odd weeks, every N weeks), offline queue.
 - **House**: Home Assistant lights, switches, scenes and blinds with custom names, icons and colours.
 - **Cameras**: Frigate, Home Assistant or image-URL cameras relayed by the backend as MJPEG.

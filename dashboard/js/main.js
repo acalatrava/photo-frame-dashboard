@@ -2,6 +2,7 @@
 import '@fontsource-variable/archivo/wdth.css';
 import '@fontsource/instrument-serif/400.css';
 import '@fontsource/instrument-serif/400-italic.css';
+import '../css/emoji.css';
 import './icons.js';
 import './data.js';
 import './app.js';

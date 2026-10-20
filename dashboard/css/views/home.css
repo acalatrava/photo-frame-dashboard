@@ -44,6 +44,8 @@
 .h-hero-title { font-size: 72px; line-height: .95; margin: 8px 0 8px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .h-hero-meta { font-size: 19px; opacity: .88; }
 .h-hero-foot { margin-top: auto; display: flex; align-items: center; gap: 14px; }
+.h-hero-later { font-size: 19px; opacity: .9; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
+.h-hero-later b { font-weight: 800; text-transform: uppercase; letter-spacing: .06em; font-size: 15px; margin-right: 4px; }
 .h-hero-foot .dots i { box-shadow: 0 0 0 3px var(--c); }
 .h-hero-count { font-size: 150px; line-height: .78; letter-spacing: -.04em; text-align: right; display: flex; flex-direction: column; align-items: flex-end; justify-content: center; }
 .h-hero-count small { font-size: 22px; letter-spacing: .1em; text-transform: uppercase; font-stretch: 80%; margin-top: 10px; }

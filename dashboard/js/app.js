@@ -62,7 +62,8 @@
 
   // ------------------------------------------------------------ calendar helpers
   App.events = function () { return D.events; };
-  App.isFamily = function (e) { return e.people.length >= D.people.length; };
+  // An event nobody is linked to belongs to the whole family, same as one linked to everybody.
+  App.isFamily = function (e) { return !e.people.length || e.people.length >= D.people.length; };
   App.evColor = function (e) { return App.isFamily(e) ? D.family : App.person(e.people[0]); };
   App.timedOn = function (day, pid) {
     var s = App.dayStart(day), e = App.addDays(s, 1);

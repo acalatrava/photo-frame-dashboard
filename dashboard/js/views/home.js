@@ -42,6 +42,8 @@
     var mins = (e.start - now) / 60000;
     var who = e.people.map(function (id) { return App.person(id).name; });
     var whoText = App.isFamily(e) ? App.t('everyone') : who.join(' + ');
+    // Family events sit under nobody's name, so the card also lists the next couple that follow this one.
+    var later = App.timedOn(now).filter(function (x) { return x !== e && x.start >= e.start && App.isFamily(x); }).slice(0, 2);
     var big = mins < 100
       ? '<div class="h-hero-count num">' + Math.max(0, Math.round(mins)) + '<small>min</small></div>'
       : '<div class="h-hero-count num">' + App.fmt.time(e.start, false) + '<small>' + App.fmt.ampm(e.start) + '</small></div>';
@@ -50,7 +52,8 @@
       '  <div class="label label--on">' + App.t('next_up') + (whoText ? ' · ' + App.esc(whoText) : '') + '</div>' +
       '  <div class="h-hero-title serif">' + App.esc(e.title) + '</div>' +
       '  <div class="h-hero-meta">' + App.fmt.range(e.start, e.end) + (e.loc ? ' · ' + App.esc(e.loc) : '') + '</div>' +
-      '  <div class="h-hero-foot">' + (e.people.length > 1 ? App.dots(e.people, 22) : '') + '</div>' +
+      '  <div class="h-hero-foot">' + (e.people.length > 1 ? App.dots(e.people, 22) : '') +
+      (later.length ? '<span class="h-hero-later"><b>' + App.t('hero_later') + '</b> ' + later.map(function (x) { return App.fmt.time(x.start, false) + ' ' + App.esc(x.title); }).join(' · ') + '</span>' : '') + '</div>' +
       '</div>' + big + '</button>';
   }
 

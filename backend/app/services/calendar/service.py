@@ -6,6 +6,8 @@ keep showing the last known agenda when the calendar provider (or the Internet) 
 import asyncio
 import hashlib
 import logging
+import re
+import unicodedata
 from datetime import date, datetime, timedelta, timezone
 from zoneinfo import ZoneInfo
 
@@ -20,6 +22,7 @@ from ...core.events import bus
 from ...models import CalendarEvent, SourceStatus
 from ...schemas.config import CalendarSource
 from .. import config_service
+from .legacy_emoji import LEGACY_EMOJI
 
 log = logging.getLogger("homehq.calendar")
 PAST_DAYS, FUTURE_DAYS = 45, 150
@@ -216,17 +219,67 @@ async def scheduler_loop() -> None:
         await asyncio.sleep(60)
 
 
+_LEGACY_TABLE = str.maketrans(LEGACY_EMOJI)
+
+
+def modern_emoji(text: str) -> str:
+    """Swap the private-use emoji codes of very old phones for the standard ones that fonts can draw."""
+    return text.translate(_LEGACY_TABLE) if text else text
+
+
+USER_TAG = re.compile(r"@user:\s*([^\s,;@]+)", re.IGNORECASE)
+FAMILY_WORDS = {"familia", "family", "todos", "all"}
+
+
+def _fold(text: str) -> str:
+    """Lower case without accents, so `@user:ines` finds a person called "Inés"."""
+    decomposed = unicodedata.normalize("NFKD", text.strip().lower())
+    return "".join(c for c in decomposed if not unicodedata.combining(c))
+
+
+def read_user_tags(notes: str, people: list) -> tuple[list[str] | None, str]:
+    """Look for `@user:<name>` tags in an event's notes.
+
+    Returns the matching person ids (an empty list when the tag asks for the whole family) or None when the
+    notes carry no usable tag, plus the notes with every tag removed. A tag matches a person's id, full name
+    or first name, ignoring case and accents.
+    """
+    tags = USER_TAG.findall(notes or "")
+    if not tags:
+        return None, notes
+    keys: dict[str, str] = {}
+    for p in people:
+        for key in (p.id, p.name, p.name.split()[0] if p.name.split() else ""):
+            keys.setdefault(_fold(key), p.id)
+    found: list[str] = []
+    family = False
+    for tag in tags:
+        folded = _fold(tag)
+        if folded in FAMILY_WORDS:
+            family = True
+        elif folded in keys and keys[folded] not in found:
+            found.append(keys[folded])
+    cleaned = re.sub(r"[ \t]{2,}", " ", USER_TAG.sub("", notes)).strip()
+    if found:
+        return found, cleaned
+    return ([] if family else None), cleaned
+
+
 def device_events(db: Session, person_ids_visible: list[str] | None = None) -> list[dict]:
+    """Events for the frames. Who an event belongs to is, in order: an `@user:` tag in its notes, the people
+    linked to its calendar, or nobody. An event with nobody is a family event: it appears in the agendas and
+    as "next up", but under no person's column."""
     g, _ = config_service.get_global(db)
     all_people = [p.id for p in g.people]
-    by_source = {s.id: (s.person_ids or all_people) for s in g.calendars if s.enabled}
+    by_source = {s.id: [p for p in s.person_ids if p in all_people] for s in g.calendars if s.enabled}
     out = []
     for r in db.query(CalendarEvent).filter(CalendarEvent.source_id.in_(list(by_source) or [""])):
-        people = [p for p in by_source[r.source_id] if p in all_people]
-        if person_ids_visible:
+        tagged, notes = read_user_tags(r.notes, g.people)
+        people = by_source[r.source_id] if tagged is None else tagged
+        if people and person_ids_visible:
             people = [p for p in people if p in person_ids_visible]
-        if not people:
-            continue
-        out.append({"id": r.id, "title": r.title, "start": r.start, "end": r.end, "allDay": r.all_day,
-                    "loc": r.location, "notes": r.notes, "people": people})
+            if not people:
+                continue
+        out.append({"id": r.id, "title": modern_emoji(r.title), "start": r.start, "end": r.end, "allDay": r.all_day,
+                    "loc": modern_emoji(r.location), "notes": modern_emoji(notes), "people": people})
     return out
