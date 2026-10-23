@@ -18,6 +18,7 @@ from ..services.calendar import service as cal
 from ..services.cameras import service as cams
 from ..services.chores import service as chores
 from ..services.homeassistant import service as has
+from ..services.menu import service as menu_service
 from ..services.photos import service as photos
 from ..services.presence import service as presence
 from ..services.shopping import service as shop
@@ -122,6 +123,7 @@ async def dashboard(device: Device = Depends(device_required), db: Session = Dep
         "ha": ha_view,
         "chores": chores.snapshot(db, g),
         "cameras": cams.device_list(g, device),
+        "menu": menu_service.for_frame(g),
         "weather": weather.get_cached(),
         "photos": photos.device_photos(db, device, dcfg.photos.album_id) if dcfg.photos.enabled else [],
         "presence": {"ha_active": has.presence_active(db, state.ha, presence_entities)},

@@ -31,7 +31,7 @@ class Location(Strict):
 
 
 # Screens that can be reordered in the side rail. Today is always first and Settings always last.
-NAV_ITEMS = ["calendar", "photos", "chores", "house", "cameras", "shopping"]
+NAV_ITEMS = ["calendar", "photos", "chores", "house", "cameras", "shopping", "menu"]
 
 
 def normalize_nav(order: list[str]) -> list[str]:
@@ -381,6 +381,68 @@ class DeviceConfig(Strict):
     language: Literal["es-ES", "en", "inherit"] = "inherit"
 
 
+MEALS = ["breakfast", "midmorning", "lunch", "snack", "dinner"]
+MAX_MENU_WEEKS = 12
+
+
+class MenuDay(Strict):
+    """What is served at each meal of one day. Empty means nothing planned."""
+    breakfast: str = Field("", max_length=300)
+    midmorning: str = Field("", max_length=300)
+    lunch: str = Field("", max_length=300)
+    snack: str = Field("", max_length=300)
+    dinner: str = Field("", max_length=300)
+
+
+def _blank_days() -> list["MenuDay"]:
+    return [MenuDay() for _ in range(7)]
+
+
+class MenuWeek(Strict):
+    name: str = Field("", max_length=40)
+    # Monday first. Seven entries, always.
+    days: list[MenuDay] = Field(default_factory=_blank_days)
+    # A meal that is the same all week (like "fruit plus one snack") is written once here and spans the day columns.
+    shared: MenuDay = MenuDay()
+
+    @field_validator("days")
+    @classmethod
+    def _seven(cls, v: list[MenuDay]) -> list[MenuDay]:
+        if len(v) != 7:
+            raise ValueError("una semana tiene siete días (de lunes a domingo)")
+        return v
+
+
+class MenuConfig(Strict):
+    """A rotating weekly menu. The weeks repeat in order; `start_week` was the current one during the week that
+    begins on `start_date`, which is how the frame knows which week it is today."""
+    meals: list[Literal["breakfast", "midmorning", "lunch", "snack", "dinner"]] = ["breakfast", "lunch", "dinner"]
+    weeks: list[MenuWeek] = Field(default_factory=list, max_length=MAX_MENU_WEEKS)
+    start_week: int = Field(1, ge=1, le=MAX_MENU_WEEKS)
+    start_date: str = ""
+
+    @field_validator("meals")
+    @classmethod
+    def _meals(cls, v: list[str]) -> list[str]:
+        return [m for m in MEALS if m in v]
+
+    @field_validator("start_date")
+    @classmethod
+    def _start(cls, v: str) -> str:
+        if v:
+            try:
+                datetime.strptime(v, "%Y-%m-%d")
+            except ValueError as exc:
+                raise ValueError("fecha AAAA-MM-DD") from exc
+        return v
+
+    @model_validator(mode="after")
+    def _clamp_start_week(self):
+        if self.weeks and self.start_week > len(self.weeks):
+            self.start_week = len(self.weeks)
+        return self
+
+
 class UpdatesConfig(Strict):
     """off: frames ignore published app versions; notify: they offer the update in Settings;
     auto: they also download it in the background so installing is a single tap."""
@@ -398,6 +460,7 @@ class GlobalConfig(Strict):
     frigate: FrigateConfig = FrigateConfig()
     cameras: list[CameraSource] = []
     updates: UpdatesConfig = UpdatesConfig()
+    menu: MenuConfig = MenuConfig()
     device_defaults: DeviceConfig = DeviceConfig()
 
     @field_validator("people")
