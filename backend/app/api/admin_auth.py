@@ -9,7 +9,8 @@ from ..core import security
 from ..core.config import get_settings
 from ..core.db import get_db
 from ..models import AdminUser, RefreshToken
-from .deps import ACCESS_COOKIE, ADMIN_HEADER, REFRESH_COOKIE, RateLimiter, admin_required, client_ip, is_https
+from .deps import (ACCESS_COOKIE, ADMIN_HEADER, REFRESH_COOKIE, RateLimiter, admin_required, admin_session_required,
+                   client_ip, is_https)
 
 router = APIRouter(prefix="/api/v1/admin/auth", tags=["admin-auth"])
 login_limiter = RateLimiter(8, 900)
@@ -134,7 +135,7 @@ def me(user: AdminUser = Depends(admin_required)):
 
 @router.post("/password")
 def change_password(body: PasswordBody, request: Request, response: Response,
-                    user: AdminUser = Depends(admin_required), db: Session = Depends(get_db)):
+                    user: AdminUser = Depends(admin_session_required), db: Session = Depends(get_db)):
     if not security.verify_password(user.password_hash, body.current_password):
         raise HTTPException(400, "La contraseña actual no es correcta")
     user.password_hash = security.hash_password(body.new_password)

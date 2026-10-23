@@ -34,6 +34,21 @@ class RefreshToken(Base):
     user_agent: Mapped[str | None] = mapped_column(String(200), nullable=True)
 
 
+class ApiToken(Base):
+    """Long-lived, revocable credentials for scripts and AI agents (MCP). Only the SHA-256 of the token is stored."""
+    __tablename__ = "api_tokens"
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    user_id: Mapped[int] = mapped_column(ForeignKey("admin_users.id", ondelete="CASCADE"), index=True)
+    name: Mapped[str] = mapped_column(String(80))
+    token_hash: Mapped[str] = mapped_column(String(64), unique=True)
+    prefix: Mapped[str] = mapped_column(String(12))
+    scope: Mapped[str] = mapped_column(String(8), default="read")  # read | full
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)
+    expires_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    last_used_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    revoked_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+
+
 class Device(Base):
     __tablename__ = "devices"
     id: Mapped[str] = mapped_column(String(32), primary_key=True)
