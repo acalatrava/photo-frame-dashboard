@@ -16,3 +16,4 @@ icalendar>=6.0,<7
 recurring-ical-events>=3.3
 zeroconf>=0.132
 tzdata
+certifi>=2026.10.19
