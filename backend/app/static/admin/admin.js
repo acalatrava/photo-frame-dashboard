@@ -13,8 +13,26 @@
       upd_publish_confirm: '¿Publicar esta versión? Los marcos la ofrecerán o la descargarán según el modo elegido.',
       upd_help: 'Flujo: 1) sube el número de versión en kiosk/build.sh, 2) ejecuta kiosk/build.sh, 3) sube kiosk/build/homehq.apk aquí, 4) publícalo. Un marco solo se actualiza a versiones con un versionCode mayor y firmadas con la misma clave.',
       command_update: 'Actualizar ahora', upd_outdated: 'Desactualizado', upd_ok: 'Al día', upd_cmd_sent: 'Orden enviada: el marco mostrará el diálogo de instalación', upd_version_col: 'App',
+      nav_menu: 'Menú semanal', sub_menu: 'Desayuno, comida y cena de cada día. Puedes crear varias semanas que se repiten en orden.',
+      meal_breakfast: 'Desayuno', meal_midmorning: 'Media mañana', meal_lunch: 'Comida', meal_snack: 'Merienda', meal_dinner: 'Cena',
+      days_long: 'Lunes,Martes,Miércoles,Jueves,Viernes,Sábado,Domingo',
+      menu_current: 'Semana actual', menu_now_is: 'Esta semana es la {n}{name}', menu_next_is: 'La siguiente será la {n}{name}', menu_set_current: 'Esta semana es la…', menu_apply: 'Aplicar',
+      menu_applied: 'Semana actual actualizada', menu_meals: 'Comidas que se muestran', menu_meals_help: 'Elige qué filas aparecen en el marco. Media mañana y merienda sirven para cosas iguales todos los días, como la fruta.',
+      menu_weeks: 'Semanas del ciclo', menu_week: 'Semana {n}', menu_add_week: 'Añadir semana', menu_dup_week: 'Duplicar', menu_del_week: 'Eliminar semana',
+      menu_del_confirm: '¿Eliminar esta semana del menú?', menu_move_left: 'Mover antes', menu_move_right: 'Mover después',
+      menu_week_name: 'Nombre de la semana (opcional, p. ej. «Verano»)', menu_shared: 'Igual toda la semana',
+      menu_shared_help: 'Lo que escribas aquí se muestra en una sola fila para toda la semana y sustituye a lo de cada día (útil para la fruta o el yogur).',
+      menu_none: 'Todavía no hay menú. Crea la primera semana.', menu_first: 'Crear la primera semana',
+      menu_rotation: 'Las semanas se repiten en orden: tras la última vuelve la primera. Cada lunes pasa a la siguiente.',
+      nav_agents: 'Agentes (MCP)', sub_agents: 'Conecta un agente de IA para que configure y ajuste Home HQ por ti. Habla el protocolo MCP y usa tokens que puedes revocar cuando quieras.',
+      ag_url: 'Dirección MCP', ag_new: 'Nuevo token', ag_name: 'Nombre (p. ej. «Cursor»)', ag_scope: 'Permisos', ag_read: 'Solo lectura', ag_full: 'Lectura y escritura',
+      ag_exp: 'Caduca', ag_days: '{n} días', ag_create: 'Crear token', ag_once: 'Cópialo ahora: no se volverá a mostrar.', ag_config: 'Configuración para tu agente',
+      ag_copy: 'Copiar', ag_copied: 'Copiado', ag_tokens: 'Tokens', ag_none: 'Aún no hay tokens.', ag_token: 'Token', ag_last: 'Último uso', ag_expires: 'Caduca',
+      ag_revoke_confirm: '¿Revocar este token? Los agentes que lo usen dejarán de funcionar.', ag_revoked: 'Revocado', ag_expired: 'Caducado', ag_active: 'Activo',
+      ag_security: 'Un token da acceso a la administración sin contraseña. Guárdalo como una contraseña, elige solo lectura si te basta y revócalo si se filtra. Los secretos (contraseñas de calendario, token de Home Assistant) nunca se pueden leer por esta vía, y un token no puede crear otros ni cambiar la contraseña.',
+      ag_menu: 'Menú de navegación', ag_close: 'Cerrar menú',
       nav_screens: 'Pantallas', g_frames: 'Marcos', g_content: 'Contenido', g_integrations: 'Integraciones', g_system: 'Sistema',
-      scr_home: 'Hoy', scr_calendar: 'Calendario', scr_photos: 'Fotos', scr_chores: 'Tareas', scr_house: 'Casa', scr_cameras: 'Cámaras', scr_shopping: 'Compra', scr_settings: 'Ajustes',
+      scr_home: 'Hoy', scr_calendar: 'Calendario', scr_photos: 'Fotos', scr_chores: 'Tareas', scr_house: 'Casa', scr_cameras: 'Cámaras', scr_shopping: 'Compra', scr_menu: 'Menú', scr_settings: 'Ajustes',
       screens_title: 'Orden de las pantallas', screens_help: 'Elige en qué orden aparecen las pantallas en la barra lateral del marco. «Hoy» siempre va la primera y «Ajustes» siempre la última, junto al reloj.',
       fixed_first: 'Siempre la primera', fixed_last: 'Siempre la última', move_up: 'Subir', move_down: 'Bajar', reset_order: 'Orden por defecto',
       sub_status: 'Estado de los servicios y de los marcos conectados.', sub_devices: 'Empareja marcos nuevos y ajusta pantalla, presencia y fotos de cada uno.',
@@ -91,8 +109,26 @@
       upd_publish_confirm: 'Publish this version? Frames will offer or download it according to the selected mode.',
       upd_help: 'Flow: 1) raise the version number in kiosk/build.sh, 2) run kiosk/build.sh, 3) upload kiosk/build/homehq.apk here, 4) publish it. A frame only updates to a higher versionCode signed with the same key.',
       command_update: 'Update now', upd_outdated: 'Out of date', upd_ok: 'Up to date', upd_cmd_sent: 'Command sent: the frame will show the install dialog', upd_version_col: 'App',
+      nav_menu: 'Weekly menu', sub_menu: 'Breakfast, lunch and dinner for each day. Create several weeks that repeat in order.',
+      meal_breakfast: 'Breakfast', meal_midmorning: 'Mid-morning', meal_lunch: 'Lunch', meal_snack: 'Snack', meal_dinner: 'Dinner',
+      days_long: 'Monday,Tuesday,Wednesday,Thursday,Friday,Saturday,Sunday',
+      menu_current: 'Current week', menu_now_is: 'This week is week {n}{name}', menu_next_is: 'Next week will be week {n}{name}', menu_set_current: 'This week is week…', menu_apply: 'Apply',
+      menu_applied: 'Current week updated', menu_meals: 'Meals shown', menu_meals_help: 'Choose which rows appear on the frame. Mid-morning and snack suit things that are the same every day, like fruit.',
+      menu_weeks: 'Weeks in the cycle', menu_week: 'Week {n}', menu_add_week: 'Add week', menu_dup_week: 'Duplicate', menu_del_week: 'Delete week',
+      menu_del_confirm: 'Delete this week from the menu?', menu_move_left: 'Move earlier', menu_move_right: 'Move later',
+      menu_week_name: 'Week name (optional, e.g. “Summer”)', menu_shared: 'Same all week',
+      menu_shared_help: 'Whatever you write here is shown as a single row for the whole week and replaces each day’s entry (handy for fruit or yogurt).',
+      menu_none: 'No menu yet. Create the first week.', menu_first: 'Create the first week',
+      menu_rotation: 'Weeks repeat in order: after the last one the first returns. Each Monday moves to the next.',
+      nav_agents: 'Agents (MCP)', sub_agents: 'Connect an AI agent so it can configure and tune Home HQ for you. It speaks the MCP protocol and uses tokens you can revoke at any time.',
+      ag_url: 'MCP address', ag_new: 'New token', ag_name: 'Name (e.g. “Cursor”)', ag_scope: 'Permissions', ag_read: 'Read only', ag_full: 'Read and write',
+      ag_exp: 'Expires', ag_days: '{n} days', ag_create: 'Create token', ag_once: 'Copy it now: it will not be shown again.', ag_config: 'Settings for your agent',
+      ag_copy: 'Copy', ag_copied: 'Copied', ag_tokens: 'Tokens', ag_none: 'No tokens yet.', ag_token: 'Token', ag_last: 'Last used', ag_expires: 'Expires',
+      ag_revoke_confirm: 'Revoke this token? Agents using it will stop working.', ag_revoked: 'Revoked', ag_expired: 'Expired', ag_active: 'Active',
+      ag_security: 'A token gives access to the admin without a password. Keep it like a password, choose read-only when that is enough and revoke it if it leaks. Secrets (calendar passwords, the Home Assistant token) can never be read this way, and a token cannot create others or change the password.',
+      ag_menu: 'Navigation menu', ag_close: 'Close menu',
       nav_screens: 'Screens', g_frames: 'Frames', g_content: 'Content', g_integrations: 'Integrations', g_system: 'System',
-      scr_home: 'Today', scr_calendar: 'Calendar', scr_photos: 'Photos', scr_chores: 'Chores', scr_house: 'House', scr_cameras: 'Cameras', scr_shopping: 'Shopping', scr_settings: 'Settings',
+      scr_home: 'Today', scr_calendar: 'Calendar', scr_photos: 'Photos', scr_chores: 'Chores', scr_house: 'House', scr_cameras: 'Cameras', scr_shopping: 'Shopping', scr_menu: 'Menu', scr_settings: 'Settings',
       screens_title: 'Screen order', screens_help: 'Choose the order of the screens in the frame side bar. “Today” is always first and “Settings” is always last, next to the clock.',
       fixed_first: 'Always first', fixed_last: 'Always last', move_up: 'Move up', move_down: 'Move down', reset_order: 'Default order',
       sub_status: 'Health of the services and of the connected frames.', sub_devices: 'Pair new frames and tune display, presence and photos for each one.',
@@ -310,6 +346,9 @@
     lang: ['M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20z', 'M2 12h20', 'M12 2a15 15 0 0 1 0 20 15 15 0 0 1 0-20'],
     up: ['M18 15l-6-6-6 6'], down: ['M6 9l6 6 6-6'],
     ok: ['M20 6L9 17l-5-5'], alert: ['M12 8v5', 'M12 16h.01', 'M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20z'],
+    menu: ['M7 3v8', 'M4.5 3v5a2.5 2.5 0 0 0 5 0V3', 'M7 11v10', 'M17 21V3c-2.5 1.5-3.5 4-3.5 8h3.5'],
+    agents: ['M12 2v4', 'M7 6h10a3 3 0 0 1 3 3v6a3 3 0 0 1-3 3H7a3 3 0 0 1-3-3V9a3 3 0 0 1 3-3z', 'M9 12h.01', 'M15 12h.01', 'M9 21h6'],
+    burger: ['M4 6h16', 'M4 12h16', 'M4 18h16'], close: ['M18 6L6 18', 'M6 6l12 12'], plus: ['M12 5v14', 'M5 12h14'], copy: ['M9 9h11v11H9z', 'M5 15H4a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v1'],
     lock: ['M5 11h14a2 2 0 0 1 2 2v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2z', 'M7 11V7a5 5 0 0 1 10 0v4']
   };
   function icon(name) {
@@ -328,8 +367,8 @@
 
   var NAV = [
     ['g_frames', [['status', 'nav_status'], ['devices', 'nav_devices'], ['screens', 'nav_screens'], ['updates', 'nav_updates']]],
-    ['g_content', [['photos', 'nav_photos'], ['calendars', 'nav_calendars'], ['chores', 'nav_chores'], ['shopping', 'nav_shopping'], ['cameras', 'nav_cameras']]],
-    ['g_integrations', [['ha', 'nav_ha'], ['sensor', 'nav_sensor']]],
+    ['g_content', [['photos', 'nav_photos'], ['calendars', 'nav_calendars'], ['chores', 'nav_chores'], ['shopping', 'nav_shopping'], ['cameras', 'nav_cameras'], ['menu', 'nav_menu']]],
+    ['g_integrations', [['ha', 'nav_ha'], ['sensor', 'nav_sensor'], ['agents', 'nav_agents']]],
     ['g_system', [['general', 'nav_general'], ['account', 'nav_account']]]
   ];
 
@@ -352,7 +391,43 @@
     side.appendChild(h('button', { class: 'quiet', onclick: function () { lang = lang === 'es' ? 'en' : 'es'; localStorage.setItem('hq_admin_lang', lang); document.documentElement.lang = lang; renderShell(); go(state.view); } }, icon('lang'), lang === 'es' ? 'English' : 'Español'));
     side.appendChild(h('button', { class: 'quiet', onclick: logout }, icon('logout'), t('logout') + ' (' + state.user.username + ')'));
     main = h('main');
-    root.appendChild(h('div', { class: 'shell' }, side, main));
+    var bar = h('header', { class: 'topbar' },
+      h('button', { class: 'tb', type: 'button', 'aria-label': t('ag_menu'), 'aria-controls': 'sidenav', 'aria-expanded': 'false', onclick: function () { toggleNav(); } }, icon('burger')),
+      h('div', { class: 'tb-title', id: 'tbTitle' }, 'Home HQ'));
+    side.id = 'sidenav';
+    root.appendChild(h('div', { class: 'shell' }, bar, side, h('div', { class: 'scrim', onclick: function () { toggleNav(false); } }), main));
+    watchTables();
+  }
+
+  /* Off-canvas navigation on small screens. */
+  function toggleNav(open) {
+    var on = open == null ? !document.body.classList.contains('nav-open') : open;
+    document.body.classList.toggle('nav-open', on);
+    var b = document.querySelector('.topbar .tb');
+    if (b) b.setAttribute('aria-expanded', on ? 'true' : 'false');
+  }
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape') toggleNav(false); });
+
+  /* Tables become stacked cards on phones: every cell remembers the header it sits under. */
+  var tableWatch = null;
+  function labelTables() {
+    Array.prototype.forEach.call(document.querySelectorAll('main table'), function (tb) {
+      var rows = tb.querySelectorAll('tr');
+      if (!rows.length || tb.getAttribute('data-l') === String(rows.length)) return;
+      var heads = Array.prototype.map.call(rows[0].children, function (c) { return c.textContent; });
+      rows[0].className = 'thead';
+      Array.prototype.forEach.call(rows, function (r, i) {
+        if (i === 0) return;
+        Array.prototype.forEach.call(r.children, function (c, n) { c.setAttribute('data-label', heads[n] || ''); });
+      });
+      tb.setAttribute('data-l', String(rows.length));
+    });
+  }
+  function watchTables() {
+    if (tableWatch) tableWatch.disconnect();
+    if (!window.MutationObserver || !main) return;
+    tableWatch = new MutationObserver(labelTables);
+    tableWatch.observe(main, { childList: true, subtree: true });
   }
 
   function logout() {
@@ -361,6 +436,7 @@
 
   function go(view) {
     stopTimers();
+    toggleNav(false);
     state.view = view;
     Array.prototype.forEach.call(document.querySelectorAll('nav.side button[data-v]'), function (b) {
       b.className = b.getAttribute('data-v') === view ? 'on' : '';
@@ -373,6 +449,8 @@
   function page(title, nodes) {
     clear(main);
     var sub = t('sub_' + state.view);
+    var tb = document.getElementById('tbTitle');
+    if (tb) tb.textContent = title;
     main.appendChild(h('div', { class: 'page-head' }, h('h2', null, title), sub !== 'sub_' + state.view ? h('p', null, sub) : null));
     add(main, nodes);
     window.scrollTo(0, 0);
@@ -501,7 +579,7 @@
       clear(box);
       var name = { name: d.name };
       var albumOpts = [['', t('no_album')]].concat(albums.map(function (a) { return [a.id, a.name + ' (' + a.photos + ')']; }));
-      var views = ['home', 'calendar', 'photos', 'chores', 'house', 'cameras', 'shopping', 'settings'].map(function (k) { return [k, t('scr_' + k)]; });
+      var views = ['home', 'calendar', 'photos', 'chores', 'house', 'cameras', 'shopping', 'menu', 'settings'].map(function (k) { return [k, t('scr_' + k)]; });
       var haEnts = h('input', { value: c.presence.ha_entities.join(', '), placeholder: 'binary_sensor.pasillo_movimiento, ...' });
       haEnts.addEventListener('input', function () { c.presence.ha_entities = haEnts.value.split(',').map(function (x) { return x.trim(); }).filter(Boolean); });
       var widgetsSel = h('div', { class: 'row tight' });
@@ -749,7 +827,7 @@
     });
   };
 
-  var DEFAULT_ORDER = ['calendar', 'photos', 'chores', 'house', 'cameras', 'shopping'];
+  var DEFAULT_ORDER = ['calendar', 'photos', 'chores', 'house', 'cameras', 'shopping', 'menu'];
   function normalizeOrder(order) {
     var seen = (order || []).filter(function (k, i, a) { return DEFAULT_ORDER.indexOf(k) >= 0 && a.indexOf(k) === i; });
     return seen.concat(DEFAULT_ORDER.filter(function (k) { return seen.indexOf(k) < 0; }));
@@ -1099,6 +1177,176 @@
     });
     ctx.stroke();
   }
+
+  /* ---- weekly menu */
+  var MEAL_KEYS = ['breakfast', 'midmorning', 'lunch', 'snack', 'dinner'];
+  function area(obj, path, label, meal) {
+    var el = h('textarea', { rows: 2, maxlength: 300, autocomplete: 'off' });
+    el.value = get(obj, path) || '';
+    el.addEventListener('input', function () { set(obj, path, el.value); });
+    return h('div', { class: 'mfield m-' + meal }, h('label', null, label), el);
+  }
+  function weekLabel(n, name) { return t('menu_week', { n: n }) + (name ? ' · ' + name : ''); }
+
+  VIEWS.menu = function () {
+    return api('GET', '/api/v1/admin/menu').then(function (r) {
+      var menu = r.menu, sel = 0, box = h('div'), head = h('div'), body = h('div');
+      function blankWeek() { return { name: '', days: [0, 1, 2, 3, 4, 5, 6].map(function () { return {}; }), shared: {} }; }
+      function persist() {
+        return api('PUT', '/api/v1/admin/menu', menu).then(function (x) { menu = x.menu; r = x; flash(box, 'ok', t('saved')); sel = Math.min(sel, Math.max(menu.weeks.length - 1, 0)); draw(); });
+      }
+      function drawHead() {
+        clear(head);
+        if (!r.configured) return;
+        var nameOf = function (w) { return w.name ? ' · ' + w.name : ''; };
+        var opts = menu.weeks.map(function (w, i) { return h('option', { value: String(i + 1), selected: i + 1 === r.current.number }, weekLabel(i + 1, w.name)); });
+        var pick = h('select', null, opts);
+        head.appendChild(h('div', { class: 'card' }, h('h3', null, t('menu_current')),
+          h('div', { class: 'menu-now' },
+            h('div', { class: 'big' }, h('b', null, String(r.current.number)), h('span', null, t('menu_now_is', { n: r.current.number, name: nameOf(r.current) }))),
+            h('div', { class: 'muted' }, t('menu_next_is', { n: r.next.number, name: r.next.name ? ' · ' + r.next.name : '' }))),
+          h('div', { class: 'row' }, h('div', null, h('label', null, t('menu_set_current')), pick),
+            h('div', null, btn(t('menu_apply'), function () {
+              return api('PUT', '/api/v1/admin/menu', menu).then(function () { return api('POST', '/api/v1/admin/menu/current-week', { week: Number(pick.value) }); })
+                .then(function (x) { menu = x.menu; r = x; flash(box, 'ok', t('menu_applied')); draw(); });
+            }, 'pri'))),
+          h('p', { class: 'muted' }, t('menu_rotation'))));
+      }
+      function drawMeals() {
+        var row = h('div', { class: 'row tight' });
+        MEAL_KEYS.forEach(function (m) {
+          var el = h('input', { type: 'checkbox', checked: menu.meals.indexOf(m) >= 0 });
+          el.addEventListener('change', function () {
+            menu.meals = MEAL_KEYS.filter(function (k) { return k === m ? el.checked : menu.meals.indexOf(k) >= 0; });
+            drawWeek();
+          });
+          row.appendChild(h('label', { class: 'chk' }, el, t('meal_' + m)));
+        });
+        return h('div', { class: 'card' }, h('h3', null, t('menu_meals')), h('p', { class: 'muted' }, t('menu_meals_help')), row);
+      }
+      var weekBox = h('div');
+      function drawWeek() {
+        clear(weekBox);
+        var w = menu.weeks[sel];
+        if (!w) return;
+        var tabs = h('div', { class: 'wtabs', role: 'tablist' });
+        menu.weeks.forEach(function (x, i) {
+          tabs.appendChild(h('button', { class: 'wtab' + (i === sel ? ' on' : ''), type: 'button', role: 'tab', 'aria-selected': i === sel ? 'true' : 'false', onclick: function () { sel = i; drawWeek(); } },
+            String(i + 1), r.configured && r.current.number === i + 1 ? h('i', { title: t('menu_current') }) : null));
+        });
+        if (menu.weeks.length < 12) tabs.appendChild(h('button', { class: 'wtab add', type: 'button', 'aria-label': t('menu_add_week'), title: t('menu_add_week'), onclick: function () { menu.weeks.push(blankWeek()); sel = menu.weeks.length - 1; drawWeek(); } }, icon('plus')));
+        function move(d) {
+          var j = sel + d;
+          if (j < 0 || j >= menu.weeks.length) return;
+          var x = menu.weeks[sel]; menu.weeks[sel] = menu.weeks[j]; menu.weeks[j] = x; sel = j; drawWeek();
+        }
+        var days = h('div', { class: 'mdays' });
+        t('days_long').split(',').forEach(function (dn, i) {
+          var day = h('div', { class: 'mday' }, h('h4', null, dn));
+          menu.meals.forEach(function (m) { day.appendChild(area(w, 'days.' + i + '.' + m, t('meal_' + m), m)); });
+          days.appendChild(day);
+        });
+        var shared = h('div', { class: 'mshared' }, h('h4', null, t('menu_shared')), h('p', { class: 'muted' }, t('menu_shared_help')));
+        var srow = h('div', { class: 'mdays wide' });
+        menu.meals.forEach(function (m) { srow.appendChild(area(w, 'shared.' + m, t('meal_' + m), m)); });
+        shared.appendChild(srow);
+        weekBox.appendChild(h('div', { class: 'card' }, h('h3', null, t('menu_weeks')), tabs,
+          h('div', { class: 'row' }, input(w, 'name', t('menu_week_name'))),
+          menu.meals.length ? [days, shared] : null,
+          h('div', { class: 'actions' },
+            h('button', { class: 'btn', type: 'button', title: t('menu_move_left'), 'aria-label': t('menu_move_left'), disabled: sel === 0, onclick: function () { move(-1); } }, icon('up')),
+            h('button', { class: 'btn', type: 'button', title: t('menu_move_right'), 'aria-label': t('menu_move_right'), disabled: sel === menu.weeks.length - 1, onclick: function () { move(1); } }, icon('down')),
+            h('button', { class: 'btn', type: 'button', onclick: function () { if (menu.weeks.length >= 12) return; menu.weeks.splice(sel + 1, 0, JSON.parse(JSON.stringify(w))); sel += 1; drawWeek(); } }, icon('copy'), t('menu_dup_week')),
+            h('button', { class: 'btn bad', type: 'button', onclick: function () { if (!confirm(t('menu_del_confirm'))) return; menu.weeks.splice(sel, 1); sel = Math.max(0, sel - 1); draw(); } }, t('menu_del_week')))));
+      }
+      function draw() {
+        drawHead();
+        clear(body);
+        if (!menu.weeks.length) {
+          body.appendChild(h('div', { class: 'empty' }, h('p', null, t('menu_none')), btn(t('menu_first'), function () { menu.weeks.push(blankWeek()); sel = 0; draw(); }, 'pri')));
+          return;
+        }
+        body.appendChild(drawMeals());
+        body.appendChild(weekBox);
+        drawWeek();
+        body.appendChild(h('div', { class: 'actions sticky-save' }, btn(t('save'), persist, 'pri')));
+      }
+      page(t('nav_menu'), [head, body]);
+      draw();
+    });
+  };
+
+  /* ---- agents (MCP) */
+  function copyText(text, source) {
+    if (navigator.clipboard && window.isSecureContext) return navigator.clipboard.writeText(text);
+    source.focus(); source.select();
+    try { document.execCommand('copy'); } catch (e) { /* the text stays selected for a manual copy */ }
+    return Promise.resolve();
+  }
+  function snippet(url, token) {
+    return JSON.stringify({ mcpServers: { homehq: { url: url, headers: { Authorization: 'Bearer ' + token } } } }, null, 2);
+  }
+
+  VIEWS.agents = function () {
+    return Promise.resolve().then(function () {
+      var url = location.origin + '/mcp', box = h('div'), fresh = h('div');
+      var form = { name: '', scope: 'read', expires_days: '90' };
+      var urlEl = h('input', { readonly: true, value: url });
+      var cfgEl = h('textarea', { readonly: true, class: 'snip', rows: 9 });
+      cfgEl.value = snippet(url, 'hqa_…');
+      var created = h('div', { class: 'card' }, h('h3', null, t('ag_new')),
+        h('div', { class: 'row' }, input(form, 'name', t('ag_name')),
+          select(form, 'scope', t('ag_scope'), [['read', t('ag_read')], ['full', t('ag_full')]]),
+          select(form, 'expires_days', t('ag_exp'), [['30', t('ag_days', { n: 30 })], ['90', t('ag_days', { n: 90 })], ['365', t('ag_days', { n: 365 })], ['', t('never')]])),
+        h('div', { class: 'actions' }, btn(t('ag_create'), function () {
+          if (!form.name.trim()) throw new Error(t('name'));
+          return api('POST', '/api/v1/admin/tokens', { name: form.name.trim(), scope: form.scope, expires_days: form.expires_days ? Number(form.expires_days) : null })
+            .then(function (tk) {
+              var tokEl = h('input', { readonly: true, value: tk.token, class: 'secret' });
+              var cfg = h('textarea', { readonly: true, class: 'snip', rows: 9 });
+              cfg.value = snippet(url, tk.token);
+              clear(fresh);
+              fresh.appendChild(h('div', { class: 'card fresh' }, h('h3', null, tk.name), banner('ok', t('ag_once')),
+                h('label', null, t('ag_token')), tokEl,
+                h('div', { class: 'actions' }, btn(t('ag_copy'), function () { return copyText(tk.token, tokEl).then(function () { flash(box, 'ok', t('ag_copied')); }); })),
+                h('label', null, t('ag_config')), cfg,
+                h('div', { class: 'actions' }, btn(t('ag_copy'), function () { return copyText(cfg.value, cfg).then(function () { flash(box, 'ok', t('ag_copied')); }); }))));
+              form.name = '';
+              return listTokens();
+            });
+        }, 'pri')));
+      var listBox = h('div');
+      function status(tk) {
+        if (tk.revoked) return h('span', { class: 'pill bad' }, t('ag_revoked'));
+        if (tk.expires_at && new Date(tk.expires_at.endsWith('Z') ? tk.expires_at : tk.expires_at + 'Z') < new Date()) return h('span', { class: 'pill warn' }, t('ag_expired'));
+        return h('span', { class: 'pill ok' }, t('ag_active'));
+      }
+      function listTokens() {
+        return api('GET', '/api/v1/admin/tokens').then(function (rows) {
+          clear(listBox);
+          if (!rows.length) { listBox.appendChild(h('p', { class: 'muted' }, t('ag_none'))); return; }
+          var tb = h('table', null, h('tr', null, h('th', null, t('name')), h('th', null, t('ag_token')), h('th', null, t('ag_scope')), h('th', null, t('status')), h('th', null, t('ag_last')), h('th', null, t('ag_expires')), h('th', null, '')));
+          rows.forEach(function (tk) {
+            tb.appendChild(h('tr', null, h('td', null, tk.name), h('td', null, h('code', null, tk.prefix + '…')),
+              h('td', null, h('span', { class: 'pill' }, tk.scope === 'full' ? t('ag_full') : t('ag_read'))), h('td', null, status(tk)),
+              h('td', null, fmtDate(tk.last_used_at)), h('td', null, tk.expires_at ? fmtDate(tk.expires_at) : t('never')),
+              h('td', null, tk.revoked ? null : btn(t('revoke'), function () {
+                if (!confirm(t('ag_revoke_confirm'))) return;
+                return api('DELETE', '/api/v1/admin/tokens/' + tk.id).then(listTokens);
+              }, 'bad'))));
+          });
+          listBox.appendChild(tb);
+        });
+      }
+      page(t('nav_agents'), box);
+      box.appendChild(h('div', { class: 'card' }, h('h3', null, t('ag_url')), h('div', { class: 'copyrow' }, urlEl, btn(t('ag_copy'), function () { return copyText(url, urlEl).then(function () { flash(box, 'ok', t('ag_copied')); }); })),
+        h('label', null, t('ag_config')), cfgEl, banner('err', t('ag_security'))));
+      box.appendChild(created);
+      box.appendChild(fresh);
+      box.appendChild(h('div', { class: 'card' }, h('h3', null, t('ag_tokens')), listBox));
+      return listTokens();
+    });
+  };
 
   VIEWS.account = function () {
     page(t('nav_account'), [h('div', { class: 'card' }, h('h3', null, t('change_pw')), passwordForm())]);

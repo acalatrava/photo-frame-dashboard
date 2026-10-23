@@ -362,7 +362,7 @@ class PhotosConfig(Strict):
 
 
 class HomeLayoutConfig(Strict):
-    default_view: Literal["home", "calendar", "photos", "house", "chores", "cameras", "shopping", "settings"] = "home"
+    default_view: Literal["home", "calendar", "photos", "house", "chores", "cameras", "shopping", "menu", "settings"] = "home"
     # How the calendar opens; whoever is at the frame can still switch it.
     calendar_mode: Literal["day", "3day", "week", "month"] = "day"
     ambient_after_s: int = Field(120, ge=15, le=3600)
