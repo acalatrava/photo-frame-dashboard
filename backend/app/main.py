@@ -1,5 +1,6 @@
 import asyncio
 import logging
+import os
 import secrets as pysecrets
 from contextlib import asynccontextmanager
 from pathlib import Path
@@ -12,6 +13,7 @@ from pydantic import ValidationError
 from sqlalchemy import text
 
 from . import state
+from .api.deps import is_https
 from .api import (admin_auth, admin_devices, admin_menu, admin_settings, admin_tokens, admin_updates, device_api, media,
                   pairing)
 from .mcp import server as mcp_server
@@ -28,6 +30,7 @@ from .services.weather import service as weather
 
 log = logging.getLogger("homehq")
 STATIC = Path(__file__).parent / "static"
+MAX_JSON_BODY = 2 * 1024 * 1024
 
 
 def bootstrap_admin() -> None:
@@ -49,8 +52,10 @@ def bootstrap_admin() -> None:
             log.warning("=" * 60)
             path = s.secrets_dir / "initial-admin-password.txt"
             path.parent.mkdir(parents=True, exist_ok=True)
-            path.write_text(f"{s.admin_user}:{password}\n")
-            path.chmod(0o600)
+            path.unlink(missing_ok=True)
+            fd = os.open(path, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o600)
+            with os.fdopen(fd, "w") as fh:
+                fh.write(f"{s.admin_user}:{password}\n")
 
 
 def on_ha_change(changed: list[dict]) -> None:
@@ -129,10 +134,23 @@ def create_app() -> FastAPI:
                        allow_headers=["Authorization", "Content-Type"], max_age=600)
 
     @app.middleware("http")
+    async def limit_body(request: Request, call_next):
+        """JSON endpoints never need big bodies; only the two upload routes may be large."""
+        path = request.url.path
+        big = path.startswith("/api/v1/admin/albums/") and path.endswith("/photos") or path == "/api/v1/admin/updates"
+        if request.method in ("POST", "PUT", "PATCH") and not big:
+            declared = request.headers.get("content-length")
+            if declared and declared.isdigit() and int(declared) > MAX_JSON_BODY:
+                return JSONResponse({"detail": "Petición demasiado grande"}, status_code=413)
+        return await call_next(request)
+
+    @app.middleware("http")
     async def security_headers(request: Request, call_next):
         resp = await call_next(request)
         resp.headers.setdefault("X-Content-Type-Options", "nosniff")
         resp.headers.setdefault("Referrer-Policy", "no-referrer")
+        if is_https(request):
+            resp.headers.setdefault("Strict-Transport-Security", "max-age=31536000")
         if request.url.path.startswith(("/admin", "/api/v1/admin")):
             resp.headers.setdefault("X-Frame-Options", "DENY")
             if request.url.path.startswith("/admin"):
@@ -141,6 +159,8 @@ def create_app() -> FastAPI:
                     "default-src 'self'; img-src 'self' data:; style-src 'self'; script-src 'self'; "
                     "base-uri 'none'; form-action 'self'; frame-ancestors 'none'")
             resp.headers.setdefault("Cache-Control", "no-store") if request.url.path.startswith("/api") else None
+        if request.url.path.startswith(("/mcp", "/api/v1/device")):
+            resp.headers.setdefault("Cache-Control", "no-store")
         # Chrome's Private Network Access preflight for LAN backends.
         if request.method == "OPTIONS":
             resp.headers["Access-Control-Allow-Private-Network"] = "true"

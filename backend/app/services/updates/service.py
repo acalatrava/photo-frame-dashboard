@@ -87,7 +87,7 @@ def add_release(data: bytes, filename: str, notes: str = "") -> tuple[dict, bool
     # Android refuses to update an app with a different signing certificate, so reject it here rather than
     # letting every frame download something it can never install.
     known = {m["cert_sha256"] for m in list_releases() if m["cert_sha256"]}
-    if known and info.cert_sha256 and info.cert_sha256 not in known:
+    if known and info.cert_sha256 not in known:
         raise UpdateError("El APK está firmado con otra clave que las versiones anteriores: los marcos no podrían instalarlo")
     folder = _root() / str(info.version_code)
     folder.mkdir(parents=True, exist_ok=True)

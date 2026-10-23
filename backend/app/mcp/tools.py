@@ -316,14 +316,8 @@ rest("delete_photo", "Borra una foto.", "DELETE", f"{A}/photos/{{photo_id}}", {"
 
 # ------------------------------------------------------------------ app updates
 rest("list_app_updates", "Versiones de la app de los marcos subidas al servidor, cuál está publicada y el modo de "
-     "actualización (off, notify, auto). Subir un APK nuevo se hace desde el panel o con publish.sh.", "GET",
+     "actualización (off, notify, auto). Subir, publicar o borrar un APK solo se puede hacer desde el panel o con publish.sh, por seguridad.", "GET",
      f"{A}/updates")
-rest("publish_app_update", "Publica una versión ya subida para que los marcos la ofrezcan.", "POST",
-     f"{A}/updates/{{version_code}}/publish", {"version_code": I}, ("version_code",), idempotent=True)
-rest("unpublish_app_update", "Retira la versión publicada: los marcos dejan de ofrecer actualización.", "POST",
-     f"{A}/updates/unpublish")
-rest("delete_app_update", "Borra una versión no publicada.", "DELETE", f"{A}/updates/{{version_code}}",
-     {"version_code": I}, ("version_code",), destructive=True)
 rest("set_update_mode", "Modo de actualización de los marcos: off, notify (avisan) o auto (descargan solos).", "PUT",
      f"{A}/updates/settings", {"mode": {"type": "string", "enum": ["off", "notify", "auto"]}}, ("mode",),
      idempotent=True)

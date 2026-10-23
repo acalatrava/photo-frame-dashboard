@@ -32,7 +32,10 @@ def _secure(request: Request) -> bool:
         return True
     if mode in ("false", "0", "no"):
         return False
-    return is_https(request)
+    # Believing a forged "https" only ever makes the cookie stricter, so this header is safe to honour even
+    # when the proxy is not formally trusted.
+    forwarded = request.headers.get("x-forwarded-proto", "").split(",")[0].strip().lower()
+    return is_https(request) or forwarded == "https"
 
 
 def _set_cookies(request: Request, response: Response, user: AdminUser, refresh: str) -> None:
@@ -69,7 +72,7 @@ def _csrf(request: Request) -> None:
 @router.post("/login")
 def login(body: LoginBody, request: Request, response: Response, db: Session = Depends(get_db)):
     _csrf(request)
-    key = f"{client_ip(request)}|{body.username.lower()}"
+    key = client_ip(request)
     if not login_limiter.check(key):
         raise HTTPException(429, "Demasiados intentos. Espera unos minutos.")
     user = db.query(AdminUser).filter(AdminUser.username == body.username).one_or_none()
@@ -109,6 +112,9 @@ def refresh(request: Request, response: Response, db: Session = Depends(get_db))
         _clear_cookies(response)
         raise HTTPException(401, "Sesión caducada")
     user = db.get(AdminUser, row.user_id)
+    if not user:
+        _clear_cookies(response)
+        raise HTTPException(401, "Sesión no válida")
     row.used_at = now
     new_raw = _issue_refresh(db, request, user, family=row.family_id)
     _set_cookies(request, response, user, new_raw)
@@ -145,4 +151,6 @@ def change_password(body: PasswordBody, request: Request, response: Response,
         .update({"revoked_at": datetime.now(timezone.utc)})
     raw = _issue_refresh(db, request, user)
     _set_cookies(request, response, user, raw)
+    # The generated first-run password is useless after this and must not linger on disk.
+    (get_settings().secrets_dir / "initial-admin-password.txt").unlink(missing_ok=True)
     return {"ok": True}

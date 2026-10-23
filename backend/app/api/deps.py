@@ -15,10 +15,11 @@ ADMIN_HEADER = "x-homehq-admin"
 
 
 def client_ip(request: Request) -> str:
-    if get_settings().trust_proxy:
-        fwd = request.headers.get("x-forwarded-for")
-        if fwd:
-            return fwd.split(",")[0].strip()
+    st = get_settings()
+    if st.trust_proxy:
+        parts = [p.strip() for p in request.headers.get("x-forwarded-for", "").split(",") if p.strip()]
+        if parts:
+            return parts[-st.trusted_proxy_hops] if len(parts) >= st.trusted_proxy_hops else parts[0]
     return request.client.host if request.client else "?"
 
 
@@ -40,14 +41,14 @@ def _api_token_user(request: Request, db: Session, raw: str, enforce_scope: bool
     """Authenticate `Authorization: Bearer hqa_...`. Read tokens may only use safe methods unless the caller
     enforces scope itself (the MCP endpoint does, per tool)."""
     ip = client_ip(request)
-    if not _token_failures.check(ip):
+    if _token_failures.blocked(ip):
         raise HTTPException(429, "Demasiados intentos con un token no válido")
     row = db.query(ApiToken).filter(ApiToken.token_hash == security.sha256_hex(raw)).one_or_none() \
         if raw.startswith(API_TOKEN_PREFIX) else None
     now = datetime.now(timezone.utc)
     if not row or row.revoked_at or (row.expires_at and _as_utc(row.expires_at) < now):
+        _token_failures.fail(ip)
         raise HTTPException(401, "Token no válido, revocado o caducado", headers={"WWW-Authenticate": "Bearer"})
-    _token_failures.reset(ip)
     if enforce_scope and row.scope != "full" and request.method not in ("GET", "HEAD", "OPTIONS"):
         raise HTTPException(403, "Este token es de solo lectura")
     user = db.get(AdminUser, row.user_id)
@@ -126,10 +127,31 @@ class RateLimiter:
         if ok:
             arr.append(now)
         self.hits[key] = arr
+        self._prune(now)
         return ok
+
+    def blocked(self, key: str) -> bool:
+        """True when the key has used up its allowance. Does not count as an attempt."""
+        now = time.time()
+        return len([t for t in self.hits.get(key, []) if now - t < self.window]) >= self.limit
+
+    def fail(self, key: str) -> None:
+        """Counts one failed attempt."""
+        now = time.time()
+        self.hits[key] = [t for t in self.hits.get(key, []) if now - t < self.window] + [now]
+        self._prune(now)
 
     def reset(self, key: str) -> None:
         self.hits.pop(key, None)
+
+    def _prune(self, now: float) -> None:
+        """Keeps memory bounded when an attacker invents a new key for every request."""
+        if len(self.hits) > 5000:
+            live = {k: v for k, v in self.hits.items() if v and now - v[-1] < self.window}
+            if len(live) > 4000:
+                newest = sorted(live, key=lambda k: live[k][-1], reverse=True)[:2000]
+                live = {k: live[k] for k in newest}
+            self.hits = live
 
 
 _token_failures = RateLimiter(30, 900)

@@ -12,9 +12,12 @@ from ..models import AdminUser
 from ..schemas.config import UpdatesConfig
 from ..services import config_service
 from ..services.updates import service as upd
-from .deps import admin_required
+from .deps import admin_required, admin_session_required
 
 router = APIRouter(prefix="/api/v1/admin/updates", tags=["admin-updates"])
+
+# What the frames install is code that runs on them, so changing it needs a logged-in admin session; an API token
+# (even a full one) can only read this section and change the update mode.
 
 
 class UpdateSettings(BaseModel):
@@ -35,7 +38,7 @@ def overview(_: AdminUser = Depends(admin_required), db: Session = Depends(get_d
 
 @router.post("")
 async def upload(request: Request, filename: str = "homehq.apk", notes: str = "",
-                 _: AdminUser = Depends(admin_required), db: Session = Depends(get_db)):
+                 _: AdminUser = Depends(admin_session_required), db: Session = Depends(get_db)):
     """Raw body upload, like photos. The APK is stored but not offered to the frames until it is published."""
     limit = get_settings().apk_max_upload_mb * 1024 * 1024
     if int(request.headers.get("content-length") or 0) > limit:
@@ -54,7 +57,7 @@ async def upload(request: Request, filename: str = "homehq.apk", notes: str = ""
 
 
 @router.post("/{version_code}/publish")
-def publish(version_code: int, _: AdminUser = Depends(admin_required), db: Session = Depends(get_db)):
+def publish(version_code: int, _: AdminUser = Depends(admin_session_required), db: Session = Depends(get_db)):
     try:
         release = upd.publish(version_code)
     except upd.UpdateError as exc:
@@ -64,14 +67,14 @@ def publish(version_code: int, _: AdminUser = Depends(admin_required), db: Sessi
 
 
 @router.post("/unpublish")
-def unpublish(_: AdminUser = Depends(admin_required), db: Session = Depends(get_db)):
+def unpublish(_: AdminUser = Depends(admin_session_required), db: Session = Depends(get_db)):
     upd.unpublish()
     bus.publish("update.changed", {"version_code": None})
     return _overview(db)
 
 
 @router.delete("/{version_code}")
-def remove(version_code: int, _: AdminUser = Depends(admin_required), db: Session = Depends(get_db)):
+def remove(version_code: int, _: AdminUser = Depends(admin_session_required), db: Session = Depends(get_db)):
     try:
         upd.delete(version_code)
     except upd.UpdateError as exc:

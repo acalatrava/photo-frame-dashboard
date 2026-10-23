@@ -17,12 +17,15 @@ import recurring_ical_events
 from sqlalchemy.orm import Session
 
 from ...core import secrets_store
+from ...core.http import TooLarge, get_limited
 from ...core.db import session_scope
 from ...core.events import bus
 from ...models import CalendarEvent, SourceStatus
 from ...schemas.config import CalendarSource
 from .. import config_service
 from .legacy_emoji import LEGACY_EMOJI
+
+MAX_ICS_BYTES = 15 * 1024 * 1024
 
 log = logging.getLogger("homehq.calendar")
 PAST_DAYS, FUTURE_DAYS = 45, 150
@@ -75,7 +78,7 @@ def parse_ics(data: bytes, tz: ZoneInfo, now: datetime | None = None) -> list[di
 
 async def fetch_ics(src: CalendarSource, tz: ZoneInfo) -> list[dict]:
     async with httpx.AsyncClient(timeout=30, follow_redirects=True) as c:
-        r = await c.get(src.url)
+        r = await get_limited(c, src.url, MAX_ICS_BYTES)
     r.raise_for_status()
     return await asyncio.to_thread(parse_ics, r.content, tz)
 

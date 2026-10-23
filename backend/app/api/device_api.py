@@ -1,11 +1,12 @@
 import asyncio
+import json
 import time
 from datetime import datetime, timezone
 from typing import Literal
 
 from fastapi import APIRouter, Depends, HTTPException, Request
 from fastapi.responses import FileResponse, StreamingResponse
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, field_validator
 from sqlalchemy.orm import Session
 
 from .. import state
@@ -54,15 +55,25 @@ class ChoreOpsBody(BaseModel):
     ops: list[ChoreOp] = Field(max_length=200)
 
 
+def _small(value: dict) -> dict:
+    if len(json.dumps(value, default=str)) > 16 * 1024:
+        raise ValueError("demasiado grande")
+    return value
+
+
 class HaServiceBody(BaseModel):
     entity_id: str = Field(max_length=120)
     service: str = Field(max_length=60)
     data: dict = {}
 
+    _cap = field_validator("data")(_small)
+
 
 class HeartbeatBody(BaseModel):
     app_version: str | None = Field(None, max_length=32)
     status: dict = {}
+
+    _cap = field_validator("status")(_small)
 
 
 class TelemetryBody(BaseModel):

@@ -12,6 +12,7 @@ from typing import AsyncIterator
 import httpx
 
 from ...core import security
+from ...core.http import TooLarge, get_limited
 from ...models import Device
 from ...schemas.config import CameraSource, GlobalConfig
 from ..homeassistant.client import HAClient, HAError
@@ -19,6 +20,7 @@ from ..homeassistant.client import HAClient, HAError
 log = logging.getLogger("homehq.cameras")
 BOUNDARY = "homehqframe"
 MAX_STREAMS = 8
+MAX_SNAPSHOT_BYTES = 10 * 1024 * 1024
 MAX_STREAM_SECONDS = 15 * 60
 
 _active = 0
@@ -69,7 +71,7 @@ async def fetch_snapshot(g: GlobalConfig, cam: CameraSource, ha: HAClient, clien
         own = client is None
         client = client or httpx.AsyncClient(verify=verify, timeout=8, follow_redirects=True)
         try:
-            r = await client.get(url)
+            r = await get_limited(client, url, MAX_SNAPSHOT_BYTES)
         finally:
             if own:
                 await client.aclose()
@@ -80,6 +82,8 @@ async def fetch_snapshot(g: GlobalConfig, cam: CameraSource, ha: HAClient, clien
         return r.content
     except HAError as exc:
         raise CameraError(str(exc)) from exc
+    except TooLarge as exc:
+        raise CameraError("La imagen de la cámara es demasiado grande") from exc
     except httpx.HTTPError as exc:
         raise CameraError(f"No se pudo conectar con la cámara: {exc.__class__.__name__}") from exc
 

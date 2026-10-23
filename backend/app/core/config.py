@@ -33,6 +33,9 @@ class Settings(BaseSettings):
     apk_max_upload_mb: int = 80
     # Trust X-Forwarded-Proto/For from a reverse proxy.
     trust_proxy: bool = False
+    # How many reverse proxies sit in front. The client address is the entry that many places from the END of
+    # X-Forwarded-For: everything to its left was written by the client and can be forged.
+    trusted_proxy_hops: int = Field(1, ge=1, le=5)
     public_dashboard: bool = True
 
     @property
