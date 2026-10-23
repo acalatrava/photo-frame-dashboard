@@ -81,6 +81,20 @@ telemetry ring buffer and sensor recordings.
   request arrived over HTTPS. A plain-HTTP LAN install therefore sends the cookies without `Secure`;
   put the panel behind HTTPS and set `HOMEHQ_COOKIE_SECURE=true` as soon as you can.
 
+- Agents: `POST /mcp` with an API token (`Authorization: Bearer hqa_...`, stored as SHA-256, scope `read` or `full`,
+  optional expiry, revocable, 30 failed attempts per 15 minutes per address). Tokens never reach token management, the
+  password change or the frame APK upload/publish/delete, which require a real panel session. See
+  [homehq-mcp.md](homehq-mcp.md).
+- Every route is audited by a test (`backend/tests/test_security.py`): a new endpoint without a guard fails the suite
+  until it is added to the short list of deliberately public ones (login, refresh, logout, pairing, signed media).
+- Behind a proxy the client address comes from the right end of `X-Forwarded-For` (`HOMEHQ_TRUSTED_PROXY_HOPS`).
+  `Secure` is also forced on when `X-Forwarded-Proto: https` arrives, since a forged value can only make cookies stricter.
+- JSON bodies over 2 MB are refused (only photo and APK uploads may be larger), calendar and camera downloads are capped
+  (15 MB and 10 MB), device-supplied JSON is capped at 16 KB, and `/mcp` and `/api/v1/device/*` answer with
+  `Cache-Control: no-store`. HSTS is sent when the request is HTTPS.
+- The first-run admin password file is created with mode 0600 and deleted when the password is changed.
+- APKs must carry the signing certificate of the releases already stored; one whose certificate cannot be read is refused.
+
 ## Data flow on the frame
 
 1. The bundle reads the saved backend address and device token from native private preferences (not from

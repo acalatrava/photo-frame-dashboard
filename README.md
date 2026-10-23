@@ -101,7 +101,8 @@ docker compose up -d --build        # then open http://<server>:8787/admin/
 Start with the **[user guide](docs/homehq-user-guide.md)**. The rest of the Home HQ docs:
 [architecture](docs/homehq-architecture.md), [install, variables, backups, updates](docs/homehq-install.md),
 [pairing](docs/homehq-pairing.md), [Home Assistant and the Amazon list](docs/homehq-homeassistant.md),
-[updating the frame app over the network](docs/homehq-updates.md),
+[updating the frame app over the network](docs/homehq-updates.md), [weekly menu](docs/homehq-menu.md),
+[MCP for AI agents](docs/homehq-mcp.md),
 [chores, cameras, Frigate and screen order](docs/homehq-chores-cameras.md), [shopping conflict policy](docs/shopping.md),
 [light sensor and screen control](docs/light-sensor.md), [troubleshooting](docs/homehq-troubleshooting.md) and the
 [audit with verification status](docs/homehq-audit.md).

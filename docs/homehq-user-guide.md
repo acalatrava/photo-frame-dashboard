@@ -88,6 +88,11 @@ frame as MJPEG; the frame never connects to the camera system directly.
 The shopping list, either local to the server or a Home Assistant `todo.*` list (for example the Alexa list).
 Changes made offline are queued and replayed in order; the conflict policy is in [shopping.md](shopping.md).
 
+### Menu (*Menú*)
+
+The week's menu with today's column highlighted. It only appears once a menu has been planned in the panel; see
+[homehq-menu.md](homehq-menu.md).
+
 ### Settings (*Ajustes*)
 
 Connection state, display and screen-off mode, the light-sensor activity graph with its sensitivity switch (low,
@@ -131,6 +136,8 @@ is in Spanish or English (button at the bottom of the side bar) and follows the 
 | **Home Assistant** | URL, long-lived token (stored encrypted, never shown again), TLS check, test connection, authorised entities and their customisation. |
 | **Sensor de luz** | Live lux reading and calibration recordings (CSV download). |
 | **General** | Language, time zone, location for the weather, and the people (name, colour, optional `person.*` entity for presence). |
+| **Menú semanal** | Breakfast, lunch and dinner for each day, in one or several weeks that repeat. See [homehq-menu.md](homehq-menu.md). |
+| **Agentes (MCP)** | API tokens so an AI agent can configure Home HQ. See [homehq-mcp.md](homehq-mcp.md). |
 | **Cuenta** | Change the admin password. |
 
 Changes reach connected frames immediately over a live connection, with no restart.

@@ -32,7 +32,7 @@ The service then listens on the host's port 8787 and announces `_homehq._tcp`. C
 ### HTTPS
 
 Put a reverse proxy (Caddy, Traefik, nginx) in front, forward `X-Forwarded-Proto` and `X-Forwarded-For`, then set
-`HOMEHQ_TRUST_PROXY=true` and `HOMEHQ_COOKIE_SECURE=true`. Frames accept `http://` or `https://` backend addresses.
+`HOMEHQ_TRUST_PROXY=true` and `HOMEHQ_COOKIE_SECURE=true`. If more than one proxy is chained (for example a tunnel and then Caddy), set `HOMEHQ_TRUSTED_PROXY_HOPS` to how many there are. The client address is taken that many entries from the right of `X-Forwarded-For`, because whatever is to the left was written by the client and can be forged to dodge the login rate limit. Frames accept `http://` or `https://` backend addresses.
 
 ## 2. Environment variables
 
@@ -43,6 +43,7 @@ Put a reverse proxy (Caddy, Traefik, nginx) in front, forward `X-Forwarded-Proto
 | `HOMEHQ_SECRET_KEY` | generated | Base64 Fernet key for stored secrets. Empty: `data/secrets/master.key`. |
 | `HOMEHQ_COOKIE_SECURE` | `auto` | `auto`, `true` or `false`. See the security note in [homehq-architecture.md](homehq-architecture.md). |
 | `HOMEHQ_TRUST_PROXY` | `false` | Trust `X-Forwarded-*` headers. Only behind a proxy you control. |
+| `HOMEHQ_TRUSTED_PROXY_HOPS` | `1` | Number of reverse proxies in front (1 to 5). Only used with `HOMEHQ_TRUST_PROXY=true`. |
 | `HOMEHQ_CORS_ORIGINS` | empty | Extra allowed browser origins, comma separated. |
 | `HOMEHQ_MDNS_ENABLED` | `false` | Announce `_homehq._tcp` (needs host networking). |
 | `HOMEHQ_ACCESS_TOKEN_MINUTES` / `HOMEHQ_REFRESH_TOKEN_DAYS` | `15` / `7` | Admin session lifetimes. |

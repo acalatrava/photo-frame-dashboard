@@ -20,6 +20,11 @@
 | An event is in nobody's column on Today | It has no person: its calendar is linked to nobody and its notes carry no `@user:name` tag. That is the intended meaning of a family event; it shows in the next-up card and in the calendar. Link the calendar to people, or tag the event. |
 | An `@user:` tag does nothing | The name must match a person's id, name or first name (case and accents do not matter) and the calendar must have synced since. An unknown name is ignored. Check *General* for the exact names. |
 | An emoji shows as an empty box | Frames before version 3.0 use the Android 6 system font, which stops at Unicode 8; update the app ([homehq-updates.md](homehq-updates.md)). From 3.0 on the frame has its own emoji font. |
+| The Menú screen is missing on the frame | It only appears once the menu has at least one week (*Menú semanal* in the panel) and is not hidden in *Pantallas*. |
+| The menu shows the wrong week | Set it with *Semana actual > Esta semana es la… > Aplicar*. Weeks change on Monday according to the frame's clock and time zone, so check the clock note above first. |
+| An agent gets 401 or 429 from `/mcp` | 401: the token is wrong, revoked or expired (see *Agentes (MCP)*). 429: 30 wrong tokens from one address in 15 minutes; wait, or fix the token. Behind a proxy without `HOMEHQ_TRUST_PROXY=true` every client shares the proxy's address. |
+| An agent gets 403 on publishing or deleting an APK, creating tokens or changing the password | By design: those need a logged-in panel session, not an API token ([homehq-mcp.md](homehq-mcp.md)). `kiosk/publish.sh` logs in with the admin password, so it still works. |
+| Login is blocked right after changing proxy settings | The limiter counts per client address. Behind a proxy set `HOMEHQ_TRUST_PROXY=true` and `HOMEHQ_TRUSTED_PROXY_HOPS`; otherwise all users look like one address. |
 | Backend does not start | `docker compose logs homehq`. `HOMEHQ_SECRET_KEY` must be a valid Fernet key (32 url-safe base64 bytes) or empty. |
 
 Logs: `data/logs/homehq.log` (rotating). On the frame: `adb logcat -s HomeHQ chromium`. Remote WebView debugging is off by default;
