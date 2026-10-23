@@ -171,9 +171,9 @@
     Object.keys(App.views).forEach(function (k) { if (k !== App.current) App.views[k]._dirty = true; });
     refreshStale(1500);
   }
-  // Chores and cameras only appear in the rail when the server has some configured.
+  // Chores, cameras and the menu only appear in the rail when the server has some configured.
   App.syncRail = function () {
-    var show = { chores: D.chores.configured > 0, cameras: D.cameras.length > 0 };
+    var show = { chores: D.chores.configured > 0, cameras: D.cameras.length > 0, menu: !!(D.menu && D.menu.configured) };
     Object.keys(show).forEach(function (k) {
       var b = $('.rail-item[data-go="' + k + '"]');
       if (b) b.hidden = !show[k];

@@ -10,6 +10,7 @@ window.DATA = {
   ha: { enabled: false, connected: false, entities: [] },
   chores: { day: '', configured: 0, items: [] },
   cameras: [],
+  menu: { configured: false, meals: [], weeks: [], start_week: 1, start_date: '' },
   weather: null,
   photos: [],
   presence: { ha_active: null },
