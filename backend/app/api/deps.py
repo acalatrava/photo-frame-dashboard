@@ -36,8 +36,9 @@ def _as_utc(dt: datetime) -> datetime:
     return dt if dt.tzinfo else dt.replace(tzinfo=timezone.utc)
 
 
-def _api_token_user(request: Request, db: Session, raw: str) -> AdminUser:
-    """Authenticate `Authorization: Bearer hqa_...`. Read tokens may only use safe methods."""
+def _api_token_user(request: Request, db: Session, raw: str, enforce_scope: bool = True) -> AdminUser:
+    """Authenticate `Authorization: Bearer hqa_...`. Read tokens may only use safe methods unless the caller
+    enforces scope itself (the MCP endpoint does, per tool)."""
     ip = client_ip(request)
     if not _token_failures.check(ip):
         raise HTTPException(429, "Demasiados intentos con un token no válido")
@@ -47,7 +48,7 @@ def _api_token_user(request: Request, db: Session, raw: str) -> AdminUser:
     if not row or row.revoked_at or (row.expires_at and _as_utc(row.expires_at) < now):
         raise HTTPException(401, "Token no válido, revocado o caducado", headers={"WWW-Authenticate": "Bearer"})
     _token_failures.reset(ip)
-    if row.scope != "full" and request.method not in ("GET", "HEAD", "OPTIONS"):
+    if enforce_scope and row.scope != "full" and request.method not in ("GET", "HEAD", "OPTIONS"):
         raise HTTPException(403, "Este token es de solo lectura")
     user = db.get(AdminUser, row.user_id)
     if not user:
@@ -80,6 +81,15 @@ def admin_required(request: Request, db: Session = Depends(get_db)) -> AdminUser
     if auth.lower().startswith("bearer "):
         return _api_token_user(request, db, auth[7:].strip())
     return admin_session_required(request, db)
+
+
+def mcp_token_user(request: Request, db: Session = Depends(get_db)) -> AdminUser:
+    """Bearer API token only (never a cookie). Scope is applied later, call by call, by the admin API itself."""
+    auth = request.headers.get("authorization", "")
+    if not auth.lower().startswith("bearer "):
+        raise HTTPException(401, "Se necesita un token de API (Authorization: Bearer hqa_...)",
+                            headers={"WWW-Authenticate": "Bearer"})
+    return _api_token_user(request, db, auth[7:].strip(), enforce_scope=False)
 
 
 _last_seen_write: dict[str, float] = {}

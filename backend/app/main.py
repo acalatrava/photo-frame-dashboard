@@ -12,7 +12,9 @@ from pydantic import ValidationError
 from sqlalchemy import text
 
 from . import state
-from .api import admin_auth, admin_devices, admin_menu, admin_settings, admin_tokens, admin_updates, device_api, media, pairing
+from .api import (admin_auth, admin_devices, admin_menu, admin_settings, admin_tokens, admin_updates, device_api, media,
+                  pairing)
+from .mcp import server as mcp_server
 from .core import db as dbmod
 from .core import security
 from .core.config import APP_VERSION, get_settings
@@ -156,7 +158,8 @@ def create_app() -> FastAPI:
         return JSONResponse({"status": "ok" if db_ok else "error", "version": APP_VERSION, "db": db_ok,
                              "homeassistant": state.ha.connected}, status_code=code)
 
-    for r in (admin_auth.router, admin_devices.router, admin_settings.router, admin_updates.router, admin_menu.router, admin_tokens.router, device_api.router,
+    for r in (admin_auth.router, admin_devices.router, admin_settings.router, admin_updates.router, admin_menu.router,
+              admin_tokens.router, mcp_server.router, device_api.router,
               pairing.router, media.router):
         app.include_router(r)
 
