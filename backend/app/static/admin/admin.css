@@ -277,3 +277,20 @@ html{-webkit-tap-highlight-color:transparent}
   .stats{grid-template-columns:1fr}
 }
 @media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+
+/* ---------- chores and alarms ---------- */
+.seg{display:inline-flex;padding:4px;margin-bottom:14px;border-radius:99px;background:var(--surface-2);border:1px solid var(--line)}
+.seg-b{all:unset;box-sizing:border-box;cursor:pointer;padding:8px 18px;border-radius:99px;font-size:14px;font-weight:650;color:var(--ink-2)}
+.seg-b.on{background:var(--acc);color:var(--acc-ink);box-shadow:0 2px 8px rgba(79,70,229,.35)}
+.seg-b:focus-visible{outline:2px solid var(--acc-2);outline-offset:1px}
+.chcard{padding:16px 20px;margin-bottom:12px;border-left:5px solid var(--acc)}
+.chcard.once{border-left-color:var(--warn)}
+.chcard.off{opacity:.65;border-left-color:var(--line-2)}
+.chcard-h{display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.chcard-t{flex:1 1 260px;min-width:0;display:flex;flex-direction:column;gap:2px}
+.chcard-t b{font-size:16px;overflow-wrap:anywhere}
+.chcard-a{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.chcard-a button.btn{height:36px;padding:0 14px}
+.chedit{margin-top:18px;padding-top:18px;border-top:1px solid var(--line)}
+.chedit>label{margin-top:4px}
+.alarm-time{font-size:30px;font-weight:750;letter-spacing:-.02em;font-variant-numeric:tabular-nums;min-width:96px}

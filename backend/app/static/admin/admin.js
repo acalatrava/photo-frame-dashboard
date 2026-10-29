@@ -4,6 +4,29 @@
   /* ------------------------------------------------------------------ i18n */
   var STR = {
     es: {
+      al_frames_help: 'Si no marcas ninguno, suena en todos los marcos.', chores_none: 'Todavía no hay tareas. Añade la primera con los botones de abajo.',
+      nav_alarms: 'Alarmas', sub_alarms: 'Alarmas que suenan en los marcos con un sonido, un mensaje o ambos. El mensaje puede leerse en voz alta.',
+      al_add: 'Nueva alarma', al_time: 'Hora', al_name: 'Nombre', al_days: 'Qué días', al_date: 'O un día concreto (suena solo ese día)', al_sound: 'Sonido', al_message: 'Mensaje (se muestra en pantalla)',
+      al_speak: 'Leer el mensaje en voz alta', al_volume: 'Volumen de la alarma', al_duration: 'Se para sola a los (segundos)', al_snooze: 'Minutos de posponer (0 = sin botón)',
+      al_frames: 'En qué marcos suena', al_all_frames: 'En todos los marcos', al_test: 'Probar ahora', al_tested: 'Enviada a los marcos conectados.', al_none: 'Todavía no hay alarmas.',
+      al_tts_help: 'La lectura en voz alta depende de que el marco tenga síntesis de voz (Android 6 puede no traerla). Usa «Probar ahora» para comprobarlo; si no habla, el mensaje se muestra igualmente.',
+      al_off: 'Desactivada', al_sound_none: 'Sin sonido', al_once_on: 'El {d}', al_edit: 'Editar', al_close: 'Cerrar', al_untitled: 'Alarma sin nombre',
+      snd_chime: 'Campanilla', snd_bell: 'Campana', snd_soft: 'Suave', snd_beep: 'Pitido', snd_melody: 'Melodía', snd_speak: 'Decir la hora en voz alta',
+      night_color: 'Color del reloj nocturno', text_color: 'Color del texto en reposo', transition: 'Transición entre fotos', tr_fade: 'Fundido suave', tr_none: 'Corte directo',
+      sleep_on_lights_off: 'Apagar la pantalla al detectar que se apaga la luz', lights_off_lux: 'Luz apagada por debajo de (lux)',
+      lights_off_help: 'Si la luz de la habitación baja de golpe hasta casi la oscuridad, el marco entiende que han apagado la luz y apaga la pantalla.',
+      sounds_h: 'Sonido', sounds_volume: 'Volumen del marco (%)', chime_enabled: 'Sonar a las horas en punto', chime_every: 'Cuándo', ev_hour: 'Cada hora en punto', ev_half: 'Cada media hora',
+      chime_sound: 'Qué suena', chime_quiet: 'No molestar (silencio en este tramo)', quiet_start: 'Desde', quiet_end: 'Hasta', test_alert: 'Probar sonido y voz', test_msg: 'Prueba del marco',
+      ch_kind_repeat: 'Se repite', ch_kind_once: 'Una sola vez', ch_new_once: 'Nueva tarea de una vez', ch_edit: 'Editar', ch_close: 'Cerrar', ch_untitled: 'Tarea sin título',
+      ch_what: '¿Qué hay que hacer?', ch_who: '¿Quién la hace?', ch_who_help: 'Cada persona marcada tiene su propia casilla. Sin marcar a nadie es una tarea de toda la casa (una sola casilla).',
+      ch_when: '¿Cuándo?', ch_every_day: 'Todos los días', ch_weekdays: 'Lunes a viernes', ch_weekend: 'Fin de semana', ch_due: 'Para el día',
+      ch_once_help: 'Aparece en el marco a partir de ese día y se queda hasta que alguien la marca. Una vez hecha, desaparece al día siguiente. Si no se hace, se marca como pendiente.',
+      ch_whole_house: 'Toda la casa', ch_paused: 'Pausada', ch_weeks_even: 'semanas pares', ch_weeks_odd: 'semanas impares', ch_weeks_every: 'cada {n} semanas',
+      chores_help2: 'Las tareas aparecen en el marco (sección Tareas) y se marcan tocándolas. Las que se repiten se reinician cada día; las de una sola vez se quedan hasta que se hacen.',
+      ch_quick: 'Atajos', days_full: 'lunes,martes,miércoles,jueves,viernes,sábado,domingo',
+      ag_trigger: 'Solo disparadores (Home Assistant)', ag_ha_h: 'Home Assistant: abrir una cámara o dar un aviso en el marco',
+      ag_ha_help: 'Crea una clave con permiso «Solo disparadores» y pégala en este fragmento. Solo puede enviar órdenes a los marcos: no lee ni cambia nada más.',
+      ag_ha_use: 'Después, en una automatización: action: rest_command.homehq_camera (data: device: "Salón", camera: "puerta") o rest_command.homehq_aviso (data: message: "Llaman a la puerta").',
       nav_updates: 'Actualizaciones', sub_updates: 'Publica nuevas versiones de la app del marco para que se instalen por la red, sin cable USB.',
       upd_mode: 'Qué hacen los marcos con una versión nueva', upd_mode_off: 'Nada (actualizaciones desactivadas)', upd_mode_notify: 'Avisar y ofrecerla en Ajustes', upd_mode_auto: 'Descargarla sola y dejarla lista para instalar',
       upd_mode_help: 'Instalar siempre requiere un toque de confirmación en el marco: Android no permite que una app se instale sola sin permisos de sistema.',
@@ -100,6 +123,29 @@
       app_version: 'App', hw: 'Hardware', close: 'Cerrar', pairing_expired: 'Caduca'
     },
     en: {
+      al_frames_help: 'With none selected, it rings on every frame.', chores_none: 'There are no chores yet. Add the first one with the buttons below.',
+      nav_alarms: 'Alarms', sub_alarms: 'Alarms that ring on the frames with a sound, a message or both. The message can be read aloud.',
+      al_add: 'New alarm', al_time: 'Time', al_name: 'Name', al_days: 'Which days', al_date: 'Or one specific day (rings only that day)', al_sound: 'Sound', al_message: 'Message (shown on screen)',
+      al_speak: 'Read the message aloud', al_volume: 'Alarm volume', al_duration: 'Stops by itself after (seconds)', al_snooze: 'Snooze minutes (0 = no button)',
+      al_frames: 'Which frames ring', al_all_frames: 'All frames', al_test: 'Try it now', al_tested: 'Sent to the connected frames.', al_none: 'There are no alarms yet.',
+      al_tts_help: 'Speech depends on the frame having a text-to-speech engine (Android 6 may not ship one). Use “Try it now” to check; if it stays silent, the message is still shown.',
+      al_off: 'Off', al_sound_none: 'No sound', al_once_on: 'On {d}', al_edit: 'Edit', al_close: 'Close', al_untitled: 'Unnamed alarm',
+      snd_chime: 'Chime', snd_bell: 'Bell', snd_soft: 'Soft', snd_beep: 'Beep', snd_melody: 'Melody', snd_speak: 'Say the time aloud',
+      night_color: 'Night clock colour', text_color: 'Text colour on the idle screen', transition: 'Photo transition', tr_fade: 'Smooth fade', tr_none: 'Straight cut',
+      sleep_on_lights_off: 'Turn the screen off when the room light goes out', lights_off_lux: 'Light counts as off below (lux)',
+      lights_off_help: 'If the room light drops suddenly to near darkness, the frame assumes the light was switched off and turns the screen off.',
+      sounds_h: 'Sound', sounds_volume: 'Frame volume (%)', chime_enabled: 'Chime on the hour', chime_every: 'When', ev_hour: 'Every hour', ev_half: 'Every half hour',
+      chime_sound: 'What plays', chime_quiet: 'Do not disturb (silent in this window)', quiet_start: 'From', quiet_end: 'Until', test_alert: 'Test sound and voice', test_msg: 'Frame test',
+      ch_kind_repeat: 'Repeats', ch_kind_once: 'One time only', ch_new_once: 'New one-off task', ch_edit: 'Edit', ch_close: 'Close', ch_untitled: 'Untitled chore',
+      ch_what: 'What needs doing?', ch_who: 'Who does it?', ch_who_help: 'Every selected person gets their own checkbox. With nobody selected it is a household chore (one checkbox).',
+      ch_when: 'When?', ch_every_day: 'Every day', ch_weekdays: 'Monday to Friday', ch_weekend: 'Weekend', ch_due: 'Due on',
+      ch_once_help: 'It shows on the frame from that day and stays until somebody ticks it. Once done, it disappears the next day. If it is not done, it is flagged as overdue.',
+      ch_whole_house: 'Whole household', ch_paused: 'Paused', ch_weeks_even: 'even weeks', ch_weeks_odd: 'odd weeks', ch_weeks_every: 'every {n} weeks',
+      chores_help2: 'Chores show on the frame (Chores section) and are ticked by tapping them. Repeating ones reset every day; one-off ones stay until they are done.',
+      ch_quick: 'Shortcuts', days_full: 'Monday,Tuesday,Wednesday,Thursday,Friday,Saturday,Sunday',
+      ag_trigger: 'Triggers only (Home Assistant)', ag_ha_h: 'Home Assistant: open a camera or show a notice on a frame',
+      ag_ha_help: 'Create a key with the “Triggers only” scope and paste it into this snippet. It can only send commands to the frames: it cannot read or change anything else.',
+      ag_ha_use: 'Then, in an automation: action: rest_command.homehq_camera (data: device: "Living room", camera: "door") or rest_command.homehq_aviso (data: message: "Someone is at the door").',
       nav_updates: 'Updates', sub_updates: 'Publish new versions of the frame app so they install over the network, no USB cable.',
       upd_mode: 'What frames do with a new version', upd_mode_off: 'Nothing (updates off)', upd_mode_notify: 'Notify and offer it in Settings', upd_mode_auto: 'Download it automatically and leave it ready to install',
       upd_mode_help: 'Installing always needs one confirmation tap on the frame: Android does not let an app install itself without system privileges.',
@@ -344,6 +390,7 @@
     account: ['M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2', 'M12 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8z'],
     logout: ['M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4', 'M16 17l5-5-5-5', 'M21 12H9'],
     lang: ['M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20z', 'M2 12h20', 'M12 2a15 15 0 0 1 0 20 15 15 0 0 1 0-20'],
+    alarms: ['M12 22a9 9 0 1 0 0-18 9 9 0 0 0 0 18z', 'M12 8v5l3 2', 'M5 3L2 6', 'M22 6l-3-3'],
     up: ['M18 15l-6-6-6 6'], down: ['M6 9l6 6 6-6'],
     ok: ['M20 6L9 17l-5-5'], alert: ['M12 8v5', 'M12 16h.01', 'M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20z'],
     menu: ['M7 3v8', 'M4.5 3v5a2.5 2.5 0 0 0 5 0V3', 'M7 11v10', 'M17 21V3c-2.5 1.5-3.5 4-3.5 8h3.5'],
@@ -367,7 +414,7 @@
 
   var NAV = [
     ['g_frames', [['status', 'nav_status'], ['devices', 'nav_devices'], ['screens', 'nav_screens'], ['updates', 'nav_updates']]],
-    ['g_content', [['photos', 'nav_photos'], ['calendars', 'nav_calendars'], ['chores', 'nav_chores'], ['shopping', 'nav_shopping'], ['cameras', 'nav_cameras'], ['menu', 'nav_menu']]],
+    ['g_content', [['photos', 'nav_photos'], ['calendars', 'nav_calendars'], ['chores', 'nav_chores'], ['alarms', 'nav_alarms'], ['shopping', 'nav_shopping'], ['cameras', 'nav_cameras'], ['menu', 'nav_menu']]],
     ['g_integrations', [['ha', 'nav_ha'], ['sensor', 'nav_sensor'], ['agents', 'nav_agents']]],
     ['g_system', [['general', 'nav_general'], ['account', 'nav_account']]]
   ];
@@ -488,6 +535,36 @@
     });
     el.addEventListener('change', function () { set(obj, path, o.nullable && el.value === '' ? null : el.value); });
     return h('div', null, h('label', null, label), el);
+  }
+  function color(obj, path, label) {
+    var el = h('input', { type: 'color', value: get(obj, path) || '#ffffff' });
+    el.addEventListener('input', function () { set(obj, path, el.value.toUpperCase()); });
+    return h('div', null, h('label', null, label), el);
+  }
+  function seg(options, current, pick) {
+    return h('div', { class: 'seg', role: 'group' }, options.map(function (o) {
+      return h('button', { type: 'button', class: 'seg-b' + (o[0] === current ? ' on' : ''), 'aria-pressed': o[0] === current ? 'true' : 'false', onclick: function () { pick(o[0]); } }, o[1]);
+    }));
+  }
+  function daysText(days) {
+    var d = (days || []).slice().sort(), names = t('days_full').split(',');
+    if (!d.length || d.length === 7) return t('ch_every_day');
+    if (d.join() === '0,1,2,3,4') return t('ch_weekdays');
+    if (d.join() === '5,6') return t('ch_weekend');
+    return d.map(function (n) { return names[n]; }).join(', ');
+  }
+  function dayLabel(iso) {
+    if (!iso) return '—';
+    return new Date(iso + 'T12:00:00').toLocaleDateString(lang === 'en' ? 'en-GB' : 'es-ES', { weekday: 'short', day: 'numeric', month: 'short' });
+  }
+  function dayChips(arr) {
+    var row = h('div', { class: 'row tight' });
+    t('days_short').split(',').forEach(function (d, n) {
+      var el = h('input', { type: 'checkbox', checked: arr.indexOf(n) >= 0 });
+      el.addEventListener('change', function () { var k = arr.indexOf(n); if (k >= 0) arr.splice(k, 1); if (el.checked) arr.push(n); arr.sort(); });
+      row.appendChild(h('label', { class: 'chk' }, el, d));
+    });
+    return row;
   }
   function btn(label, fn, cls) {
     var b = h('button', { class: 'btn ' + (cls || ''), type: 'button' }, label);
@@ -621,7 +698,8 @@
           input(c, 'display.inactivity_timeout', t('inactivity_timeout'), { type: 'number', min: 10 }),
           select(c, 'display.screen_off', t('screen_off'), [['never', t('never_off')], ['black', t('black')], ['off', t('off')]])),
         h('div', { class: 'row' }, check(c, 'display.night_mode', t('night_mode')), input(c, 'display.night_start', t('night_start'), { type: 'time' }),
-          input(c, 'display.night_end', t('night_end'), { type: 'time' }), input(c, 'display.night_brightness', t('night_brightness'), { type: 'number', min: 0, max: 100 })),
+          input(c, 'display.night_end', t('night_end'), { type: 'time' }), input(c, 'display.night_brightness', t('night_brightness'), { type: 'number', min: 0, max: 100 }),
+          color(c, 'display.night_color', t('night_color'))),
         h('h3', null, t('presence')),
         h('div', { class: 'row' }, check(c, 'presence.enabled', t('enabled')),
           select(c, 'presence.provider', t('provider'), [['light_sensor', t('light_sensor')], ['homeassistant', t('homeassistant')], ['combined', t('combined')], ['none', t('none')]]),
@@ -631,6 +709,8 @@
           input(c, 'presence.min_event_gap_s', t('min_gap'), { type: 'number', step: 0.5 }),
           input(c, 'presence.activity_hold_s', t('hold'), { type: 'number' }),
           input(c, 'presence.ha_hold_seconds', t('ha_hold'), { type: 'number' })),
+        h('div', { class: 'row' }, check(c, 'presence.sleep_on_lights_off', t('sleep_on_lights_off')), input(c, 'presence.lights_off_lux', t('lights_off_lux'), { type: 'number', min: 1, max: 50 })),
+        h('p', { class: 'muted' }, t('lights_off_help')),
         h('div', null, h('label', null, t('ha_entities')), haEnts),
         h('h3', null, t('photos_cfg')),
         h('div', { class: 'row' }, check(c, 'photos.enabled', t('enabled')), select(c, 'photos.album_id', t('album'), albumOpts, { nullable: true }),
@@ -638,8 +718,20 @@
           select(c, 'photos.order', t('order'), [['random', t('random')], ['chronological', t('chronological')]]),
           select(c, 'photos.fit', t('fit'), [['cover', t('cover')], ['contain', t('contain')]]),
           input(c, 'photos.cache_limit', t('cache_limit'), { type: 'number', min: 10, max: 400 })),
+        h('div', { class: 'row' }, color(c, 'photos.text_color', t('text_color')),
+          select(c, 'photos.transition', t('transition'), [['fade', t('tr_fade')], ['none', t('tr_none')]])),
         check(c, 'photos.show_overlay', t('overlay')),
         h('label', null, t('widgets_h')), widgetsSel, h('p', { class: 'muted' }, t('widgets_help')),
+        h('h3', null, t('sounds_h')),
+        h('div', { class: 'row' }, input(c, 'sounds.volume', t('sounds_volume'), { type: 'number', min: 0, max: 100 }),
+          check(c, 'sounds.chime.enabled', t('chime_enabled')),
+          select(c, 'sounds.chime.every', t('chime_every'), [['hour', t('ev_hour')], ['half', t('ev_half')]]),
+          select(c, 'sounds.chime.sound', t('chime_sound'), [['chime', t('snd_chime')], ['bell', t('snd_bell')], ['soft', t('snd_soft')], ['speak', t('snd_speak')]])),
+        h('div', { class: 'row' }, check(c, 'sounds.chime.quiet', t('chime_quiet')), input(c, 'sounds.chime.quiet_start', t('quiet_start'), { type: 'time' }),
+          input(c, 'sounds.chime.quiet_end', t('quiet_end'), { type: 'time' })),
+        h('div', { class: 'row tight' }, btn(t('test_alert'), function () {
+          return api('POST', '/api/v1/admin/devices/' + id + '/trigger', { action: 'alert', message: t('test_msg'), speak: true, sound: 'bell', duration_s: 10 }).then(function () { flash(box, 'ok', t('al_tested')); });
+        })),
         h('h3', null, t('layout')),
         h('div', { class: 'row' }, select(c, 'layout.default_view', t('default_view'), views),
           select(c, 'layout.calendar_mode', t('calendar_mode'), [['day', t('cal_mode_day')], ['3day', t('cal_mode_3day')], ['week', t('cal_mode_week')], ['month', t('cal_mode_month')]]),
@@ -927,46 +1019,158 @@
 
   VIEWS.chores = function () {
     return loadConfig().then(function (r) {
-      var cfg = r.config, list = h('div'), box = h('div');
+      var cfg = r.config, list = h('div'), box = h('div'), open = null;
       page(t('nav_chores'), box);
-      box.appendChild(h('p', { class: 'muted' }, t('chores_help')));
-      function weekMode(c) {
-        var sel = select(c, 'week_mode', t('week_mode'), [['all', t('wm_all')], ['even', t('wm_even')], ['odd', t('wm_odd')], ['every', t('wm_every')]]);
-        sel.querySelector('select').addEventListener('change', function () {
+      box.appendChild(h('p', { class: 'muted' }, t('chores_help2')));
+
+      function who(c) {
+        var names = cfg.people.filter(function (p) { return c.person_ids.indexOf(p.id) >= 0; }).map(function (p) { return p.name; });
+        return names.length ? names.join(', ') : t('ch_whole_house');
+      }
+      function when(c) {
+        if (c.week_mode === 'once') return t('ch_due') + ' ' + dayLabel(c.start_date);
+        var parts = [daysText(c.days)];
+        if (c.week_mode === 'even') parts.push(t('ch_weeks_even'));
+        else if (c.week_mode === 'odd') parts.push(t('ch_weeks_odd'));
+        else if (c.week_mode === 'every') parts.push(t('ch_weeks_every', { n: c.every_weeks }));
+        return parts.join(' · ');
+      }
+      function editor(c) {
+        var once = c.week_mode === 'once';
+        var kind = seg([['repeat', t('ch_kind_repeat')], ['once', t('ch_kind_once')]], once ? 'once' : 'repeat', function (k) {
+          if (k === 'once') { c.week_mode = 'once'; if (!c.start_date) c.start_date = todayIso(); } else if (c.week_mode === 'once') c.week_mode = 'all';
+          draw();
+        });
+        var mode = select(c, 'week_mode', t('week_mode'), [['all', t('wm_all')], ['even', t('wm_even')], ['odd', t('wm_odd')], ['every', t('wm_every')]]);
+        mode.querySelector('select').addEventListener('change', function () {
           if (c.week_mode === 'every') { if (!c.start_date) c.start_date = todayIso(); if (!c.every_weeks) c.every_weeks = 2; }
           draw();
         });
-        return sel;
+        var quick = h('div', { class: 'row tight' },
+          btn(t('ch_every_day'), function () { c.days = []; draw(); }), btn(t('ch_weekdays'), function () { c.days = [0, 1, 2, 3, 4]; draw(); }),
+          btn(t('ch_weekend'), function () { c.days = [5, 6]; draw(); }));
+        return h('div', { class: 'chedit' },
+          h('div', { class: 'row' }, input(c, 'title', t('ch_what')), iconSelect(c, 'icon', t('icon'))),
+          h('label', null, t('ch_who')), peoplePicker(cfg, c.person_ids), h('p', { class: 'muted' }, t('ch_who_help')),
+          h('label', null, t('ch_when')), kind,
+          once ? h('div', { class: 'row' }, input(c, 'start_date', t('ch_due'), { type: 'date' }), input(c, 'time', t('time_opt'), { type: 'time' })) : [
+            h('label', null, t('chore_days')), dayChips(c.days), h('label', null, t('ch_quick')), quick,
+            h('div', { class: 'row' }, mode,
+              c.week_mode === 'every' ? input(c, 'every_weeks', t('every_weeks'), { type: 'number', min: 2, max: 12 }) : null,
+              c.week_mode === 'every' ? input(c, 'start_date', t('start_week'), { type: 'date' }) : null,
+              input(c, 'time', t('time_opt'), { type: 'time' })),
+            h('p', { class: 'muted' }, t('week_help'))],
+          once ? h('p', { class: 'muted' }, t('ch_once_help')) : null,
+          h('div', { class: 'row tight' }, check(c, 'enabled', t('enabled'))));
       }
       function draw() {
         clear(list);
+        if (!cfg.chores.length) list.appendChild(h('div', { class: 'empty' }, t('chores_none')));
         cfg.chores.forEach(function (c, i) {
-          var days = h('div', { class: 'row tight' });
-          t('days_short').split(',').forEach(function (d, n) {
-            var el = h('input', { type: 'checkbox', checked: c.days.indexOf(n) >= 0 });
-            el.addEventListener('change', function () { var k = c.days.indexOf(n); if (k >= 0) c.days.splice(k, 1); if (el.checked) c.days.push(n); c.days.sort(); });
-            days.appendChild(h('label', { class: 'chk' }, el, d));
+          var isOpen = open === c.id;
+          list.appendChild(h('div', { class: 'card chcard' + (c.enabled ? '' : ' off') + (c.week_mode === 'once' ? ' once' : '') },
+            h('div', { class: 'chcard-h' },
+              h('div', { class: 'chcard-t' },
+                h('b', null, c.title || t('ch_untitled')),
+                h('span', { class: 'muted' }, who(c) + ' · ' + when(c) + (c.time ? ' · ' + c.time : ''))),
+              h('div', { class: 'chcard-a' },
+                c.week_mode === 'once' ? h('span', { class: 'pill warn' }, t('ch_kind_once')) : null,
+                c.enabled ? null : h('span', { class: 'pill' }, t('ch_paused')),
+                btn(isOpen ? t('ch_close') : t('ch_edit'), function () { open = isOpen ? null : c.id; draw(); }),
+                btn(t('delete'), function () { cfg.chores.splice(i, 1); draw(); }, 'bad'))),
+            isOpen ? editor(c) : null));
+        });
+      }
+      function blank(once) {
+        var c = { id: 'c' + Math.random().toString(36).slice(2, 8), title: '', icon: 'tasks', person_ids: [], days: [], week_mode: once ? 'once' : 'all', every_weeks: 2, start_date: once ? todayIso() : '', time: '', enabled: true };
+        cfg.chores.push(c); open = c.id; draw();
+      }
+      draw();
+      box.appendChild(list);
+      box.appendChild(h('div', { class: 'row tight' },
+        btn(t('add_chore'), function () { blank(false); }), btn(t('ch_new_once'), function () { blank(true); }),
+        btn(t('save'), function () {
+          cfg.chores = cfg.chores.filter(function (c) { return c.title.trim(); });
+          cfg.chores.forEach(function (c) {
+            c.title = c.title.trim();
+            if ((c.week_mode === 'once' || c.week_mode === 'every') && !c.start_date) c.start_date = todayIso();
           });
-          list.appendChild(h('div', { class: 'card' },
-            h('div', { class: 'row' }, input(c, 'title', t('chore_title')), iconSelect(c, 'icon', t('icon')), input(c, 'time', t('time_opt'), { type: 'time' })),
-            h('label', null, t('chore_people')), peoplePicker(cfg, c.person_ids),
-            h('label', null, t('chore_days')), days,
-            h('div', { class: 'row' }, weekMode(c),
-              c.week_mode === 'every' ? input(c, 'every_weeks', t('every_weeks'), { type: 'number', min: 2, max: 12 }) : null,
-              c.week_mode === 'every' ? input(c, 'start_date', t('start_week'), { type: 'date' }) : null),
-            h('p', { class: 'muted' }, t('week_help')),
-            check(c, 'enabled', t('enabled')), h('p'),
-            btn(t('delete'), function () { cfg.chores.splice(i, 1); draw(); }, 'bad')));
+          return saveConfig(cfg, box).then(function () { return VIEWS.chores(); });
+        }, 'pri')));
+    });
+  };
+
+  VIEWS.alarms = function () {
+    return Promise.all([loadConfig(), api('GET', '/api/v1/admin/devices')]).then(function (rs) {
+      var cfg = rs[0].config, devices = rs[1], list = h('div'), box = h('div'), open = null;
+      var SOUNDS = [['melody', t('snd_melody')], ['chime', t('snd_chime')], ['bell', t('snd_bell')], ['soft', t('snd_soft')], ['beep', t('snd_beep')], ['none', t('al_sound_none')]];
+      page(t('nav_alarms'), box);
+      function soundName(v) { var f = SOUNDS.filter(function (o) { return o[0] === v; })[0]; return f ? f[1] : v; }
+      function frames(a) {
+        if (!a.device_ids.length) return t('al_all_frames');
+        return devices.filter(function (d) { return a.device_ids.indexOf(d.id) >= 0; }).map(function (d) { return d.name; }).join(', ');
+      }
+      function framePicker(a) {
+        var row = h('div', { class: 'row tight' });
+        devices.forEach(function (d) {
+          var el = h('input', { type: 'checkbox', checked: a.device_ids.indexOf(d.id) >= 0 });
+          el.addEventListener('change', function () { var k = a.device_ids.indexOf(d.id); if (k >= 0) a.device_ids.splice(k, 1); if (el.checked) a.device_ids.push(d.id); });
+          row.appendChild(h('label', { class: 'chk' }, el, d.name));
+        });
+        return row;
+      }
+      function tryIt(a) {
+        var targets = devices.filter(function (d) { return !a.device_ids.length || a.device_ids.indexOf(d.id) >= 0; });
+        return Promise.all(targets.map(function (d) {
+          return api('POST', '/api/v1/admin/devices/' + d.id + '/trigger', { action: 'alert', message: a.message || a.name || t('test_msg'), speak: a.speak, sound: a.sound, volume: a.volume, duration_s: 15 });
+        })).then(function () { flash(box, 'ok', t('al_tested')); });
+      }
+      function editor(a) {
+        var byDate = !!a.date;
+        var kind = seg([['days', t('al_days')], ['date', t('al_date')]], byDate ? 'date' : 'days', function (k) {
+          if (k === 'date') { if (!a.date) a.date = todayIso(); } else a.date = '';
+          draw();
+        });
+        return h('div', { class: 'chedit' },
+          h('div', { class: 'row' }, input(a, 'name', t('al_name')), input(a, 'time', t('al_time'), { type: 'time' })),
+          kind,
+          byDate ? h('div', { class: 'row' }, input(a, 'date', t('al_date'), { type: 'date' })) : dayChips(a.days),
+          h('div', { class: 'row' }, select(a, 'sound', t('al_sound'), SOUNDS), input(a, 'volume', t('al_volume'), { type: 'number', min: 1, max: 100 })),
+          h('div', null, h('label', null, t('al_message')), (function () { var el = h('input', { value: a.message, maxlength: 200 }); el.addEventListener('input', function () { a.message = el.value; }); return el; })()),
+          check(a, 'speak', t('al_speak')), h('p', { class: 'muted' }, t('al_tts_help')),
+          h('div', { class: 'row' }, input(a, 'duration_s', t('al_duration'), { type: 'number', min: 5, max: 900 }), input(a, 'snooze_min', t('al_snooze'), { type: 'number', min: 0, max: 60 })),
+          h('label', null, t('al_frames')), framePicker(a), h('p', { class: 'muted' }, t('al_frames_help')),
+          h('div', { class: 'row tight' }, btn(t('al_test'), function () { return tryIt(a); })));
+      }
+      function draw() {
+        clear(list);
+        if (!cfg.alarms.length) list.appendChild(h('div', { class: 'empty' }, t('al_none')));
+        cfg.alarms.forEach(function (a, i) {
+          var isOpen = open === a.id;
+          var when = a.date ? t('al_once_on', { d: dayLabel(a.date) }) : daysText(a.days);
+          list.appendChild(h('div', { class: 'card chcard' + (a.enabled ? '' : ' off') },
+            h('div', { class: 'chcard-h' },
+              h('div', { class: 'alarm-time' }, a.time),
+              h('div', { class: 'chcard-t' },
+                h('b', null, a.name || a.message || t('al_untitled')),
+                h('span', { class: 'muted' }, [when, soundName(a.sound), a.speak ? t('al_speak') : '', frames(a)].filter(Boolean).join(' · '))),
+              h('div', { class: 'chcard-a' },
+                a.enabled ? null : h('span', { class: 'pill' }, t('al_off')),
+                btn(isOpen ? t('al_close') : t('al_edit'), function () { open = isOpen ? null : a.id; draw(); }),
+                btn(t('delete'), function () { cfg.alarms.splice(i, 1); draw(); }, 'bad'))),
+            isOpen ? h('div', null, editor(a), h('div', { class: 'row tight' }, check(a, 'enabled', t('enabled')))) : null));
         });
       }
       draw();
       box.appendChild(list);
       box.appendChild(h('div', { class: 'row tight' },
-        btn(t('add_chore'), function () { cfg.chores.push({ id: 'c' + Math.random().toString(36).slice(2, 8), title: '', icon: 'tasks', person_ids: [], days: [], week_mode: 'all', every_weeks: 2, start_date: '', time: '', enabled: true }); draw(); }),
+        btn(t('al_add'), function () {
+          var a = { id: 'a' + Math.random().toString(36).slice(2, 8), name: '', time: '07:00', days: [], date: '', enabled: true, sound: 'melody', message: '', speak: false, volume: 80, duration_s: 60, snooze_min: 5, device_ids: [] };
+          cfg.alarms.push(a); open = a.id; draw();
+        }),
         btn(t('save'), function () {
-          cfg.chores = cfg.chores.filter(function (c) { return c.title.trim(); });
-          cfg.chores.forEach(function (c) { c.title = c.title.trim(); });
-          return saveConfig(cfg, box).then(function () { return VIEWS.chores(); });
+          cfg.alarms.forEach(function (a) { if (a.sound === 'none' && !a.message.trim()) a.sound = 'melody'; if (a.date && !/^\d{4}-\d{2}-\d{2}$/.test(a.date)) a.date = ''; });
+          return saveConfig(cfg, box).then(function () { return VIEWS.alarms(); });
         }, 'pri')));
     });
   };
@@ -1296,7 +1500,7 @@
       cfgEl.value = snippet(url, 'hqa_…');
       var created = h('div', { class: 'card' }, h('h3', null, t('ag_new')),
         h('div', { class: 'row' }, input(form, 'name', t('ag_name')),
-          select(form, 'scope', t('ag_scope'), [['read', t('ag_read')], ['full', t('ag_full')]]),
+          select(form, 'scope', t('ag_scope'), [['read', t('ag_read')], ['full', t('ag_full')], ['trigger', t('ag_trigger')]]),
           select(form, 'expires_days', t('ag_exp'), [['30', t('ag_days', { n: 30 })], ['90', t('ag_days', { n: 90 })], ['365', t('ag_days', { n: 365 })], ['', t('never')]])),
         h('div', { class: 'actions' }, btn(t('ag_create'), function () {
           if (!form.name.trim()) throw new Error(t('name'));
@@ -1328,7 +1532,7 @@
           var tb = h('table', null, h('tr', null, h('th', null, t('name')), h('th', null, t('ag_token')), h('th', null, t('ag_scope')), h('th', null, t('status')), h('th', null, t('ag_last')), h('th', null, t('ag_expires')), h('th', null, '')));
           rows.forEach(function (tk) {
             tb.appendChild(h('tr', null, h('td', null, tk.name), h('td', null, h('code', null, tk.prefix + '…')),
-              h('td', null, h('span', { class: 'pill' }, tk.scope === 'full' ? t('ag_full') : t('ag_read'))), h('td', null, status(tk)),
+              h('td', null, h('span', { class: 'pill' }, tk.scope === 'full' ? t('ag_full') : tk.scope === 'trigger' ? t('ag_trigger') : t('ag_read'))), h('td', null, status(tk)),
               h('td', null, fmtDate(tk.last_used_at)), h('td', null, tk.expires_at ? fmtDate(tk.expires_at) : t('never')),
               h('td', null, tk.revoked ? null : btn(t('revoke'), function () {
                 if (!confirm(t('ag_revoke_confirm'))) return;
@@ -1341,6 +1545,30 @@
       page(t('nav_agents'), box);
       box.appendChild(h('div', { class: 'card' }, h('h3', null, t('ag_url')), h('div', { class: 'copyrow' }, urlEl, btn(t('ag_copy'), function () { return copyText(url, urlEl).then(function () { flash(box, 'ok', t('ag_copied')); }); })),
         h('label', null, t('ag_config')), cfgEl, banner('err', t('ag_security'))));
+      var haSnippet = [
+        'rest_command:',
+        '  homehq_camera:',
+        '    url: "' + location.origin + '/api/v1/trigger"',
+        '    method: POST',
+        '    content_type: "application/json"',
+        '    headers:',
+        '      Authorization: "Bearer hqa_…"',
+        '    payload: >-',
+        '      {"action":"show_view","view":"cameras","camera":"{{ camera }}","device":"{{ device | default(\'\') }}","duration_s":{{ duration | default(30) }}}',
+        '  homehq_aviso:',
+        '    url: "' + location.origin + '/api/v1/trigger"',
+        '    method: POST',
+        '    content_type: "application/json"',
+        '    headers:',
+        '      Authorization: "Bearer hqa_…"',
+        '    payload: >-',
+        '      {"action":"alert","message":"{{ message }}","speak":true,"device":"{{ device | default(\'\') }}"}'
+      ].join('\n');
+      var haEl = h('textarea', { readonly: true, class: 'snip', rows: 18 });
+      haEl.value = haSnippet;
+      box.appendChild(h('div', { class: 'card' }, h('h3', null, t('ag_ha_h')), h('p', { class: 'muted' }, t('ag_ha_help')), haEl,
+        h('div', { class: 'actions' }, btn(t('ag_copy'), function () { return copyText(haSnippet, haEl).then(function () { flash(box, 'ok', t('ag_copied')); }); })),
+        h('p', { class: 'muted' }, t('ag_ha_use'))));
       box.appendChild(created);
       box.appendChild(fresh);
       box.appendChild(h('div', { class: 'card' }, h('h3', null, t('ag_tokens')), listBox));
