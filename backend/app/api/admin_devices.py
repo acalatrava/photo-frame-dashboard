@@ -12,6 +12,7 @@ from ..models import AdminUser, Device, PairingRequest
 from ..schemas.config import DeviceConfig
 from ..services import config_service
 from .deps import admin_required
+from .trigger import TriggerBody, publish_trigger
 
 router = APIRouter(prefix="/api/v1/admin", tags=["admin-devices"])
 
@@ -124,3 +125,13 @@ def send_command(device_id: str, body: CommandBody, _: AdminUser = Depends(admin
         raise HTTPException(404, "Dispositivo no encontrado")
     bus.publish("device.command", {"type": body.type}, d.id)
     return {"ok": True, "delivered_to_online": d.id in bus.connected_devices()}
+
+
+@router.post("/devices/{device_id}/trigger")
+def trigger_device(device_id: str, body: TriggerBody, _: AdminUser = Depends(admin_required),
+                   db: Session = Depends(get_db)):
+    """Lets the panel try an alert or a screen on one frame, the same way Home Assistant would."""
+    d = db.get(Device, device_id)
+    if not d or d.status != "active":
+        raise HTTPException(404, "Dispositivo no encontrado")
+    return publish_trigger(db, body.model_copy(update={"device": d.id}))

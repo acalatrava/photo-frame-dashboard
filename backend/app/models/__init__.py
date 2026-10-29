@@ -42,7 +42,7 @@ class ApiToken(Base):
     name: Mapped[str] = mapped_column(String(80))
     token_hash: Mapped[str] = mapped_column(String(64), unique=True)
     prefix: Mapped[str] = mapped_column(String(12))
-    scope: Mapped[str] = mapped_column(String(8), default="read")  # read | full
+    scope: Mapped[str] = mapped_column(String(8), default="read")  # read | full | trigger
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)
     expires_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
     last_used_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)

@@ -26,7 +26,8 @@
       '<div class="ch-list">' + g.items.map(function (i) {
         return '<button class="ch-item' + (i.done ? ' is-done' : '') + '" data-chore="' + App.esc(i.id) + '" data-person="' + App.esc(i.person) + '">' +
           '<span class="ch-ic">' + App.icon(i.done ? 'check' : i.icon, 34) + '</span>' +
-          '<span class="ch-tx"><b>' + App.esc(i.title) + '</b>' + (i.time ? '<small>' + App.esc(i.time) + '</small>' : '') + '</span></button>';
+          '<span class="ch-tx"><b>' + App.esc(i.title) + '</b>' +
+          (i.overdue ? '<small class="ch-late">' + App.t('ch_overdue') + '</small>' : i.time ? '<small>' + App.esc(i.time) + '</small>' : i.once ? '<small>' + App.t('ch_once') + '</small>' : '') + '</span></button>';
       }).join('') + (all ? '<div class="ch-all serif">' + App.t('ch_all_done') + '</div>' : '') + '</div></section>';
   }
 

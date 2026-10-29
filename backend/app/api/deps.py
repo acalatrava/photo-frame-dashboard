@@ -37,9 +37,15 @@ def _as_utc(dt: datetime) -> datetime:
     return dt if dt.tzinfo else dt.replace(tzinfo=timezone.utc)
 
 
-def _api_token_user(request: Request, db: Session, raw: str, enforce_scope: bool = True) -> AdminUser:
+ADMIN_SCOPES = ("read", "full")
+TRIGGER_SCOPES = ("trigger", "full")
+
+
+def _api_token_user(request: Request, db: Session, raw: str, enforce_scope: bool = True,
+                    allowed: tuple[str, ...] = ADMIN_SCOPES) -> AdminUser:
     """Authenticate `Authorization: Bearer hqa_...`. Read tokens may only use safe methods unless the caller
-    enforces scope itself (the MCP endpoint does, per tool)."""
+    enforces scope itself (the MCP endpoint does, per tool). A trigger token can only fire actions on the frames
+    and is refused everywhere else."""
     ip = client_ip(request)
     if _token_failures.blocked(ip):
         raise HTTPException(429, "Demasiados intentos con un token no válido")
@@ -49,6 +55,8 @@ def _api_token_user(request: Request, db: Session, raw: str, enforce_scope: bool
     if not row or row.revoked_at or (row.expires_at and _as_utc(row.expires_at) < now):
         _token_failures.fail(ip)
         raise HTTPException(401, "Token no válido, revocado o caducado", headers={"WWW-Authenticate": "Bearer"})
+    if row.scope not in allowed:
+        raise HTTPException(403, "Este token no tiene permiso para esto")
     if enforce_scope and row.scope != "full" and request.method not in ("GET", "HEAD", "OPTIONS"):
         raise HTTPException(403, "Este token es de solo lectura")
     user = db.get(AdminUser, row.user_id)
@@ -91,6 +99,15 @@ def mcp_token_user(request: Request, db: Session = Depends(get_db)) -> AdminUser
         raise HTTPException(401, "Se necesita un token de API (Authorization: Bearer hqa_...)",
                             headers={"WWW-Authenticate": "Bearer"})
     return _api_token_user(request, db, auth[7:].strip(), enforce_scope=False)
+
+
+def trigger_required(request: Request, db: Session = Depends(get_db)) -> AdminUser:
+    """Bearer token allowed to fire actions on the frames (scope trigger or full), for Home Assistant and scripts."""
+    auth = request.headers.get("authorization", "")
+    if not auth.lower().startswith("bearer "):
+        raise HTTPException(401, "Se necesita un token (Authorization: Bearer hqa_...)",
+                            headers={"WWW-Authenticate": "Bearer"})
+    return _api_token_user(request, db, auth[7:].strip(), enforce_scope=False, allowed=TRIGGER_SCOPES)
 
 
 _last_seen_write: dict[str, float] = {}

@@ -191,7 +191,8 @@ class Chore(Strict):
     days: list[int] = []
     # Which weeks it repeats: every week, ISO-even / ISO-odd weeks, or every N weeks counting from the week that
     # contains `start_date`.
-    week_mode: Literal["all", "even", "odd", "every"] = "all"
+    # "once" is a one-off task: `start_date` is the day it is due, and it stays on the list until somebody ticks it.
+    week_mode: Literal["all", "even", "odd", "every", "once"] = "all"
     every_weeks: int = Field(2, ge=2, le=12)
     start_date: str = ""
     time: str = ""
@@ -225,6 +226,8 @@ class Chore(Strict):
     def _every_needs_start(self):
         if self.week_mode == "every" and not self.start_date:
             raise ValueError("indica la semana de inicio")
+        if self.week_mode == "once" and not self.start_date:
+            raise ValueError("indica el día de la tarea")
         return self
 
     @field_validator("days")
@@ -317,12 +320,21 @@ class DisplayConfig(Strict):
     night_start: str = "22:00"
     night_end: str = "07:00"
     night_brightness: int = Field(5, ge=0, le=100)
+    # Colour of the clock on the dim night screen.
+    night_color: str = "#C22C1C"
 
     @field_validator("night_start", "night_end")
     @classmethod
     def _t(cls, v: str) -> str:
         if not HHMM.match(v):
             raise ValueError("hora HH:MM")
+        return v
+
+    @field_validator("night_color")
+    @classmethod
+    def _color(cls, v: str) -> str:
+        if not HEX_COLOR.match(v):
+            raise ValueError("color debe ser #RRGGBB")
         return v
 
 
@@ -337,6 +349,9 @@ class PresenceConfig(Strict):
     min_rel_change: float = Field(NEW_REL, ge=0.02, le=2)
     min_event_gap_s: float = Field(2.0, ge=0.2, le=60)
     activity_hold_s: int = Field(45, ge=5, le=1800)
+    # Someone switched the room light off: the lux reading collapses within seconds. The screen goes to sleep then.
+    sleep_on_lights_off: bool = True
+    lights_off_lux: float = Field(10, ge=1, le=50)
 
 
 PHOTO_WIDGETS = ["time", "date", "weather", "calendar", "tasks", "people"]
@@ -354,11 +369,48 @@ class PhotosConfig(Strict):
     widgets: list[Literal["time", "date", "weather", "calendar", "tasks", "people"]] = [
         "time", "date", "weather", "calendar", "people"]
     cache_limit: int = Field(80, ge=10, le=400)
+    # Colour of the clock, date and weather drawn over the photos while the frame is idle.
+    text_color: str = "#FFFFFF"
+    # How one photo gives way to the next.
+    transition: Literal["fade", "none"] = "fade"
+
+    @field_validator("text_color")
+    @classmethod
+    def _text_color(cls, v: str) -> str:
+        if not HEX_COLOR.match(v):
+            raise ValueError("color debe ser #RRGGBB")
+        return v
 
     @field_validator("widgets")
     @classmethod
     def _widgets(cls, v: list[str]) -> list[str]:
         return [w for w in PHOTO_WIDGETS if w in v]
+
+
+SOUNDS = ["chime", "bell", "soft", "beep", "melody", "none"]
+
+
+class ChimeConfig(Strict):
+    """A sound on the hour (or half hour) with a quiet period in which the frame stays silent."""
+    enabled: bool = False
+    every: Literal["hour", "half"] = "hour"
+    sound: Literal["chime", "bell", "soft", "speak"] = "chime"
+    quiet: bool = True
+    quiet_start: str = "22:00"
+    quiet_end: str = "08:00"
+
+    @field_validator("quiet_start", "quiet_end")
+    @classmethod
+    def _t(cls, v: str) -> str:
+        if not HHMM.match(v):
+            raise ValueError("hora HH:MM")
+        return v
+
+
+class SoundsConfig(Strict):
+    # Master volume of the frame (Android media volume, 0 to 100).
+    volume: int = Field(70, ge=0, le=100)
+    chime: ChimeConfig = ChimeConfig()
 
 
 class HomeLayoutConfig(Strict):
@@ -378,6 +430,7 @@ class DeviceConfig(Strict):
     presence: PresenceConfig = PresenceConfig()
     photos: PhotosConfig = PhotosConfig()
     layout: HomeLayoutConfig = HomeLayoutConfig()
+    sounds: SoundsConfig = SoundsConfig()
     language: Literal["es-ES", "en", "inherit"] = "inherit"
 
 
@@ -443,6 +496,65 @@ class MenuConfig(Strict):
         return self
 
 
+class Alarm(Strict):
+    """Goes off on the frames at a given time: a sound, a message (optionally read aloud), or both."""
+    id: str
+    name: str = Field("", max_length=40)
+    time: str = "07:00"
+    # Weekdays (0 = Monday .. 6 = Sunday). Empty means every day. Ignored when `date` is set.
+    days: list[int] = []
+    # A one-off alarm for a single day (AAAA-MM-DD).
+    date: str = ""
+    enabled: bool = True
+    sound: Literal["chime", "bell", "soft", "beep", "melody", "none"] = "melody"
+    message: str = Field("", max_length=200)
+    speak: bool = False
+    volume: int = Field(80, ge=1, le=100)
+    # The alarm stops by itself after this long if nobody touches the frame.
+    duration_s: int = Field(60, ge=5, le=900)
+    # Minutes a snooze lasts; 0 hides the snooze button.
+    snooze_min: int = Field(5, ge=0, le=60)
+    # Frames it rings on; empty means all of them.
+    device_ids: list[str] = []
+
+    @field_validator("id")
+    @classmethod
+    def _id(cls, v: str) -> str:
+        if not SLUG.match(v):
+            raise ValueError("id inválido")
+        return v
+
+    @field_validator("time")
+    @classmethod
+    def _time(cls, v: str) -> str:
+        if not HHMM.match(v):
+            raise ValueError("hora HH:MM")
+        return v
+
+    @field_validator("days")
+    @classmethod
+    def _days(cls, v: list[int]) -> list[int]:
+        if any(d < 0 or d > 6 for d in v):
+            raise ValueError("día de la semana inválido")
+        return sorted(set(v))
+
+    @field_validator("date")
+    @classmethod
+    def _date(cls, v: str) -> str:
+        if v:
+            try:
+                datetime.strptime(v, "%Y-%m-%d")
+            except ValueError as exc:
+                raise ValueError("fecha AAAA-MM-DD") from exc
+        return v
+
+    @model_validator(mode="after")
+    def _has_something(self):
+        if self.sound == "none" and not self.message.strip():
+            raise ValueError("una alarma necesita un sonido o un mensaje")
+        return self
+
+
 class UpdatesConfig(Strict):
     """off: frames ignore published app versions; notify: they offer the update in Settings;
     auto: they also download it in the background so installing is a single tap."""
@@ -461,6 +573,7 @@ class GlobalConfig(Strict):
     cameras: list[CameraSource] = []
     updates: UpdatesConfig = UpdatesConfig()
     menu: MenuConfig = MenuConfig()
+    alarms: list[Alarm] = Field(default_factory=list, max_length=50)
     device_defaults: DeviceConfig = DeviceConfig()
 
     @field_validator("people")
@@ -477,6 +590,14 @@ class GlobalConfig(Strict):
         ids = [c.id for c in v]
         if len(ids) != len(set(ids)):
             raise ValueError("ids de tareas duplicados")
+        return v
+
+    @field_validator("alarms")
+    @classmethod
+    def _unique_alarms(cls, v: list[Alarm]) -> list[Alarm]:
+        ids = [a.id for a in v]
+        if len(ids) != len(set(ids)):
+            raise ValueError("ids de alarmas duplicados")
         return v
 
     @field_validator("cameras")

@@ -8,6 +8,7 @@ import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Handler;
+import android.os.HandlerThread;
 import android.os.Looper;
 import android.os.PowerManager;
 import android.util.Log;
@@ -24,6 +25,9 @@ import java.util.ArrayDeque;
  * One instance lives for the whole process, so sensing continues while the activity is paused (for example
  * when the screen is really off). Samples are taken from sensor callbacks and from a one second tick, because
  * the frame's light sensor only reports when the value changes.
+ *
+ * All of that runs on its own thread: the main thread is the one that hands touches to the WebView, and the
+ * frame's single slow CPU cannot afford to make it wait for sensor maths.
  */
 final class Hardware implements SensorEventListener {
   static final String TAG = "HomeHQ";
@@ -41,7 +45,8 @@ final class Hardware implements SensorEventListener {
   }
 
   private final Context ctx;
-  private final Handler main = new Handler(Looper.getMainLooper());
+  private final HandlerThread worker = new HandlerThread("hq-sensor");
+  private final Handler main;
   private final SensorManager sm;
   private final Sensor light;
   private final PowerManager pm;
@@ -49,6 +54,9 @@ final class Hardware implements SensorEventListener {
   private final ComponentName admin;
   private final ArrayDeque<double[]> log = new ArrayDeque<>();
   private final ActivityDetector detector = new ActivityDetector(new ActivityDetector.Params());
+  private final LightsOffDetector lightsOff = new LightsOffDetector(new LightsOffDetector.Params());
+  private volatile boolean lightsOffEnabled = true;
+  private long lastLuxEmit;
   private PowerManager.WakeLock cpuLock;
 
   private volatile Sink sink;
@@ -57,11 +65,11 @@ final class Hardware implements SensorEventListener {
   private String sensitivity = "medium";
   private String override = "";
   private boolean started;
-  private double lastLux = -1;
-  private long lastSampleT;
-  private long lastEventT;
-  private double lastBaseline;
-  private boolean lastActive;
+  private volatile double lastLux = -1;
+  private volatile long lastSampleT;
+  private volatile long lastEventT;
+  private volatile double lastBaseline;
+  private volatile boolean lastActive;
   volatile String screen = "on";
 
   private final Runnable tick = new Runnable() {
@@ -74,6 +82,8 @@ final class Hardware implements SensorEventListener {
 
   private Hardware(Context c) {
     ctx = c;
+    worker.start();
+    main = new Handler(worker.getLooper());
     sm = (SensorManager) c.getSystemService(Context.SENSOR_SERVICE);
     light = sm != null ? sm.getDefaultSensor(Sensor.TYPE_LIGHT) : null;
     pm = (PowerManager) c.getSystemService(Context.POWER_SERVICE);
@@ -86,7 +96,7 @@ final class Hardware implements SensorEventListener {
   synchronized void start() {
     if (started) return;
     started = true;
-    if (light != null) sm.registerListener(this, light, SensorManager.SENSOR_DELAY_NORMAL);
+    if (light != null) sm.registerListener(this, light, SensorManager.SENSOR_DELAY_NORMAL, main);
     else Log.w(TAG, "No light sensor on this device");
     main.postDelayed(tick, TICK_MS);
   }
@@ -112,6 +122,8 @@ final class Hardware implements SensorEventListener {
     sensitivity = p.optString("sensitivity", "medium");
     String provider = p.optString("provider", "light_sensor");
     lightEnabled = p.optBoolean("enabled", true) && ("light_sensor".equals(provider) || "combined".equals(provider));
+    lightsOffEnabled = p.optBoolean("sleep_on_lights_off", true);
+    lightsOff.setOffLux(p.optDouble("lights_off_lux", 10));
     refreshParams();
   }
 
@@ -147,19 +159,32 @@ final class Hardware implements SensorEventListener {
       log.addLast(new double[] {t, lux, r.baseline, r.active ? 1 : 0});
       while (log.size() > LOG_MAX) log.removeFirst();
     }
+    boolean off = lightsOff.onSample(t, lux);
     Sink s = sink;
     if (s == null) return;
     try {
-      JSONObject o = new JSONObject();
-      o.put("t", t); o.put("lux", round(lux)); o.put("baseline", round(r.baseline)); o.put("active", r.active);
-      s.emit("lux", o.toString());
-      if (r.event && lightEnabled) {
+      // The page needs a reading about once a second, not on every callback.
+      if (t - lastLuxEmit >= 900 || r.event || off) {
+        lastLuxEmit = t;
+        JSONObject o = new JSONObject();
+        o.put("t", t); o.put("lux", round(lux)); o.put("baseline", round(r.baseline)); o.put("active", r.active);
+        s.emit("lux", o.toString());
+      }
+      if (off && lightsOffEnabled) {
+        JSONObject o = new JSONObject();
+        o.put("t", t); o.put("lux", round(lux));
+        s.emit("lights_off", o.toString());
+      }
+      if (r.event && lightEnabled && !off) {
         JSONObject a = new JSONObject();
         a.put("t", t); a.put("lux", round(lux)); a.put("delta", round(r.smoothed - r.baseline));
         s.emit("activity", a.toString());
       }
     } catch (JSONException ignored) { }
   }
+
+  /** Called when the app changes the backlight, so the resulting change in the reading is not taken for the room. */
+  void noteBrightnessChange() { lightsOff.suppressUntil(System.currentTimeMillis() + 12000); }
 
   private static double round(double v) { return Math.round(v * 10.0) / 10.0; }
 

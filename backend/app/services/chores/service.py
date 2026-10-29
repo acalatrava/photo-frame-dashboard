@@ -1,6 +1,7 @@
 """Household chores: recurring tasks assigned to people (or shared) and ticked off from the frames.
 
-A chore is due on certain weekdays (all of them when none are set). Every assigned person has their own check
+A chore is due on certain weekdays (all of them when none are set). A one-off chore ("once") has a due day and stays
+on the list until it is ticked, then disappears from the next day on. Every assigned person has their own check
 for the day; a chore without people is one shared check. Completion is stored per local day, so the next day
 starts clean without any reset job. Ticking is an absolute state ("done" or "not done"): the last write wins.
 """
@@ -35,6 +36,8 @@ def is_due(chore: Chore, day: str) -> bool:
     if not chore.enabled:
         return False
     d = datetime.strptime(day, "%Y-%m-%d").date()
+    if chore.week_mode == "once":
+        return day >= chore.start_date
     if chore.days and d.weekday() not in chore.days:
         return False
     if chore.week_mode == "even":
@@ -57,14 +60,25 @@ def snapshot(db: Session, g: GlobalConfig, day: str | None = None) -> dict:
     day = day or local_day(g)
     valid = {p.id for p in g.people}
     done = {(r.chore_id, r.person_id) for r in db.query(ChoreLog).filter(ChoreLog.day == day)}
+    once_ids = [c.id for c in g.chores if c.week_mode == "once"]
+    finished = {}
+    if once_ids:
+        for r in db.query(ChoreLog).filter(ChoreLog.chore_id.in_(once_ids)):
+            key = (r.chore_id, r.person_id)
+            finished[key] = min(finished.get(key, r.day), r.day)
     items = []
     for c in g.chores:
         if not is_due(c, day):
             continue
+        once = c.week_mode == "once"
         for pid in slots(c, valid):
+            # A one-off chore ticked on an earlier day is finished and no longer shown.
+            if once and finished.get((c.id, pid), day) < day:
+                continue
             items.append({"id": c.id, "title": c.title, "icon": c.icon, "person_id": pid or None,
-                          "time": c.time or None, "done": (c.id, pid) in done})
-    items.sort(key=lambda i: (i["time"] or "99:99", i["title"].lower()))
+                          "time": c.time or None, "done": (c.id, pid) in done,
+                          "once": once, "overdue": once and c.start_date < day and (c.id, pid) not in done})
+    items.sort(key=lambda i: (not i["overdue"], i["time"] or "99:99", i["title"].lower()))
     return {"day": day, "configured": sum(1 for c in g.chores if c.enabled), "items": items}
 
 
@@ -105,9 +119,19 @@ def week_stats(db: Session, g: GlobalConfig) -> dict:
     days = [(today - timedelta(days=i)).date().isoformat() for i in range(7)]
     valid = {p.id for p in g.people}
     done = {(r.chore_id, r.person_id, r.day) for r in db.query(ChoreLog).filter(ChoreLog.day.in_(days))}
+    once_done = {(r.chore_id, r.person_id) for r in
+                 db.query(ChoreLog).filter(ChoreLog.chore_id.in_([c.id for c in g.chores if c.week_mode == "once"]))}
     out: dict[str, dict] = {}
     for c in g.chores:
         for d in days:
+            if c.week_mode == "once":
+                if d != c.start_date or not c.enabled:
+                    continue
+                for pid in slots(c, valid):
+                    o = out.setdefault(pid or "", {"done": 0, "due": 0})
+                    o["due"] += 1
+                    o["done"] += 1 if (c.id, pid) in once_done else 0
+                continue
             if not is_due(c, d):
                 continue
             for pid in slots(c, valid):

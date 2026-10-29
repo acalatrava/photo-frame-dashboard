@@ -42,6 +42,8 @@
   function setOnline(v) {
     if (B.online === v) return;
     B.online = v;
+    // Coming back must repaint with the real state, so an identical payload may not be skipped afterwards.
+    B._sig = null;
     if (!v && D.ha) { D.ha.connected = false; App.emit('ha'); App.emit('data'); }
     App.emit('conn', v);
   }
@@ -159,12 +161,23 @@
     c = c || { day: '', items: [] };
     D.chores = {
       day: c.day, configured: c.configured || 0,
-      items: (c.items || []).map(function (i) { return { id: i.id, title: i.title, icon: i.icon || 'tasks', person: i.person_id || '', time: i.time || '', done: !!i.done }; })
+      items: (c.items || []).map(function (i) { return { id: i.id, title: i.title, icon: i.icon || 'tasks', person: i.person_id || '', time: i.time || '', done: !!i.done, once: !!i.once, overdue: !!i.overdue }; })
     };
     (cqueue()).forEach(applyChoreOp);
   }
 
   // ------------------------------------------------------------ boot, cache and refresh
+  // Applies a dashboard payload only when it differs from the last one. Most refreshes bring the same data, and
+  // rebuilding every screen for nothing blocks the page (and with it the touch screen) on this slow hardware.
+  function ingest(dash) {
+    var raw = JSON.stringify(dash), sig = App.dayStart(App.now()).getTime() + '|' + raw;
+    if (sig === B._sig) { B.lastSync = Date.now(); return false; }
+    B._sig = sig;
+    sset(K.cache, '{"at":' + Date.now() + ',"dash":' + raw + '}');
+    B.apply(dash, false);
+    return true;
+  }
+
   B.sync = function () {
     return B.request('GET', '/api/v1/device/bootstrap').then(function (b) {
       B.cfg = b.config;
@@ -173,8 +186,7 @@
       App.emit('config', b.config);
       return B.request('GET', '/api/v1/device/dashboard');
     }).then(function (dash) {
-      sset(K.cache, JSON.stringify({ at: Date.now(), dash: dash }));
-      B.apply(dash, false);
+      ingest(dash);
       flushQueue(); flushChores();
       B.openStream();
     });
@@ -182,8 +194,7 @@
 
   B.refreshDashboard = function () {
     return B.request('GET', '/api/v1/device/dashboard').then(function (dash) {
-      sset(K.cache, JSON.stringify({ at: Date.now(), dash: dash }));
-      B.apply(dash, false);
+      ingest(dash);
     }).catch(function () { /* offline: keep what we have */ });
   };
 
@@ -227,6 +238,7 @@
   // a frame moved to another server never shows the old server's photos or lists.
   function forgetPairing() {
     sset(K.token, null); sset(K.device, null); sset(K.cache, null); sset(K.cfg, null); sset(K.queue, null); sset(K.cq, null);
+    B._sig = null;
     D.photos = []; D.chores = { day: '', items: [] }; D.cameras = []; D.events = [];
     D.menu = { configured: false, meals: [], weeks: [], start_week: 1, start_date: '' };
     if (N && N.clearWebCache) { try { N.clearWebCache(); } catch (e) { /* ignore */ } }
@@ -259,6 +271,7 @@
     status.online = B.online;
     if (App.display) status.screen = App.display.screen;
     status.ua = (navigator.userAgent.match(/Chrome\/[\d.]+/) || [''])[0];
+    if (App.perf) status.perf = App.perf.report();
     var version = '';
     try { version = N && N.getVersion ? N.getVersion() : ''; } catch (e) { version = ''; }
     return B.request('POST', '/api/v1/device/heartbeat', { app_version: version || null, status: status }).then(function (r) {
@@ -376,7 +389,7 @@
     if (topic === 'ha.status') { D.ha.connected = !!p.connected; App.emit('ha'); if (p.connected) B.refreshDashboard(); return; }
     if (topic === 'presence.ha') { D.presence.ha_active = p.active; App.emit('presence'); return; }
     if (topic === 'device.revoked') { B.unpair(true); return; }
-    if (topic === 'device.command') { App.emit('command', p.type); return; }
+    if (topic === 'device.command') { App.emit('command', p.type, p); return; }
     if (topic === 'update.changed') { App.emit('update:published'); return; }
     if (topic === 'recording.changed') { B.recording = !!p.active; App.emit('recording', B.recording); return; }
     // calendar, shopping, photos, weather: refetch the dashboard (small payload, one request)
@@ -415,6 +428,7 @@
     op.op_id = newId('op');
     if (op.type === 'add') op.client_id = newId('tmp');
     applyOp(op);
+    B._sig = null;
     var q = queue(); q.push(op); saveQueue(q);
     App.emit('data');
     return flushQueue();
@@ -460,6 +474,7 @@
   B.chore = function (choreId, personId, done) {
     var op = { chore_id: choreId, person_id: personId || '', done: !!done, day: ymd(App.now()) };
     applyChoreOp(op);
+    B._sig = null;
     var q = cqueue(); q.push(op); sset(K.cq, JSON.stringify(q.slice(-200)));
     App.emit('chores');
     return flushChores();

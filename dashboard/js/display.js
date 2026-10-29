@@ -73,6 +73,8 @@
     App.emit('screen', 'on');
   };
 
+  S.sleepNow = function () { S.sleep(dsp().screen_off === 'never' ? 'black' : dsp().screen_off); };
+
   // ------------------------------------------------------------ presence inputs
   function usesLight() { var p = prs(); return p.enabled !== false && (p.provider === 'light_sensor' || p.provider === 'combined'); }
   function usesHa() { var p = prs(); return p.enabled !== false && (p.provider === 'homeassistant' || p.provider === 'combined'); }
@@ -87,13 +89,19 @@
     if (!usesHa()) return;
     if (D.presence.ha_active === true) { S.lastHaPresence = Date.now(); S.wake('ha'); }
   });
+  // A sharp drop to almost no light means the room light was switched off: nobody needs the screen.
+  App.on('native:lights_off', function () {
+    if (prs().sleep_on_lights_off === false) return;
+    if (Date.now() - (S.lastTouch || 0) < 10000 || (App.alerts && App.alerts.active)) return;
+    S.sleepNow();
+  });
   App.on('native:lux', function (p) {
     S.lux = p.lux;
     var now = Date.now();
     if (!S._bt || now - S._bt > 2000) { S._bt = now; applyBrightness(); }
   });
 
-  document.addEventListener('pointerdown', function () { S.lastActive = Date.now(); }, true);
+  document.addEventListener('pointerdown', function () { S.lastActive = S.lastTouch = Date.now(); }, true);
 
   // The touch that wakes the screen must not also press whatever is under the finger.
   document.addEventListener('click', function (e) {
@@ -122,7 +130,7 @@
   });
   App.on('command', function (type) {
     if (type === 'wake') S.wake('command');
-    else if (type === 'sleep') S.sleep(dsp().screen_off === 'never' ? 'black' : dsp().screen_off);
+    else if (type === 'sleep') S.sleepNow();
     else if (type === 'reload') { N.available ? N.reload() : location.reload(); }
     else if (type === 'identify') App.toast(App.t('identify_toast', { name: App.esc((App.backend.cfg && App.backend.cfg.device.name) || '') }), { icon: 'bell', ms: 8000 });
   });

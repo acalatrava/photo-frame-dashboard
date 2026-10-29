@@ -10,7 +10,8 @@ from tests.apkbuild import build_apk, new_identity
 
 from .conftest import ADMIN_HEADERS, ADMIN_PASSWORD
 
-GUARDS = {deps.admin_required, deps.admin_session_required, deps.device_required, deps.mcp_token_user}
+GUARDS = {deps.admin_required, deps.admin_session_required, deps.device_required, deps.mcp_token_user,
+          deps.trigger_required}
 
 # Routes that are open on purpose. Anything new that shows up unguarded makes the audit fail until it is reviewed.
 PUBLIC = {

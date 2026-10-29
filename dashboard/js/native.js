@@ -32,6 +32,11 @@
   H.setBrightness = function (pct) { call('setBrightness', [pct], null); };
   H.wake = function () { call('wakeScreen', [], null); };
   H.sleep = function (mode) { return call('sleepScreen', [mode || 'black'], false); };
+  H.speak = function (text, lang, volume) { call('speak', [text, lang || '', volume == null ? 80 : volume], null); };
+  H.stopSpeaking = function () { call('stopSpeaking', [], null); };
+  H.ttsAvailable = function () { return !!call('ttsAvailable', [], false); };
+  H.ttsMissing = function () { return !!call('ttsMissing', [], false); };
+  H.setVolume = function (pct) { call('setVolume', [pct], null); };
   H.reload = function () { call('reload', [], null); };
   H.openSettings = function () { call('openAndroidSettings', [], null); };
   H.downloadUpdate = function (url, token, sha256, versionCode, install) { call('downloadUpdate', [url, token, sha256, versionCode, !!install], null); };

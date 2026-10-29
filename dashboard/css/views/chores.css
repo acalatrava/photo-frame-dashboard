@@ -17,6 +17,7 @@
 .ch-tx { display: flex; flex-direction: column; min-width: 0; }
 .ch-tx b { font-size: 28px; font-weight: 700; line-height: 1.1; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
 .ch-tx small { font-size: 18px; color: var(--mute); font-weight: 700; }
+.ch-tx small.ch-late { color: #B3261E; }
 .ch-item.is-done { background: var(--c); color: var(--c-ink); }
 .ch-item.is-done .ch-ic { background: rgba(255, 255, 255, .28); color: var(--c-ink); }
 .ch-item.is-done .ch-tx b { text-decoration: line-through; opacity: .85; }

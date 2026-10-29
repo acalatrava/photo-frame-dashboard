@@ -6,6 +6,12 @@
   var DICT = {
     es: {
       nav_chores: 'Tareas', nav_cameras: 'Cámaras', ch_shared: 'Casa', cal_week_n: 'Semana {n}', cal_wk: 'Sem.', ch_see_all: 'Ver todas', undo: 'Deshacer', ch_done_toast: 'Hecho: {name}', ch_all_done: '¡Todo hecho!', ch_none: 'Hoy no hay tareas.', ch_none2: 'Disfruta del descanso.', ch_today: 'tareas de hoy',
+      ch_overdue: 'Pendiente de antes', ch_once: 'Tarea puntual',
+      al_alarm: 'Alarma', al_notice: 'Aviso', al_snooze: 'Posponer {n} min', al_stop: 'Parar', al_close: 'Cerrar',
+      chime_say: function (v) {
+        var h = v.h % 12 || 12, q = v.m >= 30 ? ' y media' : '';
+        return (h === 1 ? 'Es la una' : 'Son las ' + h) + q;
+      },
       nav_menu: 'Menú', mn_kicker: 'Semanal', mn_week: 'Semana', mn_today: 'HOY', mn_back: 'Esta semana', mn_prev: 'Semana anterior', mn_next: 'Semana siguiente', mn_none: 'Aún no hay menú.', mn_none2: 'Añádelo desde el panel de administración.', mn_week_empty: 'Esta semana no tiene comidas.', meal_breakfast: 'Desayuno', meal_midmorning: 'Media mañana', meal_lunch: 'Comida', meal_snack: 'Merienda', meal_dinner: 'Cena',
       cam_kicker: 'En directo', cam_none: 'No hay cámaras configuradas.', cam_none2: 'Añádelas desde el panel de administración.', cam_reload: 'Recargar', cam_error: 'No se puede mostrar la cámara.',
       g_covers: 'Persianas y cortinas', cover_open: 'Abierta', cover_closed: 'Cerrada', cover_opening: 'Abriendo', cover_closing: 'Cerrando', cover_up: 'Subir', cover_down: 'Bajar', cover_stop: 'Parar',
@@ -68,6 +74,12 @@
     },
     en: {
       nav_chores: 'Chores', nav_cameras: 'Cameras', ch_shared: 'Household', cal_week_n: 'Week {n}', cal_wk: 'Wk', ch_see_all: 'See all', undo: 'Undo', ch_done_toast: 'Done: {name}', ch_all_done: 'All done!', ch_none: 'No chores today.', ch_none2: 'Enjoy the break.', ch_today: 'chores today',
+      ch_overdue: 'Overdue', ch_once: 'One-off',
+      al_alarm: 'Alarm', al_notice: 'Notice', al_snooze: 'Snooze {n} min', al_stop: 'Stop', al_close: 'Close',
+      chime_say: function (v) {
+        var h = v.h % 12 || 12;
+        return v.m >= 30 ? "It's half past " + h : "It's " + h + " o'clock";
+      },
       nav_menu: 'Menu', mn_kicker: 'Weekly', mn_week: 'Week', mn_today: 'TODAY', mn_back: 'This week', mn_prev: 'Previous week', mn_next: 'Next week', mn_none: 'No menu yet.', mn_none2: 'Add it from the admin panel.', mn_week_empty: 'This week has no meals.', meal_breakfast: 'Breakfast', meal_midmorning: 'Mid-morning', meal_lunch: 'Lunch', meal_snack: 'Snack', meal_dinner: 'Dinner',
       cam_kicker: 'Live', cam_none: 'No cameras configured.', cam_none2: 'Add them from the admin panel.', cam_reload: 'Reload', cam_error: 'The camera cannot be shown.',
       g_covers: 'Blinds and curtains', cover_open: 'Open', cover_closed: 'Closed', cover_opening: 'Opening', cover_closing: 'Closing', cover_up: 'Raise', cover_down: 'Lower', cover_stop: 'Stop',

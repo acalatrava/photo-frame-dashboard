@@ -11,9 +11,9 @@
   App.on = function (e, fn) { (handlers[e] = handlers[e] || []).push(fn); };
   App.errors = [];
   // One failing listener must never stop the others (a wall display cannot be reloaded by hand).
-  App.emit = function (e, a) {
+  App.emit = function (e, a, b) {
     (handlers[e] || []).forEach(function (fn) {
-      try { fn(a); } catch (err) {
+      try { fn(a, b); } catch (err) {
         App.errors.push(e + ': ' + (err && err.stack || err));
         if (App.errors.length > 30) App.errors.shift();
         if (window.console) console.error('[HomeHQ] handler for "' + e + '" failed', err);
@@ -125,6 +125,7 @@
   // Views are built once and kept laid out (hidden with content-visibility), so switching tabs
   // only has to paint. A view is rebuilt when its data changed ('data'/'time' events) or, for
   // time-sensitive views (minutely: true), when the minute has rolled over since it was built.
+  var lastTouch = 0, QUIET_MS = 4000;
   function minuteKey() { return Math.floor(App.now().getTime() / 60000); }
   function build(name, opts) {
     var view = App.views[name];
@@ -163,6 +164,8 @@
         return k !== App.current && (!v._built || v._dirty);
       })[0];
       if (!name) return;
+      // A rebuild blocks the page for a moment, so it waits until nobody is touching the frame.
+      if (Date.now() - lastTouch < QUIET_MS || App.mode !== 'day') { refreshTimer = setTimeout(next, 2000); return; }
       prebuild(name);
       refreshTimer = setTimeout(next, 400);
     }, delay);
@@ -276,6 +279,7 @@
   function onIdleTick() {
     idleSec++;
     var blocked = !!($('#setup') && $('#setup').classList.contains('is-open'));
+    if (Date.now() < pinnedUntil) { idleSec = 0; return; }
     if (App.mode === 'nightdash' && idleSec >= 20) { App.setMode('night'); return; }
     if (App.mode !== 'day' || blocked) return;
     if (idleSec === App.idle.home && App.current !== 'home') { App.closeSheet(); App.go('home'); }
@@ -286,6 +290,11 @@
     }
   }
   App.resetIdle = function () { idleSec = 0; };
+  // A screen shown on request (a doorbell camera, say) stays until this time unless someone touches the frame.
+  var pinnedUntil = 0;
+  App.pin = function (ms) { pinnedUntil = ms ? Date.now() + ms : 0; };
+  document.addEventListener('pointerdown', function () { pinnedUntil = 0; }, true);
+  document.addEventListener('pointerdown', function () { lastTouch = Date.now(); }, true);
 
   // ------------------------------------------------------------ stage scaling (desktop preview only)
   function fit() {

@@ -174,6 +174,7 @@ public class MainActivity extends Activity {
     bridge = new Bridge(this, hw);
     web.addJavascriptInterface(bridge, "HQNative");
     hw.setSink((event, json) -> emit(event, json));
+    bridge.speaker().setSink((event, json) -> emit(event, json));
     hw.start();
     // Keep navigation inside the kiosk. When the kiosk starts at boot before Wi-Fi is up, the
     // first load fails and would stay on the error page, so retry failed main-frame loads.
@@ -338,6 +339,7 @@ public class MainActivity extends Activity {
 
   /** 0..100. Values of 1 or less switch the backlight off while the screen stays "on" (touch still works). */
   void setBrightnessPct(int pct) {
+    if (pct != lastBrightness) hw.noteBrightnessChange();
     lastBrightness = pct;
     runOnUiThread(() -> {
       WindowManager.LayoutParams lp = getWindow().getAttributes();

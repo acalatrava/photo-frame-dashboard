@@ -83,4 +83,12 @@
     hide: function () { closeLive(); clearInterval(V.timer); }
   });
   App.on('mode', function (m) { if (m !== 'day' && V.el) closeLive(); });
+
+  // Opens one camera full screen by its id (used when Home Assistant rings the doorbell).
+  App.cameras = {
+    open: function (id) {
+      for (var i = 0; i < D.cameras.length; i++) if (D.cameras[i].id === id && V.el) { openLive(i); return true; }
+      return false;
+    }
+  };
 })();

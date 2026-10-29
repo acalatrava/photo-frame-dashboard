@@ -9,6 +9,7 @@ from ..core.db import get_db
 from ..models import AdminUser, ApiToken
 from .deps import API_TOKEN_PREFIX, admin_session_required
 
+# A `trigger` token can only fire actions on the frames (see trigger.py); it is meant for Home Assistant.
 # Minting and revoking tokens needs a real login: a token can never create more tokens.
 router = APIRouter(prefix="/api/v1/admin/tokens", tags=["admin-tokens"])
 MAX_ACTIVE = 20
@@ -16,7 +17,7 @@ MAX_ACTIVE = 20
 
 class TokenBody(BaseModel):
     name: str = Field(min_length=1, max_length=80)
-    scope: str = Field("read", pattern="^(read|full)$")
+    scope: str = Field("read", pattern="^(read|full|trigger)$")
     expires_days: int | None = Field(None, ge=1, le=3650)
 
 

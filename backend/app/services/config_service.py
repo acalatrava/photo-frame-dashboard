@@ -53,6 +53,8 @@ def effective_config(db: Session, device: Device) -> dict:
                    for p in g.people if p.id in visible],
         "shopping": {"provider": g.shopping.provider},
         "updates": {"mode": g.updates.mode},
+        "alarms": [x.model_dump(mode="json") for x in g.alarms
+                   if x.enabled and (not x.device_ids or device.id in x.device_ids)],
         "homeassistant": {"enabled": g.homeassistant.enabled},
         "device_config": d.model_dump(mode="json"),
     }

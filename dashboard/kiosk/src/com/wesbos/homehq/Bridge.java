@@ -7,6 +7,8 @@ import android.content.pm.PackageInfo;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.Build;
+import android.os.Handler;
+import android.os.HandlerThread;
 import android.os.SystemClock;
 import android.provider.Settings;
 import android.util.Log;
@@ -27,29 +29,55 @@ final class Bridge {
   private final Hardware hw;
   private final Discovery discovery;
   private final Updater updater;
+  private final Speaker speaker;
   private final SharedPreferences prefs;
+  // Cached copies of the dashboard and configuration live in their own file, so saving a small preference never
+  // rewrites hundreds of kilobytes of cache.
+  private final SharedPreferences cachePrefs;
+  private static final String CACHE_PREFIX = "hq.cache.";
+  private final HandlerThread statusThread = new HandlerThread("hq-status");
+  private volatile String statusJson = "{}";
 
   Bridge(MainActivity act, Hardware hw) {
     this.act = act;
     this.hw = hw;
     this.discovery = new Discovery(act);
     this.updater = new Updater(act);
+    this.speaker = new Speaker(act);
     this.prefs = act.getSharedPreferences(PREFS, Context.MODE_PRIVATE);
+    this.cachePrefs = act.getSharedPreferences(PREFS + "_cache", Context.MODE_PRIVATE);
+    statusThread.start();
+    final Handler h = new Handler(statusThread.getLooper());
+    h.post(new Runnable() {
+      @Override public void run() {
+        statusJson = buildStatus();
+        h.postDelayed(this, 15000);
+      }
+    });
   }
+
+  Speaker speaker() { return speaker; }
 
   private boolean trusted() { return act.pageIsBundled(); }
 
-  void shutdown() { discovery.stop(); updater.shutdown(); }
+  void shutdown() { discovery.stop(); updater.shutdown(); speaker.shutdown(); statusThread.quitSafely(); }
   void onForeground() { updater.onForeground(); }
 
   // ------------------------------------------------------------ preferences
+  private SharedPreferences store(String key) {
+    return key.startsWith(CACHE_PREFIX) ? cachePrefs : prefs;
+  }
+
   @JavascriptInterface public String getPref(String key) {
-    return trusted() && key != null ? prefs.getString(key, "") : "";
+    if (!trusted() || key == null) return "";
+    String v = store(key).getString(key, null);
+    // Before the cache had its own file these keys were kept with the other preferences.
+    return v != null ? v : (store(key) == prefs ? "" : prefs.getString(key, ""));
   }
 
   @JavascriptInterface public void setPref(String key, String value) {
     if (!trusted() || key == null || key.length() > 80) return;
-    SharedPreferences.Editor e = prefs.edit();
+    SharedPreferences.Editor e = store(key).edit();
     if (value == null || value.isEmpty()) e.remove(key); else e.putString(key, value);
     e.apply();
   }
@@ -77,8 +105,12 @@ final class Bridge {
     return o.toString();
   }
 
+  /** Answered from a copy refreshed every 15 seconds, because asking Android for Wi-Fi details can block. */
   @JavascriptInterface public String getStatus() {
-    if (!trusted()) return "{}";
+    return trusted() ? statusJson : "{}";
+  }
+
+  private String buildStatus() {
     JSONObject o = new JSONObject();
     try {
       o.put("screen", hw.screen);
@@ -126,6 +158,13 @@ final class Bridge {
 
   @JavascriptInterface public String getSensorInfo() { return trusted() ? hw.sensorInfo().toString() : "{}"; }
   @JavascriptInterface public String getSensorLog() { return trusted() ? hw.sensorLog().toString() : "[]"; }
+
+  // ------------------------------------------------------------ sound
+  @JavascriptInterface public void speak(String text, String lang, int volumePct) { if (trusted()) speaker.speak(text, lang, volumePct); }
+  @JavascriptInterface public void stopSpeaking() { if (trusted()) speaker.stop(); }
+  @JavascriptInterface public boolean ttsAvailable() { return trusted() && speaker.available(); }
+  @JavascriptInterface public boolean ttsMissing() { return trusted() && speaker.unavailable(); }
+  @JavascriptInterface public void setVolume(int pct) { if (trusted()) speaker.setVolume(pct); }
 
   // ------------------------------------------------------------ screen
   @JavascriptInterface public void setBrightness(int pct) { if (trusted()) act.setBrightnessPct(pct); }

@@ -94,11 +94,11 @@ async def _update_config(ctx: Ctx, args: dict) -> Any:
 
 register("update_config", "Cambia parte de la configuración global con un JSON Merge Patch (RFC 7386): los objetos se "
          "fusionan, un valor null elimina la clave y las listas se REEMPLAZAN enteras (para personas, calendarios, "
-         "tareas y cámaras usa upsert_collection_item). Ejemplo: {\"general\":{\"nav_order\":[\"calendar\",\"menu\"]}}. "
+         "tareas, cámaras y alarmas usa upsert_collection_item). Ejemplo: {\"general\":{\"nav_order\":[\"calendar\",\"menu\"]}}. "
          "Se valida entera y los marcos reciben el cambio al instante.",
          obj({"patch": {"type": "object"}}, ["patch"]), _update_config, idempotent=True)
 
-COLLECTIONS = {"people": "name", "calendars": "name", "chores": "title", "cameras": "name"}
+COLLECTIONS = {"people": "name", "calendars": "name", "chores": "title", "cameras": "name", "alarms": "name"}
 
 
 def _slug(text: str) -> str:
@@ -128,7 +128,7 @@ async def _upsert(ctx: Ctx, args: dict) -> Any:
     return {"created": existing is None, "item": merged, "version": res["version"]}
 
 
-register("upsert_collection_item", "Crea o actualiza un elemento de people, calendars, chores o cameras. Si `item.id` "
+register("upsert_collection_item", "Crea o actualiza un elemento de people, calendars, chores, cameras o alarms. Si `item.id` "
          "existe se fusionan solo los campos que envíes; si no existe se crea (el id se genera desde el nombre si "
          "falta). Consulta get_config_schema para los campos de cada tipo. Los secretos (contraseña de un calendario) "
          "se guardan aparte con set_calendar_password.",
@@ -150,7 +150,7 @@ async def _delete_item(ctx: Ctx, args: dict) -> Any:
     return {"deleted": ident, "version": res["version"]}
 
 
-register("delete_collection_item", "Elimina un elemento de people, calendars, chores o cameras por id. Al borrar una "
+register("delete_collection_item", "Elimina un elemento de people, calendars, chores, cameras o alarms por id. Al borrar una "
          "persona se quita también de los calendarios y tareas que la nombraban.",
          obj({"collection": {"type": "string", "enum": list(COLLECTIONS)}, "id": S}, ["collection", "id"]),
          _delete_item, destructive=True)
