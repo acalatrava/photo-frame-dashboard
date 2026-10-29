@@ -119,7 +119,7 @@
     App.display.wake('trigger');
     App.setMode('day');
     App.closeSheet();
-    App.go(p.view);
+    App.go(p.view, { sync: true });
     if (p.view === 'cameras' && p.camera && App.cameras) App.cameras.open(p.camera);
     App.resetIdle();
     var shownAt = Date.now(), ms = p.duration_s > 0 ? p.duration_s * 1000 : 0;

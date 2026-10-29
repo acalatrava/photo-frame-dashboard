@@ -2,8 +2,11 @@
 .mu { height: 100%; display: flex; flex-direction: column; gap: 14px; }
 .mu-head { display: flex; align-items: flex-end; justify-content: space-between; flex: none; gap: 20px; }
 .mu-head h1 { font-size: 64px; line-height: .95; }
-.mu-spks { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 8px; max-width: 60%; }
-.mu-spk { min-height: 52px; padding: 0 22px; border-radius: 999px; background: var(--card); font-size: 19px; font-weight: 800; }
+.mu-spkwrap { position: relative; margin-left: 10px; }
+.mu-spkwrap.is-open .mu-spkbtn { background: var(--ink); color: #fff; }
+.mu-menu { display: none; position: absolute; right: 0; bottom: calc(100% + 10px); z-index: 5; min-width: 280px; max-width: 360px; max-height: 300px; overflow-y: auto; padding: 8px; border-radius: 20px; background: var(--card); box-shadow: 0 10px 30px rgb(0 0 0 / .28); flex-direction: column; gap: 4px; }
+.mu-spkwrap.is-open .mu-menu { display: flex; }
+.mu-spk { min-height: 56px; padding: 0 18px; border-radius: 14px; font-size: 20px; font-weight: 800; text-align: left; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .mu-spk.is-on { background: var(--ink); color: #fff; }
 .mu-body { flex: 1; min-height: 0; display: grid; grid-template-columns: 420px minmax(0, 1fr); gap: 18px; }
 .mu-now { display: flex; flex-direction: column; align-items: center; gap: 10px; padding: 22px; overflow: hidden; }
@@ -20,7 +23,7 @@
 .mu-play { width: 96px; height: 96px; border-radius: 50%; background: var(--ink); color: #fff; display: grid; place-items: center; }
 .mu-sk { width: 68px; height: 68px; border-radius: 50%; display: grid; place-items: center; background: rgb(var(--ink-rgb) / .07); }
 .mu-play:active, .mu-sk:active { transform: scale(.93); }
-.mu-vol { display: flex; align-items: center; gap: 12px; }
+.mu-vol { display: flex; align-items: center; justify-content: center; gap: 12px; }
 .mu-vol .mu-sk { width: 56px; height: 56px; }
 .mu-vol b { min-width: 46px; text-align: center; font-size: 24px; }
 .mu-msg { text-align: center; font-size: 30px; line-height: 1.2; margin: auto 0; }

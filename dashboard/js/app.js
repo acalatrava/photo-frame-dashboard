@@ -125,13 +125,24 @@
   // Views are built once and kept laid out (hidden with content-visibility), so switching tabs
   // only has to paint. A view is rebuilt when its data changed ('data'/'time' events) or, for
   // time-sensitive views (minutely: true), when the minute has rolled over since it was built.
-  var lastTouch = 0, QUIET_MS = 4000;
+  var lastTouch = 0, QUIET_MS = 12000;
   function minuteKey() { return Math.floor(App.now().getTime() / 60000); }
   function build(name, opts) {
     var view = App.views[name];
-    view.show($('#view-' + name), opts || {});
+    var el = $('#view-' + name);
+    try { view.show(el, opts || {}); } finally { el.classList.remove('is-loading'); }
     view._built = true; view._dirty = false; view._min = minuteKey();
   }
+  // Runs after the browser has painted what the tap changed, so a slow rebuild never makes the tap look ignored.
+  function afterPaint(fn) {
+    var done = false;
+    function run() { if (done) return; done = true; fn(); }
+    if (window.requestAnimationFrame) requestAnimationFrame(function () { setTimeout(run, 0); });
+    setTimeout(run, 150);
+  }
+  // Switching screens answers at once: the rail and the screen change straight away (with the previous content, or
+  // a placeholder the first time) and the rebuild happens right after the first paint. Pass { sync: true } when the
+  // caller needs the screen built before it continues.
   App.go = function (name, opts) {
     opts = opts || {};
     if (!App.views[name]) name = 'home';
@@ -139,9 +150,17 @@
     App.$$('.view').forEach(function (v) { v.classList.toggle('is-active', v.dataset.view === name); });
     App.$$('.rail-item').forEach(function (b) { b.classList.toggle('is-active', b.dataset.go === name); });
     App.current = name;
-    var view = App.views[name];
-    if (!view._built || view._dirty || opts.rerender || (view.minutely && view._min !== minuteKey())) build(name, opts);
-    else if (view.resume) view.resume($('#view-' + name));
+    var view = App.views[name], el = $('#view-' + name);
+    var stale = !view._built || view._dirty || opts.rerender || (view.minutely && view._min !== minuteKey());
+    if (stale && (opts.sync || !App.started)) build(name, opts);
+    else if (stale) {
+      if (!view._built) el.classList.add('is-loading');
+      view._pending = true;
+      afterPaint(function () {
+        view._pending = false;
+        if (App.current === name) build(name, opts);
+      });
+    } else if (view.resume) view.resume(el);
     if (location.hash !== '#' + name) history.replaceState(null, '', '#' + name);
   };
   // Build a hidden view and lay it out now (cached by content-visibility; no paint happens).
@@ -165,7 +184,7 @@
       })[0];
       if (!name) return;
       // A rebuild blocks the page for a moment, so it waits until nobody is touching the frame.
-      if (Date.now() - lastTouch < QUIET_MS || App.mode !== 'day') { refreshTimer = setTimeout(next, 2000); return; }
+      if (Date.now() - lastTouch < QUIET_MS || App.mode !== 'day' || (App.display && App.display.screen !== 'on')) { refreshTimer = setTimeout(next, 2000); return; }
       prebuild(name);
       refreshTimer = setTimeout(next, 400);
     }, delay);
@@ -352,6 +371,7 @@
     document.addEventListener('pointerdown', App.resetIdle, true);
     window.addEventListener('hashchange', function () { App.go(location.hash.slice(1)); });
     App.go(location.hash.slice(1) || 'home');
+    App.started = true;
     tick();
     setInterval(tick, 1000);
     App.emit('ready');

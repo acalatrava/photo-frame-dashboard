@@ -65,6 +65,12 @@
     App.resetIdle();
   });
   App.on('minute', paint);
+  // A dark screen needs no photo changes or image downloads.
+  App.on('screen', function (s) {
+    if (!amb.show) return;
+    if (s !== 'on') amb.show.stop();
+    else if (App.mode === 'ambient') amb.show.start();
+  });
   // Colours chosen in the admin panel for the clock over the photos and for the night clock.
   var HEX = /^#[0-9a-f]{6}$/i;
   function applyColors() {

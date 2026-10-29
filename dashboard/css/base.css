@@ -80,6 +80,15 @@ ul { margin: 0; padding: 0; list-style: none; }
 .views { position: relative; overflow: hidden; }
 .view { position: absolute; top: 0; right: 0; bottom: 0; left: 0; padding: var(--pad); content-visibility: hidden; z-index: 0; }
 .view.is-active, .view.is-warming { content-visibility: visible; }
+/* Placeholder blocks for a screen that has never been built, while its content is prepared */
+.view.is-loading > * { visibility: hidden; }
+.view.is-loading::before {
+  content: ''; display: block; height: 100%; border-radius: 24px;
+  background:
+    linear-gradient(rgb(var(--ink-rgb) / .06), rgb(var(--ink-rgb) / .06)) 0 0 / 100% 30% no-repeat,
+    linear-gradient(rgb(var(--ink-rgb) / .06), rgb(var(--ink-rgb) / .06)) 0 100% / calc(50% - 8px) 62% no-repeat,
+    linear-gradient(rgb(var(--ink-rgb) / .06), rgb(var(--ink-rgb) / .06)) 100% 100% / calc(50% - 8px) 62% no-repeat;
+}
 .view.is-active { z-index: 1; }
 .view--bleed { padding: 0; }
 

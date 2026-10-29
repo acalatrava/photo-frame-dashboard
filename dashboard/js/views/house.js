@@ -162,6 +162,12 @@
       paint();
     }
   });
-  App.on('ha', function () { if (App.current === 'house') paint(); else if (App.views.house) App.views.house._dirty = true; });
+  // Home Assistant can report many changes in a burst; one repaint per short window is enough.
+  var paintTimer = 0;
+  App.on('ha', function () {
+    if (App.current !== 'house') { if (App.views.house) App.views.house._dirty = true; return; }
+    if (paintTimer) return;
+    paintTimer = setTimeout(function () { paintTimer = 0; if (App.current === 'house') paint(); }, 400);
+  });
   App.on('conn', function () { if (App.current === 'house') paint(); });
 })();

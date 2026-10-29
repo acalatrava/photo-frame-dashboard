@@ -62,13 +62,37 @@
     lastSent = null; applyBrightness();
     App.emit('screen', S.screen);
   };
+  // After waking, taps that arrive while the page is still catching up are dropped instead of pressing whatever
+  // appears under the finger a moment later (they may have been queued during a long task).
+  var settling = false, settleTimer = 0;
+  function settle() {
+    settling = true;
+    clearTimeout(settleTimer);
+    settleTimer = setTimeout(function () { settling = false; }, 3000);
+    requestAnimationFrame(function () {
+      requestAnimationFrame(function () {
+        clearTimeout(settleTimer);
+        settleTimer = setTimeout(function () { settling = false; }, 400);
+      });
+    });
+  }
+  ['pointerdown', 'pointerup', 'touchstart', 'touchend', 'mousedown', 'mouseup', 'click'].forEach(function (type) {
+    document.addEventListener(type, function (e) {
+      if (settling) { e.stopPropagation(); e.preventDefault(); }
+    }, true);
+  });
+
+  // The screen is lit first; the rest of the work follows once it is visible.
   S.wake = function (why) {
     S.lastActive = Date.now();
     if (S.screen === 'on') return;
+    var was = S.screen;
     S.screen = 'on';
-    N.wake();
+    if (was === 'off') N.wake();
     overlay().classList.remove('is-on');
     lastSent = null; applyBrightness();
+    if (why === 'touch') settle();
+    if (was !== 'off') setTimeout(N.wake, 0);
     if (why !== 'touch' && App.mode === 'day') { App.setMode(App.isNight() ? 'night' : 'ambient'); }
     App.emit('screen', 'on');
   };

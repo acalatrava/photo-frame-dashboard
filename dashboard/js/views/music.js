@@ -2,7 +2,7 @@
 // makes no sound here; the backend talks to Spotify and the frame only sends commands and draws the answer.
 (function () {
   'use strict';
-  var V = { el: null, st: null, devices: [], lists: null, results: null, tab: 'lists', q: '', err: '', poll: 0, tick: 0, sig: '', at: 0, busy: false };
+  var V = { el: null, st: null, devices: [], lists: null, results: null, tab: 'lists', q: '', spk: false, err: '', poll: 0, tick: 0, sig: '', at: 0, busy: false };
 
   function req(method, path, body) { return App.backend.request(method, path, body, { timeout: 9000 }); }
   function esc(s) { return App.esc(s == null ? '' : s); }
@@ -22,7 +22,7 @@
     }).then(function () { V.busy = false; paintNow(); }, function (e) { V.busy = false; fail(e); });
   }
   function loadDevices() {
-    return req('GET', '/api/v1/device/music/devices').then(function (d) { V.devices = d; paintSpeakers(); });
+    return req('GET', '/api/v1/device/music/devices').then(function (d) { V.devices = d; });
   }
   function loadLists() {
     if (V.lists) return;
@@ -72,7 +72,8 @@
     if (!s || !s.active || !s.track) {
       var none = V.devices.length === 0 && s;
       return '<div class="mu-msg serif">' + (none ? App.t('mu_nodev') + '<br><i>' + App.t('mu_nodev2') + '</i>' : App.t('mu_nothing') + '<br><i>' + App.t('mu_nothing2') + '</i>') + '</div>' +
-        (V.devices.length ? '<div class="mu-ctl"><button class="mu-play" data-act="play" aria-label="Play">' + App.icon('play', 44) + '</button></div>' : '');
+        (V.devices.length ? '<div class="mu-ctl"><button class="mu-play" data-act="play" aria-label="Play">' + App.icon('play', 44) + '</button></div>' +
+          '<div class="mu-vol">' + speakerMenu() + '</div>' : '');
     }
     var tr = s.track, vol = s.device && s.device.volume != null ? s.device.volume : null;
     return art(tr.art, 'mu-art') +
@@ -82,15 +83,21 @@
       '<div class="mu-ctl"><button class="mu-sk" data-act="previous" aria-label="Previous">' + App.icon('skipp', 40) + '</button>' +
       '<button class="mu-play" data-act="play" aria-label="Play or pause">' + App.icon(s.playing ? 'pause' : 'play', 44) + '</button>' +
       '<button class="mu-sk" data-act="next" aria-label="Next">' + App.icon('skipn', 40) + '</button></div>' +
-      (vol == null ? '' : '<div class="mu-vol"><button class="mu-sk" data-vol="-10" aria-label="Volume down">' + App.icon('minus', 30) + '</button>' +
-        App.icon('vol', 30) + '<b class="num">' + vol + '</b><button class="mu-sk" data-vol="10" aria-label="Volume up">' + App.icon('plus', 30) + '</button></div>');
+      '<div class="mu-vol">' + (vol == null ? '' : '<button class="mu-sk" data-vol="-10" aria-label="Volume down">' + App.icon('minus', 30) + '</button>' +
+        '<b class="num">' + vol + '</b><button class="mu-sk" data-vol="10" aria-label="Volume up">' + App.icon('plus', 30) + '</button>') +
+        speakerMenu() + '</div>';
   }
 
-  function speakersHtml() {
+  // Speaker picker: a button with the speaker icon that opens a short list, so many speakers take no room.
+  function speakerMenu() {
+    if (!V.devices.length) return '';
     var cur = V.st && V.st.active && V.st.device ? V.st.device.id : null;
-    return V.devices.map(function (d) {
-      return '<button class="mu-spk' + (d.id === cur || (!cur && d.active) ? ' is-on' : '') + '" data-dev="' + esc(d.id) + '">' + esc(d.name) + '</button>';
+    var items = V.devices.map(function (d) {
+      var on = d.id === cur || (!cur && d.active);
+      return '<button class="mu-spk' + (on ? ' is-on' : '') + '" data-dev="' + esc(d.id) + '">' + esc(d.name) + '</button>';
     }).join('');
+    return '<div class="mu-spkwrap' + (V.spk ? ' is-open' : '') + '"><button class="mu-sk mu-spkbtn" data-spk="1" aria-label="' + esc(App.t('mu_speakers')) + '" aria-expanded="' + !!V.spk + '">' +
+      App.icon('speaker', 30) + '</button><div class="mu-menu" role="menu">' + items + '</div></div>';
   }
 
   function rowsHtml(items) {
@@ -112,17 +119,16 @@
 
   function shell() {
     return '<div class="mu"><header class="mu-head"><div><div class="label">' + App.t('mu_kicker') + '</div><h1 class="serif">' + App.t('nav_music') + '</h1></div>' +
-      '<div class="mu-spks" id="muSpk"></div></header>' +
+      '</header>' +
       '<div class="mu-body"><section class="mu-now card" id="muNow"></section><section class="mu-browse" id="muBrowse"></section></div></div>';
   }
 
-  function paintSpeakers() { var el = V.el && V.el.querySelector('#muSpk'); if (el) el.innerHTML = speakersHtml(); }
   function paintBrowse() { var el = V.el && V.el.querySelector('#muBrowse'); if (el) { el.innerHTML = browseHtml(); } }
   // Only rebuild the card when something visible changed; polling must not keep the page busy.
   function paintNow(force) {
     if (!V.el) return;
-    var s = V.st, sig = JSON.stringify([V.err, s && s.active, s && s.playing, s && s.track && s.track.uri, s && s.device && s.device.volume, V.devices.length]);
-    if (force || sig !== V.sig) { V.sig = sig; var el = V.el.querySelector('#muNow'); if (el) el.innerHTML = nowHtml(); paintSpeakers(); }
+    var s = V.st, sig = JSON.stringify([V.err, s && s.active, s && s.playing, s && s.track && s.track.uri, s && s.device && s.device.volume, V.spk, V.devices.map(function (d) { return d.id + d.name + (d.active ? 1 : 0); }).join()]);
+    if (force || sig !== V.sig) { V.sig = sig; var el = V.el.querySelector('#muNow'); if (el) el.innerHTML = nowHtml(); }
     progress();
   }
   function paintAll() { V.sig = ''; paintNow(true); }
@@ -158,9 +164,11 @@
         el.innerHTML = shell();
         el.addEventListener('click', function (e) {
           var b;
+          if (V.spk && !e.target.closest('.mu-spkwrap')) { V.spk = false; paintAll(); }
           if ((b = e.target.closest('[data-act]'))) { b.dataset.act === 'play' ? playPause() : control({ action: b.dataset.act, device_id: targetDevice() || undefined }); }
           else if ((b = e.target.closest('[data-vol]'))) bump(+b.dataset.vol);
-          else if ((b = e.target.closest('[data-dev]'))) { control({ action: 'transfer', device_id: b.dataset.dev }); }
+          else if ((b = e.target.closest('[data-dev]'))) { V.spk = false; paintAll(); control({ action: 'transfer', device_id: b.dataset.dev }); }
+          else if (e.target.closest('[data-spk]')) { V.spk = !V.spk; paintAll(); }
           else if ((b = e.target.closest('[data-tab]'))) { V.tab = b.dataset.tab; paintBrowse(); }
           else if ((b = e.target.closest('[data-uri]'))) playUri(b.dataset.uri);
         });
@@ -168,8 +176,9 @@
         el.addEventListener('submit', function (e) { e.preventDefault(); search(); });
       }
       paintBrowse(); paintAll();
-      start();
-    }
+      if (App.current === 'music') start();
+    },
+    resume: function () { paintAll(); start(); }
   });
   App.on('mode', function (m) { if (m !== 'day') stop(); });
 })();

@@ -171,7 +171,11 @@
   // Applies a dashboard payload only when it differs from the last one. Most refreshes bring the same data, and
   // rebuilding every screen for nothing blocks the page (and with it the touch screen) on this slow hardware.
   function ingest(dash) {
+    // server_time changes on every call; leaving it out is what lets identical data be recognised.
+    var st = dash.server_time;
+    delete dash.server_time;
     var raw = JSON.stringify(dash), sig = App.dayStart(App.now()).getTime() + '|' + raw;
+    dash.server_time = st;
     if (sig === B._sig) { B.lastSync = Date.now(); return false; }
     B._sig = sig;
     sset(K.cache, '{"at":' + Date.now() + ',"dash":' + raw + '}');

@@ -337,13 +337,17 @@ public class MainActivity extends Activity {
   // ------------------------------------------------------------ screen control (called from the bridge)
   void applyDisplay(JSONObject display) { /* brightness and sleeping are decided by the page; nothing to keep */ }
 
-  /** 0..100. Values of 1 or less switch the backlight off while the screen stays "on" (touch still works). */
+  /**
+   * 0..100. Values of 1 or less use the lowest backlight level the panel accepts. Going all the way to 0 makes some
+   * panels (this one included) gate the touch controller until the brightness is raised again, so a touch on a
+   * sleeping frame would only be delivered several seconds later.
+   */
   void setBrightnessPct(int pct) {
     if (pct != lastBrightness) hw.noteBrightnessChange();
     lastBrightness = pct;
     runOnUiThread(() -> {
       WindowManager.LayoutParams lp = getWindow().getAttributes();
-      lp.screenBrightness = pct <= 1 ? 0f : Math.min(1f, pct / 100f);
+      lp.screenBrightness = pct <= 1 ? 0.02f : Math.min(1f, pct / 100f);
       getWindow().setAttributes(lp);
     });
   }

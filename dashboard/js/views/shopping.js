@@ -4,8 +4,8 @@
   var D = window.DATA;
   var V = { el: null, query: '', pending: {}, confirm: null };
 
-  function open() { return D.groceries.filter(function (g) { return !g.done; }); }
-  function done() { return D.groceries.filter(function (g) { return g.done; }); }
+  function open() { return D.groceries.filter(function (g) { return !g.done; }).reverse(); }
+  function done() { return D.groceries.filter(function (g) { return g.done; }).reverse(); }
   function byId(id) { return D.groceries.filter(function (g) { return g.id === id; })[0]; }
 
   function row(g, isDone) {

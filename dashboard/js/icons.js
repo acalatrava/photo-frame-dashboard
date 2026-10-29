@@ -18,6 +18,7 @@ window.ICONS = {
   skipn: '<path d="M5 4.5v15l10-7.5z" fill="currentColor"/><path d="M19 5v14"/>',
   skipp: '<path d="M19 4.5v15L9 12z" fill="currentColor"/><path d="M5 5v14"/>',
   vol: '<path d="M4 9.5v5h4l5 4v-13l-5 4z" fill="currentColor"/><path d="M16.5 9a4 4 0 0 1 0 6M19 6.5a8 8 0 0 1 0 11"/>',
+  speaker: '<rect x="6" y="3" width="12" height="18" rx="3"/><circle cx="12" cy="14.5" r="3"/><circle cx="12" cy="7.5" r="1" fill="currentColor"/>',
   search: '<circle cx="11" cy="11" r="6.5"/><path d="M16 16l5 5"/>',
   minus: '<path d="M5 12h14"/>',
   left: '<path d="M15 5l-7 7 7 7"/>',
