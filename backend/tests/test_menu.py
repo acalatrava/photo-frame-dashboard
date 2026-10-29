@@ -79,6 +79,6 @@ def test_current_week_endpoint_and_frame_payload(paired):
 def test_menu_screen_is_part_of_the_nav_order_and_empty_menu_is_not_configured(paired):
     admin, dev, token = paired
     boot = admin.get("/api/v1/device/bootstrap", headers={"Authorization": f"Bearer {token}"}).json()["config"]
-    assert boot["general"]["nav_order"][-1] == "menu"
+    assert boot["general"]["nav_order"][-1] == "music"
     dash = admin.get("/api/v1/device/dashboard", headers={"Authorization": f"Bearer {token}"}).json()
     assert dash["menu"]["configured"] is False

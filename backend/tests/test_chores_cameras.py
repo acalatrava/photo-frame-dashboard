@@ -205,11 +205,11 @@ def test_week_recurrence_validation(paired):
 def test_nav_order_is_validated_normalised_and_sent_to_frames(paired):
     c, dev, token = paired
     boot = c.get("/api/v1/device/bootstrap", headers=auth(token)).json()["config"]["general"]
-    assert boot["nav_order"] == ["calendar", "photos", "chores", "house", "cameras", "shopping", "menu"]
+    assert boot["nav_order"] == ["calendar", "photos", "chores", "house", "cameras", "shopping", "menu", "music"]
     cfg = c.get("/api/v1/admin/config").json()["config"]
     cfg["general"]["nav_order"] = ["shopping", "house", "house"]
     assert c.put("/api/v1/admin/config", json=cfg).status_code == 200
     boot = c.get("/api/v1/device/bootstrap", headers=auth(token)).json()["config"]["general"]
-    assert boot["nav_order"] == ["shopping", "house", "calendar", "photos", "chores", "cameras", "menu"]
+    assert boot["nav_order"] == ["shopping", "house", "calendar", "photos", "chores", "cameras", "menu", "music"]
     cfg["general"]["nav_order"] = ["settings"]
     assert c.put("/api/v1/admin/config", json=cfg).status_code == 422

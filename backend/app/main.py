@@ -15,7 +15,7 @@ from sqlalchemy import text
 from . import state
 from .api.deps import is_https
 from .api import (admin_auth, admin_devices, admin_menu, admin_settings, admin_tokens, admin_updates, device_api, media,
-                  pairing, trigger)
+                  pairing, spotify, trigger)
 from .mcp import server as mcp_server
 from .core import db as dbmod
 from .core import security
@@ -180,7 +180,7 @@ def create_app() -> FastAPI:
 
     for r in (admin_auth.router, admin_devices.router, admin_settings.router, admin_updates.router, admin_menu.router,
               admin_tokens.router, mcp_server.router, device_api.router,
-              pairing.router, media.router, trigger.router):
+              pairing.router, media.router, trigger.router, spotify.admin, spotify.frame):
         app.include_router(r)
 
     @app.get("/", include_in_schema=False)

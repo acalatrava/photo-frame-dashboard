@@ -31,7 +31,7 @@ class Location(Strict):
 
 
 # Screens that can be reordered in the side rail. Today is always first and Settings always last.
-NAV_ITEMS = ["calendar", "photos", "chores", "house", "cameras", "shopping", "menu"]
+NAV_ITEMS = ["calendar", "photos", "chores", "house", "cameras", "shopping", "menu", "music"]
 
 
 def normalize_nav(order: list[str]) -> list[str]:
@@ -414,7 +414,7 @@ class SoundsConfig(Strict):
 
 
 class HomeLayoutConfig(Strict):
-    default_view: Literal["home", "calendar", "photos", "house", "chores", "cameras", "shopping", "menu", "settings"] = "home"
+    default_view: Literal["home", "calendar", "photos", "house", "chores", "cameras", "shopping", "menu", "music", "settings"] = "home"
     # How the calendar opens; whoever is at the frame can still switch it.
     calendar_mode: Literal["day", "3day", "week", "month"] = "day"
     ambient_after_s: int = Field(120, ge=15, le=3600)
@@ -561,6 +561,22 @@ class UpdatesConfig(Strict):
     mode: Literal["off", "notify", "auto"] = "notify"
 
 
+class SpotifyConfig(Strict):
+    """The frames control Spotify Connect speakers through the account linked here."""
+    enabled: bool = False
+    # From a free app created at developer.spotify.com. With PKCE no client secret is needed.
+    client_id: str = Field("", max_length=64, pattern=r"^[A-Za-z0-9]*$")
+    # Spotify only accepts https or loopback addresses; the page it lands on does not need to exist.
+    redirect_uri: str = Field("http://127.0.0.1:8787/callback", max_length=200)
+
+    @field_validator("redirect_uri")
+    @classmethod
+    def _redirect(cls, v: str) -> str:
+        if not (v.startswith("https://") or v.startswith("http://127.0.0.1") or v.startswith("http://[::1]")):
+            raise ValueError("Spotify solo admite https o una dirección local http://127.0.0.1")
+        return v
+
+
 class GlobalConfig(Strict):
     schema_version: int = SCHEMA_VERSION
     general: GeneralConfig = GeneralConfig()
@@ -574,6 +590,7 @@ class GlobalConfig(Strict):
     updates: UpdatesConfig = UpdatesConfig()
     menu: MenuConfig = MenuConfig()
     alarms: list[Alarm] = Field(default_factory=list, max_length=50)
+    spotify: SpotifyConfig = SpotifyConfig()
     device_defaults: DeviceConfig = DeviceConfig()
 
     @field_validator("people")

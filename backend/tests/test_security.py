@@ -25,7 +25,7 @@ PUBLIC = {
     ("GET", "/mcp"),
     ("DELETE", "/mcp"),
 }
-SESSION_ONLY = {"/api/v1/admin/tokens", "/api/v1/admin/auth/password", "/api/v1/admin/updates"}
+SESSION_ONLY = {"/api/v1/admin/tokens", "/api/v1/admin/auth/password", "/api/v1/admin/updates", "/api/v1/admin/spotify"}
 
 
 def _dependencies(dep, found):
@@ -55,7 +55,8 @@ def test_every_route_is_guarded_unless_listed_as_public(client):
 
 def test_sensitive_sections_demand_a_real_session(client):
     for method, path, guards in _routes(client.app):
-        shared = (method, path) in {("GET", "/api/v1/admin/updates"), ("PUT", "/api/v1/admin/updates/settings")}
+        shared = (method, path) in {("GET", "/api/v1/admin/updates"), ("PUT", "/api/v1/admin/updates/settings"),
+                                    ("GET", "/api/v1/admin/spotify"), ("GET", "/api/v1/admin/spotify/devices")}
         if any(path.startswith(s) for s in SESSION_ONLY) and not shared:
             assert guards == {deps.admin_session_required}, (method, path)
 

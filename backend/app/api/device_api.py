@@ -23,6 +23,7 @@ from ..services.menu import service as menu_service
 from ..services.photos import service as photos
 from ..services.presence import service as presence
 from ..services.shopping import service as shop
+from ..services.spotify import service as spotify
 from ..services.updates import service as upd
 from ..services.weather import service as weather
 from .deps import device_required
@@ -135,6 +136,7 @@ async def dashboard(device: Device = Depends(device_required), db: Session = Dep
         "chores": chores.snapshot(db, g),
         "cameras": cams.device_list(g, device),
         "menu": menu_service.for_frame(g),
+        "music": {"configured": bool(g.spotify.enabled and g.spotify.client_id and spotify.connected())},
         "weather": weather.get_cached(),
         "photos": photos.device_photos(db, device, dcfg.photos.album_id) if dcfg.photos.enabled else [],
         "presence": {"ha_active": has.presence_active(db, state.ha, presence_entities)},
