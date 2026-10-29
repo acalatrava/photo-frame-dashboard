@@ -1,8 +1,9 @@
 /* Ambient (idle photo frame) */
-.ambient { position: absolute; top: 0; right: 0; bottom: 0; left: 0; z-index: 65; background: #000; display: none; color: #fff; cursor: pointer; }
+.ambient { position: absolute; top: 0; right: 0; bottom: 0; left: 0; z-index: 65; background: #000; display: none; color: var(--amb-ink, #fff); cursor: pointer; }
 .stage[data-mode="ambient"] .ambient { display: block; }
 .amb-stage { position: absolute; top: 0; right: 0; bottom: 0; left: 0; }
-.amb-scrim { position: absolute; left: 0; right: 0; bottom: 0; height: 60%; background: linear-gradient(0deg, rgba(0, 0, 0, .75), rgba(0, 0, 0, 0)); pointer-events: none; }
+/* The only darkening over an idle photo, and only while something is drawn over it. */
+.amb-scrim { position: absolute; left: 0; right: 0; bottom: 0; height: 55%; background: linear-gradient(0deg, rgba(0, 0, 0, .66), rgba(0, 0, 0, 0)); pointer-events: none; }
 .amb-info { position: absolute; left: 60px; right: 60px; bottom: 48px; display: flex; justify-content: space-between; align-items: flex-end; }
 .amb-time { font-size: 230px; line-height: .78; letter-spacing: -.04em; }
 .amb-date { font-family: var(--serif); font-size: 38px; margin-top: 16px; }
@@ -25,8 +26,8 @@
 /* Night (dim red clock) — kept above a minimum readable brightness */
 .night { position: absolute; top: 0; right: 0; bottom: 0; left: 0; z-index: 66; background: #000; display: none; place-items: center; cursor: pointer; }
 .stage[data-mode="night"] .night { display: grid; }
-.nt-inner { text-align: center; color: #B8281A; }
-.nt-time { font-size: 260px; line-height: .8; letter-spacing: -.04em; color: #C22C1C; }
-.nt-line { margin-top: 34px; font-size: 26px; display: flex; align-items: center; justify-content: center; gap: 10px; color: #A02618; }
-.nt-line b { color: #C22C1C; }
+.nt-inner { text-align: center; color: var(--night-ink, #C22C1C); }
+.nt-time { font-size: 260px; line-height: .8; letter-spacing: -.04em; }
+.nt-line { margin-top: 34px; font-size: 26px; display: flex; align-items: center; justify-content: center; gap: 10px; opacity: .85; }
+.nt-line b { color: inherit; }
 .nt-lock { margin-top: 18px; font-size: 18px; display: flex; align-items: center; justify-content: center; gap: 8px; color: #7A1D12; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }

@@ -65,5 +65,14 @@
     App.resetIdle();
   });
   App.on('minute', paint);
-  App.on('config', function () { if (App.mode === 'ambient') paint(); });
+  // Colours chosen in the admin panel for the clock over the photos and for the night clock.
+  var HEX = /^#[0-9a-f]{6}$/i;
+  function applyColors() {
+    var dc = (App.backend.cfg && App.backend.cfg.device_config) || {};
+    var ink = dc.photos && HEX.test(dc.photos.text_color) ? dc.photos.text_color : '#FFFFFF';
+    var night = dc.display && HEX.test(dc.display.night_color) ? dc.display.night_color : '#C22C1C';
+    $('#ambient').style.setProperty('--amb-ink', ink);
+    $('#night').style.setProperty('--night-ink', night);
+  }
+  App.on('config', function () { applyColors(); if (App.mode === 'ambient') paint(); });
 })();

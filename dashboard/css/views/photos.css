@@ -1,5 +1,6 @@
-/* Slides (shared by Photos, Ambient, Home tile) */
-.slide { position: absolute; top: 0; right: 0; bottom: 0; left: 0; overflow: hidden; background: #1A1917; }
+/* Slides (shared by Photos, Ambient, Home tile). A new slide fades in over the one it replaces. */
+.slide { position: absolute; top: 0; right: 0; bottom: 0; left: 0; overflow: hidden; background: #1A1917; transition: opacity var(--fade, 1400ms) ease-in-out; }
+.slide.is-entering { opacity: 0; will-change: opacity; }
 .slide img { width: 100%; height: 100%; object-fit: cover; object-position: 50% 30%; }
 .slide img.is-broken { visibility: hidden; }
 .kb { position: absolute; top: 0; right: 0; bottom: 0; left: 0; overflow: hidden; background: linear-gradient(135deg, #3B3934, #111); }
@@ -22,7 +23,8 @@
 .polaroid--p .polaroid-img { width: 420px; height: 560px; }
 .polaroid figcaption { display: flex; justify-content: space-between; align-items: baseline; gap: 20px; padding: 16px 6px 20px; color: var(--ink); font-size: 30px; }
 
-.slide--cover::after, .slide--pair::after, .slide--collage::after, .slide--fit::after {
+/* The darkening behind a caption exists only when the slide has one, so a bare photo is never dimmed. */
+.slide--cover.has-cap::after, .slide--pair.has-cap::after, .slide--collage.has-cap::after, .slide--fit.has-cap::after {
   content: ''; position: absolute; left: 0; right: 0; bottom: 0; height: 55%;
   background: linear-gradient(0deg, rgba(0, 0, 0, .7), rgba(0, 0, 0, 0)); pointer-events: none;
 }

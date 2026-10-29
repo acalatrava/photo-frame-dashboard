@@ -82,6 +82,7 @@
     all.push(this);
   };
   var all = [];
+  var FADE_MS = 1400;
   var S = App.Slideshow.prototype;
 
   S.interval = function () { return this.o.interval || (pcfg().interval_s || 30) * 1000; };
@@ -135,7 +136,10 @@
       : BUILD[slide.layout](slide.photos, opts);
     if (slide.photos[0]) this.last = slide.photos[0].id;
     var node = wrap.firstChild;
-    node.style.opacity = '0';
+    var fade = pcfg().transition === 'none' ? 0 : FADE_MS;
+    if (opts.captions && slide.layout !== 'empty') node.classList.add('has-cap');
+    node.style.setProperty('--fade', fade + 'ms');
+    node.classList.add('is-entering');
     // Fallback look if images can't load (offline)
     Array.prototype.forEach.call(node.querySelectorAll('img'), function (im) {
       im.addEventListener('error', function () { im.classList.add('is-broken'); });
@@ -146,9 +150,12 @@
     var shown = false;
     function show() {
       if (shown) return; shown = true;
+      // Forcing a layout makes the browser start from opacity 0, so the new photo fades in over the old one.
+      void node.offsetWidth;
+      node.classList.remove('is-entering');
       node.classList.add('is-in');
-      node.style.opacity = '';
-      old.forEach(function (o) { o.remove(); });
+      // The previous photo stays underneath until the new one is fully opaque.
+      setTimeout(function () { old.forEach(function (o) { o.remove(); }); }, fade + 150);
     }
     if (first && !first.complete) { first.addEventListener('load', show); first.addEventListener('error', show); setTimeout(show, 2500); }
     else show();
