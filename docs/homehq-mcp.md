@@ -14,6 +14,7 @@ In the panel, open **Agentes (MCP)** and create a token. Choose:
 | --- | --- |
 | `read` | Only see things: status, configuration, devices, menu, albums. Write tools are not even listed. |
 | `full` | Everything in the list below. |
+| `trigger` | Only `POST /api/v1/trigger` (show a screen or an alert on the frames). Meant for Home Assistant; refused by `/mcp` and the rest of the admin API. See [homehq-sound-and-triggers.md](homehq-sound-and-triggers.md). |
 
 You can also set an expiry. The token is shown **once**; only its SHA-256 and its first characters are stored, so it
 cannot be recovered. Revoke it from the same page at any time. There is a maximum of 20 active tokens.

@@ -25,6 +25,13 @@
 | An agent gets 401 or 429 from `/mcp` | 401: the token is wrong, revoked or expired (see *Agentes (MCP)*). 429: 30 wrong tokens from one address in 15 minutes; wait, or fix the token. Behind a proxy without `HOMEHQ_TRUST_PROXY=true` every client shares the proxy's address. |
 | An agent gets 403 on publishing or deleting an APK, creating tokens or changing the password | By design: those need a logged-in panel session, not an API token ([homehq-mcp.md](homehq-mcp.md)). `kiosk/publish.sh` logs in with the admin password, so it still works. |
 | Login is blocked right after changing proxy settings | The limiter counts per client address. Behind a proxy set `HOMEHQ_TRUST_PROXY=true` and `HOMEHQ_TRUSTED_PROXY_HOPS`; otherwise all users look like one address. |
+| An alarm or the chime makes no sound | Check *Sonido > Volumen del marco* is above 0 and the frame is not inside the *No molestar* window. Use *Probar ahora* on the alarm. The chime is off by default. |
+| Spoken text is silent | The frame has no text-to-speech engine (common on Android 6). The message is still shown. Install a TTS engine APK, then *Probar sonido y voz*. |
+| `/api/v1/trigger` returns 403 | The key's scope is `read`. Use a `trigger` or `full` key. A `trigger` key is refused everywhere else, by design. |
+| A trigger reports the frame under `offline` | The frame has no live connection to the server at that moment; triggers are not queued. |
+| The screen turns off by itself when the light goes out | That is *Apagar la pantalla al detectar que se apaga la luz*; turn it off in *Presencia*, or lower `lights_off_lux`. |
+| The Música screen is missing | It appears once Spotify is enabled and connected (*Spotify* in the panel) and is not hidden in *Pantallas*. |
+| Spotify says there is no active device | Open Spotify on a speaker so it registers as a Connect device, then pick it at the top of the Música screen. |
 | Backend does not start | `docker compose logs homehq`. `HOMEHQ_SECRET_KEY` must be a valid Fernet key (32 url-safe base64 bytes) or empty. |
 
 Logs: `data/logs/homehq.log` (rotating). On the frame: `adb logcat -s HomeHQ chromium`. Remote WebView debugging is off by default;
