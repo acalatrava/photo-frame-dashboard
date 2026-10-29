@@ -176,7 +176,7 @@
   }
   // Chores, cameras and the menu only appear in the rail when the server has some configured.
   App.syncRail = function () {
-    var show = { chores: D.chores.configured > 0, cameras: D.cameras.length > 0, menu: !!(D.menu && D.menu.configured) };
+    var show = { chores: D.chores.configured > 0, cameras: D.cameras.length > 0, menu: !!(D.menu && D.menu.configured), music: !!(D.music && D.music.configured) };
     Object.keys(show).forEach(function (k) {
       var b = $('.rail-item[data-go="' + k + '"]');
       if (b) b.hidden = !show[k];

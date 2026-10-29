@@ -294,3 +294,6 @@ html{-webkit-tap-highlight-color:transparent}
 .chedit{margin-top:18px;padding-top:18px;border-top:1px solid var(--line)}
 .chedit>label{margin-top:4px}
 .alarm-time{font-size:30px;font-weight:750;letter-spacing:-.02em;font-variant-numeric:tabular-nums;min-width:96px}
+
+.steps{margin:0 0 16px;padding-left:22px;display:grid;gap:8px}
+a.btn{display:inline-flex;align-items:center;height:42px;padding:0 18px;border-radius:var(--r-s);border:1px solid var(--acc);background:var(--acc);color:#fff;font-weight:600;text-decoration:none}

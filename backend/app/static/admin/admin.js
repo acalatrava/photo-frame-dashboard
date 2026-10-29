@@ -4,6 +4,14 @@
   /* ------------------------------------------------------------------ i18n */
   var STR = {
     es: {
+      nav_spotify: 'Spotify', sub_spotify: 'Controla desde el marco la música de tus altavoces con Spotify (Echo, Sonos, Chromecast, el móvil…). Hace falta una cuenta Premium.',
+      nav_music: 'Música', scr_music: 'Música',
+      sp_steps_h: 'Cómo conectarlo', sp_step1: 'En developer.spotify.com/dashboard crea una app (es gratis) y añade como «Redirect URI» exactamente la dirección de abajo.',
+      sp_step2: 'Copia el Client ID de esa app aquí y guarda.', sp_step3: 'Pulsa «Conectar con Spotify» y acepta el permiso. Spotify te llevará a una página que no carga (es normal): copia la dirección completa de esa página y pégala aquí.',
+      sp_enabled: 'Mostrar Música en los marcos', sp_client: 'Client ID', sp_redirect: 'Redirect URI', sp_connect: 'Guardar y conectar con Spotify', sp_open: 'Abrir Spotify para dar el permiso',
+      sp_paste: 'Pega aquí la dirección a la que te ha llevado Spotify', sp_finish: 'Terminar conexión', sp_connected: 'Conectado', sp_notconnected: 'Sin conectar', sp_disconnect: 'Desconectar',
+      sp_devices: 'Altavoces detectados', sp_no_devices: 'No hay ningún altavoz activo. Abre Spotify en uno para que aparezca.', sp_check: 'Comprobar altavoces',
+      sp_limits: 'El propio marco no puede ser un altavoz de Spotify (su Android antiguo no lo permite): controla otros altavoces. Spotify solo deja controlar la reproducción a cuentas Premium.', sp_done: 'Spotify conectado.',
       al_frames_help: 'Si no marcas ninguno, suena en todos los marcos.', chores_none: 'Todavía no hay tareas. Añade la primera con los botones de abajo.',
       nav_alarms: 'Alarmas', sub_alarms: 'Alarmas que suenan en los marcos con un sonido, un mensaje o ambos. El mensaje puede leerse en voz alta.',
       al_add: 'Nueva alarma', al_time: 'Hora', al_name: 'Nombre', al_days: 'Qué días', al_date: 'O un día concreto (suena solo ese día)', al_sound: 'Sonido', al_message: 'Mensaje (se muestra en pantalla)',
@@ -123,6 +131,14 @@
       app_version: 'App', hw: 'Hardware', close: 'Cerrar', pairing_expired: 'Caduca'
     },
     en: {
+      nav_spotify: 'Spotify', sub_spotify: 'Control the music on your Spotify speakers (Echo, Sonos, Chromecast, a phone…) from the frame. Needs a Premium account.',
+      nav_music: 'Music', scr_music: 'Music',
+      sp_steps_h: 'How to connect it', sp_step1: 'At developer.spotify.com/dashboard create an app (it is free) and add exactly the address below as its “Redirect URI”.',
+      sp_step2: 'Copy that app’s Client ID here and save.', sp_step3: 'Press “Connect with Spotify” and accept the permission. Spotify sends you to a page that does not load (that is normal): copy the full address of that page and paste it here.',
+      sp_enabled: 'Show Music on the frames', sp_client: 'Client ID', sp_redirect: 'Redirect URI', sp_connect: 'Save and connect with Spotify', sp_open: 'Open Spotify to grant permission',
+      sp_paste: 'Paste the address Spotify sent you to', sp_finish: 'Finish connecting', sp_connected: 'Connected', sp_notconnected: 'Not connected', sp_disconnect: 'Disconnect',
+      sp_devices: 'Speakers found', sp_no_devices: 'No speaker is active. Open Spotify on one so it shows up.', sp_check: 'Check speakers',
+      sp_limits: 'The frame itself cannot be a Spotify speaker (its old Android does not allow it): it controls other speakers. Spotify only lets Premium accounts control playback.', sp_done: 'Spotify connected.',
       al_frames_help: 'With none selected, it rings on every frame.', chores_none: 'There are no chores yet. Add the first one with the buttons below.',
       nav_alarms: 'Alarms', sub_alarms: 'Alarms that ring on the frames with a sound, a message or both. The message can be read aloud.',
       al_add: 'New alarm', al_time: 'Time', al_name: 'Name', al_days: 'Which days', al_date: 'Or one specific day (rings only that day)', al_sound: 'Sound', al_message: 'Message (shown on screen)',
@@ -390,6 +406,7 @@
     account: ['M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2', 'M12 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8z'],
     logout: ['M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4', 'M16 17l5-5-5-5', 'M21 12H9'],
     lang: ['M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20z', 'M2 12h20', 'M12 2a15 15 0 0 1 0 20 15 15 0 0 1 0-20'],
+    spotify: ['M9 18V5l12-2v13', 'M9 18a3 3 0 1 1-6 0 3 3 0 0 1 6 0z', 'M21 16a3 3 0 1 1-6 0 3 3 0 0 1 6 0z'],
     alarms: ['M12 22a9 9 0 1 0 0-18 9 9 0 0 0 0 18z', 'M12 8v5l3 2', 'M5 3L2 6', 'M22 6l-3-3'],
     up: ['M18 15l-6-6-6 6'], down: ['M6 9l6 6 6-6'],
     ok: ['M20 6L9 17l-5-5'], alert: ['M12 8v5', 'M12 16h.01', 'M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20z'],
@@ -415,7 +432,7 @@
   var NAV = [
     ['g_frames', [['status', 'nav_status'], ['devices', 'nav_devices'], ['screens', 'nav_screens'], ['updates', 'nav_updates']]],
     ['g_content', [['photos', 'nav_photos'], ['calendars', 'nav_calendars'], ['chores', 'nav_chores'], ['alarms', 'nav_alarms'], ['shopping', 'nav_shopping'], ['cameras', 'nav_cameras'], ['menu', 'nav_menu']]],
-    ['g_integrations', [['ha', 'nav_ha'], ['sensor', 'nav_sensor'], ['agents', 'nav_agents']]],
+    ['g_integrations', [['ha', 'nav_ha'], ['spotify', 'nav_spotify'], ['sensor', 'nav_sensor'], ['agents', 'nav_agents']]],
     ['g_system', [['general', 'nav_general'], ['account', 'nav_account']]]
   ];
 
@@ -656,7 +673,7 @@
       clear(box);
       var name = { name: d.name };
       var albumOpts = [['', t('no_album')]].concat(albums.map(function (a) { return [a.id, a.name + ' (' + a.photos + ')']; }));
-      var views = ['home', 'calendar', 'photos', 'chores', 'house', 'cameras', 'shopping', 'menu', 'settings'].map(function (k) { return [k, t('scr_' + k)]; });
+      var views = ['home', 'calendar', 'photos', 'chores', 'house', 'cameras', 'shopping', 'menu', 'music', 'settings'].map(function (k) { return [k, t('scr_' + k)]; });
       var haEnts = h('input', { value: c.presence.ha_entities.join(', '), placeholder: 'binary_sensor.pasillo_movimiento, ...' });
       haEnts.addEventListener('input', function () { c.presence.ha_entities = haEnts.value.split(',').map(function (x) { return x.trim(); }).filter(Boolean); });
       var widgetsSel = h('div', { class: 'row tight' });
@@ -919,7 +936,7 @@
     });
   };
 
-  var DEFAULT_ORDER = ['calendar', 'photos', 'chores', 'house', 'cameras', 'shopping', 'menu'];
+  var DEFAULT_ORDER = ['calendar', 'photos', 'chores', 'house', 'cameras', 'shopping', 'menu', 'music'];
   function normalizeOrder(order) {
     var seen = (order || []).filter(function (k, i, a) { return DEFAULT_ORDER.indexOf(k) >= 0 && a.indexOf(k) === i; });
     return seen.concat(DEFAULT_ORDER.filter(function (k) { return seen.indexOf(k) < 0; }));
@@ -1490,6 +1507,58 @@
   function snippet(url, token) {
     return JSON.stringify({ mcpServers: { homehq: { url: url, headers: { Authorization: 'Bearer ' + token } } } }, null, 2);
   }
+
+  VIEWS.spotify = function () {
+    return Promise.all([loadConfig(), api('GET', '/api/v1/admin/spotify')]).then(function (rs) {
+      var cfg = rs[0].config, st = rs[1], box = h('div'), flow = h('div'), speakers = h('div'), paste = { code: '' };
+      page(t('nav_spotify'), box);
+      box.appendChild(h('div', { class: 'card' }, h('h3', null, t('sp_steps_h')),
+        h('ol', { class: 'steps' }, [1, 2, 3].map(function (n) { return h('li', null, t('sp_step' + n)); })),
+        banner('ok', t('sp_limits'))));
+      function listSpeakers() {
+        return api('GET', '/api/v1/admin/spotify/devices').then(function (ds) {
+          clear(speakers);
+          if (!ds.length) { speakers.appendChild(h('p', { class: 'muted' }, t('sp_no_devices'))); return; }
+          ds.forEach(function (d) { speakers.appendChild(h('div', null, h('span', { class: 'pill' + (d.active ? ' ok' : '') }, d.name), ' ', h('span', { class: 'muted' }, d.type))); });
+        });
+      }
+      function draw() {
+        var link = st.connected ? h('span', { class: 'pill ok' }, t('sp_connected')) : h('span', { class: 'pill warn' }, t('sp_notconnected'));
+        clear(flow);
+        flow.appendChild(h('h3', null, t('nav_spotify') + ' '), link);
+        if (st.connected) {
+          flow.appendChild(h('h3', null, t('sp_devices')));
+          flow.appendChild(speakers);
+          flow.appendChild(h('div', { class: 'row tight' }, btn(t('sp_check'), listSpeakers),
+            btn(t('sp_disconnect'), function () { return api('DELETE', '/api/v1/admin/spotify').then(function () { st.connected = false; draw(); }); }, 'bad')));
+          listSpeakers().catch(fail);
+        }
+      }
+      var form = h('div', { class: 'card' },
+        check(cfg, 'spotify.enabled', t('sp_enabled')),
+        h('div', { class: 'row' }, input(cfg, 'spotify.client_id', t('sp_client'), { placeholder: '32 caracteres' }), input(cfg, 'spotify.redirect_uri', t('sp_redirect'))),
+        h('div', { class: 'row tight' }, btn(t('save'), function () { return saveConfig(cfg, box); }, 'pri'),
+          btn(t('sp_connect'), function () {
+            return saveConfig(cfg, box).then(function () { return api('POST', '/api/v1/admin/spotify/authorize'); }).then(function (r) {
+              var codeEl = h('input', { placeholder: 'http://127.0.0.1:8787/callback?code=…', autocomplete: 'off' });
+              codeEl.addEventListener('input', function () { paste.code = codeEl.value; });
+              clear(flow);
+              flow.appendChild(h('p', null, h('a', { href: r.url, target: '_blank', rel: 'noopener noreferrer', class: 'btn' }, t('sp_open'))));
+              flow.appendChild(h('div', null, h('label', null, t('sp_paste')), codeEl));
+              flow.appendChild(h('div', { class: 'actions' }, btn(t('sp_finish'), function () {
+                return api('POST', '/api/v1/admin/spotify/connect', { code: paste.code }).then(function () {
+                  st.connected = true; draw(); flash(box, 'ok', t('sp_done'));
+                });
+              }, 'pri')));
+            });
+          })));
+      box.appendChild(form);
+      var card = h('div', { class: 'card' });
+      card.appendChild(flow);
+      box.appendChild(card);
+      draw();
+    });
+  };
 
   VIEWS.agents = function () {
     return Promise.resolve().then(function () {

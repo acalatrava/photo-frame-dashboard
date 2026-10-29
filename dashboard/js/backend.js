@@ -141,6 +141,7 @@
     D.notices = dash.notices || [];
     if (dash.shopping) applyShopping(dash.shopping);
     applyChores(dash.chores);
+    D.music = dash.music || { configured: false };
     D.menu = dash.menu || { configured: false, meals: [], weeks: [], start_week: 1, start_date: '' };
     var base = B.url();
     D.cameras = (dash.cameras || []).map(function (c) { return { id: c.id, name: c.name, snapshot: base + c.snapshot, stream: base + c.stream }; });
@@ -240,6 +241,7 @@
     sset(K.token, null); sset(K.device, null); sset(K.cache, null); sset(K.cfg, null); sset(K.queue, null); sset(K.cq, null);
     B._sig = null;
     D.photos = []; D.chores = { day: '', items: [] }; D.cameras = []; D.events = [];
+    D.music = { configured: false };
     D.menu = { configured: false, meals: [], weeks: [], start_week: 1, start_date: '' };
     if (N && N.clearWebCache) { try { N.clearWebCache(); } catch (e) { /* ignore */ } }
   }

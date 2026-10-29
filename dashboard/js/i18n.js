@@ -6,6 +6,9 @@
   var DICT = {
     es: {
       nav_chores: 'Tareas', nav_cameras: 'Cámaras', ch_shared: 'Casa', cal_week_n: 'Semana {n}', cal_wk: 'Sem.', ch_see_all: 'Ver todas', undo: 'Deshacer', ch_done_toast: 'Hecho: {name}', ch_all_done: '¡Todo hecho!', ch_none: 'Hoy no hay tareas.', ch_none2: 'Disfruta del descanso.', ch_today: 'tareas de hoy',
+      nav_music: 'Música', mu_kicker: 'Spotify', mu_lists: 'Mis listas', mu_search: 'Buscar', mu_search_ph: 'Canción, artista o lista…', mu_speakers: 'Altavoz', mu_nothing: 'No suena nada', mu_nothing2: 'Elige una lista o busca una canción.',
+      mu_off: 'Spotify no está conectado.', mu_off2: 'Conéctalo desde el panel de administración.', mu_nodev: 'No hay ningún altavoz activo.', mu_nodev2: 'Abre Spotify en uno de tus altavoces y aparecerá aquí.',
+      mu_empty: 'Sin resultados.', mu_err: 'No se pudo hablar con Spotify.', mu_track: 'Canción', mu_album: 'Álbum', mu_playlist: 'Lista',
       ch_overdue: 'Pendiente de antes', ch_once: 'Tarea puntual',
       al_alarm: 'Alarma', al_notice: 'Aviso', al_snooze: 'Posponer {n} min', al_stop: 'Parar', al_close: 'Cerrar',
       chime_say: function (v) {
@@ -74,6 +77,9 @@
     },
     en: {
       nav_chores: 'Chores', nav_cameras: 'Cameras', ch_shared: 'Household', cal_week_n: 'Week {n}', cal_wk: 'Wk', ch_see_all: 'See all', undo: 'Undo', ch_done_toast: 'Done: {name}', ch_all_done: 'All done!', ch_none: 'No chores today.', ch_none2: 'Enjoy the break.', ch_today: 'chores today',
+      nav_music: 'Music', mu_kicker: 'Spotify', mu_lists: 'My playlists', mu_search: 'Search', mu_search_ph: 'Song, artist or playlist…', mu_speakers: 'Speaker', mu_nothing: 'Nothing is playing', mu_nothing2: 'Pick a playlist or search for a song.',
+      mu_off: 'Spotify is not connected.', mu_off2: 'Connect it from the admin panel.', mu_nodev: 'No speaker is active.', mu_nodev2: 'Open Spotify on one of your speakers and it will show up here.',
+      mu_empty: 'No results.', mu_err: 'Could not reach Spotify.', mu_track: 'Song', mu_album: 'Album', mu_playlist: 'Playlist',
       ch_overdue: 'Overdue', ch_once: 'One-off',
       al_alarm: 'Alarm', al_notice: 'Notice', al_snooze: 'Snooze {n} min', al_stop: 'Stop', al_close: 'Close',
       chime_say: function (v) {

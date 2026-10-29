@@ -23,6 +23,7 @@ import './views/house.js';
 import './views/chores.js';
 import './views/cameras.js';
 import './views/menu.js';
+import './views/music.js';
 import './views/shopping.js';
 import './views/settings.js';
 import './views/ambient.js';
